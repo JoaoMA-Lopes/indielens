@@ -20,3 +20,5 @@ cpp/**/Release/
 cpp/config.jsondesktop.ini
 
 desktop.ini
+
+cpp/config.json
