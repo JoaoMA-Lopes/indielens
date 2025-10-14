@@ -17,4 +17,6 @@ cpp/**/Release/
 *.suo
 
 # Ignore local config files
-cpp/config.json
+cpp/config.jsondesktop.ini
+
+desktop.ini
