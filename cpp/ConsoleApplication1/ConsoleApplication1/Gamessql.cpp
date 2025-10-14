@@ -76,10 +76,6 @@ int rungamedatabasetest () {
     return 0;
 }
 
-int rungamedatabaseactual() {
-   
-}
-
 void upsertgame(mysqlx::Session& sess, int appid, const std::string& name, const std::string& developer, const std::string& publisher) // inserts a row into the games table with the information categories of a game which aren't vectors. If there already is a row with that given appid, it just updates the values within it
 {
     sess.sql(
