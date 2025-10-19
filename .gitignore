@@ -22,3 +22,25 @@ cpp/config.jsondesktop.ini
 desktop.ini
 
 cpp/config.json
+
+# Visual Studio build outputs
+*.exe
+*.obj
+*.ilk
+*.pdb
+*.log
+*.tlog
+*.user
+*.VC.db
+*.ipch
+.vs/
+x64/
+Release/
+Debug/
+
+# Config/secrets
+config/config.json
+
+# Misc
+*.DS_Store
+Thumbs.db
