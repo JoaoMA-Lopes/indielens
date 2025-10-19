@@ -159,6 +159,7 @@
     <ClCompile Include="Userdatabase.cpp" />
     <ClCompile Include="Users.cpp" />
     <ClCompile Include="Usersql.cpp" />
+    <ClCompile Include="Weighting.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Curlstuff.h" />
@@ -171,6 +172,7 @@
     <ClInclude Include="Userdatabase.h" />
     <ClInclude Include="Users.h" />
     <ClInclude Include="Usersql.h" />
+    <ClInclude Include="Weighting.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

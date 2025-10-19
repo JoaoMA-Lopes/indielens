@@ -14,6 +14,7 @@
 #include "Curlstuff.h"
 #include "Games.h"
 #include "Usersql.h"
+#include "Weighting.h"
 
 // This is the ConsoleApplication1 cpp file
 
@@ -129,12 +130,21 @@ int main()
 		catch (const mysqlx::Error& e) {
 			std::cerr << "[MySQLX] " << e.what() << "\n";
 		}
+
+		bool wantstorate = true;
+
+		while (wantstorate)
+		{
+			dotherating(sess, u.steamid, u);
+
+		}
 	}
 	else if (signuporlogin == 2)
 	{
 		// Login code to be done
 		std::cout << "Login functionality not yet implemented\n";
 	}
+	
 
 	curl_easy_cleanup(curl);
 	curl_global_cleanup();
