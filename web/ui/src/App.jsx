@@ -379,94 +379,94 @@ export default function App() {
           
           <div style={{ marginBottom: 30, padding: 20, border: '1px solid #000', background: '#fff' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 15 }}>
-              <span style={{ fontWeight: 'bold' }}>Player: Gamer123</span>
-              <span style={{ color: '#BF4E30', fontWeight: 'bold' }}>Rating: 95/100</span>
+              <span style={{ fontWeight: 'bold' }}>Player: Alex_Summers92</span>
+              <span style={{ color: '#BF4E30', fontWeight: 'bold' }}>Rating: 94/100</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
               <span>Hours Played:</span>
-              <span>247 hours</span>
+              <span>312 hours</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
               <span>Achievements:</span>
-              <span>110 / 115 (95.7%)</span>
+              <span>108 / 115 (93.9%)</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
               <span>Profile Match:</span>
-              <span>0.92</span>
+              <span>0.94</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
               <span>Engagement:</span>
-              <span>0.95</span>
+              <span>0.96</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
               <span>Achievement Penalty:</span>
-              <span>0.98</span>
+              <span>0.99</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '15px 0', marginTop: 10, borderTop: '2px solid #BF4E30', fontWeight: 'bold', color: '#BF4E30' }}>
               <span>Weighted Score Contribution:</span>
-              <span>87.25 points</span>
+              <span>84.71 points</span>
             </div>
           </div>
 
           <div style={{ marginBottom: 30, padding: 20, border: '1px solid #000', background: '#fff' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 15 }}>
-              <span style={{ fontWeight: 'bold' }}>Player: IndieFan</span>
-              <span style={{ color: '#BF4E30', fontWeight: 'bold' }}>Rating: 88/100</span>
+              <span style={{ fontWeight: 'bold' }}>Player: Marcus_Indie</span>
+              <span style={{ color: '#BF4E30', fontWeight: 'bold' }}>Rating: 87/100</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
               <span>Hours Played:</span>
-              <span>89 hours</span>
+              <span>156 hours</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
               <span>Achievements:</span>
-              <span>65 / 115 (56.5%)</span>
+              <span>71 / 115 (61.7%)</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
               <span>Profile Match:</span>
-              <span>0.75</span>
+              <span>0.78</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
               <span>Engagement:</span>
-              <span>0.68</span>
+              <span>0.74</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
               <span>Achievement Penalty:</span>
-              <span>0.95</span>
+              <span>0.96</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '15px 0', marginTop: 10, borderTop: '2px solid #BF4E30', fontWeight: 'bold', color: '#BF4E30' }}>
               <span>Weighted Score Contribution:</span>
-              <span>42.66 points</span>
+              <span>48.62 points</span>
             </div>
           </div>
 
           <div style={{ marginBottom: 30, padding: 20, border: '1px solid #000', background: '#fff' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 15 }}>
-              <span style={{ fontWeight: 'bold' }}>Player: CasualGamer</span>
-              <span style={{ color: '#BF4E30', fontWeight: 'bold' }}>Rating: 75/100</span>
+              <span style={{ fontWeight: 'bold' }}>Player: Sam_Green</span>
+              <span style={{ color: '#BF4E30', fontWeight: 'bold' }}>Rating: 72/100</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
               <span>Hours Played:</span>
-              <span>15 hours</span>
+              <span>22 hours</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
               <span>Achievements:</span>
-              <span>5 / 115 (4.3%)</span>
+              <span>12 / 115 (10.4%)</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
               <span>Profile Match:</span>
-              <span>0.42</span>
+              <span>0.51</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
               <span>Engagement:</span>
-              <span>0.31</span>
+              <span>0.38</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
               <span>Achievement Penalty:</span>
-              <span>0.72</span>
+              <span>0.76</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '15px 0', marginTop: 10, borderTop: '2px solid #BF4E30', fontWeight: 'bold', color: '#BF4E30' }}>
               <span>Weighted Score Contribution:</span>
-              <span>7.02 points</span>
+              <span>10.69 points</span>
             </div>
           </div>
 
