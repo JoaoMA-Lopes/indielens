@@ -49,6 +49,7 @@ Prevents manipulation by comparing your achievements-per-hour to similar games:
 - **Prove Your Game's Worth**: A high IndieLens score signals genuine player engagement, not marketing hype
 - **Target Marketing**: Understand which player profiles love your game
 - **Fair Competition**: Compete on merit, not marketing budget
+- **Developer Analytics Dashboard**: See exactly which players contribute most to your score, their hours, achievement completion, and weighting factors
 
 ## Technical Excellence
 

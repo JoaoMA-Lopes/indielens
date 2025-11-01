@@ -14,6 +14,7 @@ IndieLens is a sophisticated game recommendation platform that uses your Steam g
 - **Genre & Tag Browsing**: Filter thousands of indie games by genre and tags
 - **Game Detail Pages**: View comprehensive game information with Steam data
 - **Rating & Review System**: Submit weighted ratings with optional text reviews
+- **Developer Analytics**: See detailed breakdowns of user ratings with hours, achievements, and weighting factors
 
 ### AI-Enhanced Features (Chrome Built-in AI)
 - **Grammar Checking**: AI-powered proofreading for user reviews
