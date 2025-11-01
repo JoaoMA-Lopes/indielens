@@ -93,6 +93,48 @@
             display: inline-block;
             margin: 0.5rem 1rem;
         }
+        .rating-breakdown {
+            background: #fff;
+            border: 1px solid #000;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        .rating-breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #ddd;
+        }
+        .rating-breakdown-item:last-child {
+            border-bottom: none;
+            font-weight: bold;
+            padding-top: 1rem;
+            margin-top: 0.5rem;
+            border-top: 2px solid #BF4E30;
+        }
+        .developer-mode-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #BF4E30;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            font-weight: bold;
+            z-index: 1000;
+        }
+        .developer-mode-toggle:hover {
+            background: #a03d26;
+        }
+        .dev-content {
+            display: none;
+        }
+        .dev-content.active {
+            display: block;
+        }
         .ai-section {
             background: #f9f9f9;
             border: 1px solid #000;
@@ -242,9 +284,128 @@
             </ol>
             <p>Or simply watch the <strong>demonstration video</strong> to see all features in action!</p>
         </div>
+
+        <div class="dev-content ai-section">
+            <h3 style="color: #BF4E30; display: flex; align-items: center; gap: 0.5rem;">
+                👨‍💻 Developer Mode - My Game: Terraria
+            </h3>
+            <p style="margin-bottom: 1.5rem;">Recent ratings from users for your game, with detailed weighting breakdowns:</p>
+            
+            <div class="rating-breakdown">
+                <div class="rating-breakdown-item">
+                    <span><strong>Player:</strong> Gamer123</span>
+                    <span style="color: #BF4E30;"><strong>Rating: 95/100</strong></span>
+                </div>
+                <div class="rating-breakdown-item">
+                    <span>Hours Played:</span>
+                    <span>247 hours</span>
+                </div>
+                <div class="rating-breakdown-item">
+                    <span>Achievements:</span>
+                    <span>174 / 181 (96.1%)</span>
+                </div>
+                <div class="rating-breakdown-item">
+                    <span>Profile Match:</span>
+                    <span>0.92</span>
+                </div>
+                <div class="rating-breakdown-item">
+                    <span>Engagement:</span>
+                    <span>0.95</span>
+                </div>
+                <div class="rating-breakdown-item">
+                    <span>Achievement Penalty:</span>
+                    <span>0.98</span>
+                </div>
+                <div class="rating-breakdown-item" style="color: #BF4E30;">
+                    <span>Weighted Score Contribution:</span>
+                    <span>87.25 points</span>
+                </div>
+            </div>
+
+            <div class="rating-breakdown">
+                <div class="rating-breakdown-item">
+                    <span><strong>Player:</strong> IndieFan</span>
+                    <span style="color: #BF4E30;"><strong>Rating: 88/100</strong></span>
+                </div>
+                <div class="rating-breakdown-item">
+                    <span>Hours Played:</span>
+                    <span>89 hours</span>
+                </div>
+                <div class="rating-breakdown-item">
+                    <span>Achievements:</span>
+                    <span>102 / 181 (56.4%)</span>
+                </div>
+                <div class="rating-breakdown-item">
+                    <span>Profile Match:</span>
+                    <span>0.75</span>
+                </div>
+                <div class="rating-breakdown-item">
+                    <span>Engagement:</span>
+                    <span>0.68</span>
+                </div>
+                <div class="rating-breakdown-item">
+                    <span>Achievement Penalty:</span>
+                    <span>0.95</span>
+                </div>
+                <div class="rating-breakdown-item" style="color: #BF4E30;">
+                    <span>Weighted Score Contribution:</span>
+                    <span>42.66 points</span>
+                </div>
+            </div>
+
+            <div class="rating-breakdown">
+                <div class="rating-breakdown-item">
+                    <span><strong>Player:</strong> CasualGamer</span>
+                    <span style="color: #BF4E30;"><strong>Rating: 75/100</strong></span>
+                </div>
+                <div class="rating-breakdown-item">
+                    <span>Hours Played:</span>
+                    <span>15 hours</span>
+                </div>
+                <div class="rating-breakdown-item">
+                    <span>Achievements:</span>
+                    <span>8 / 181 (4.4%)</span>
+                </div>
+                <div class="rating-breakdown-item">
+                    <span>Profile Match:</span>
+                    <span>0.42</span>
+                </div>
+                <div class="rating-breakdown-item">
+                    <span>Engagement:</span>
+                    <span>0.31</span>
+                </div>
+                <div class="rating-breakdown-item">
+                    <span>Achievement Penalty:</span>
+                    <span>0.72</span>
+                </div>
+                <div class="rating-breakdown-item" style="color: #BF4E30;">
+                    <span>Weighted Score Contribution:</span>
+                    <span>7.02 points</span>
+                </div>
+            </div>
+
+            <p style="margin-top: 1.5rem; font-size: 0.9rem; color: #666;">
+                <strong>Note:</strong> Higher hours and achievement completion result in greater weight for each rating, ensuring experienced players have more impact on your game's score.
+            </p>
+        </div>
     </div>
 
+    <button class="developer-mode-toggle" onclick="toggleDevMode()">👨‍💻 Developer Mode</button>
+
     <script>
+        function toggleDevMode() {
+            const devContent = document.querySelector('.dev-content');
+            devContent.classList.toggle('active');
+            
+            const button = document.querySelector('.developer-mode-toggle');
+            if (devContent.classList.contains('active')) {
+                button.textContent = '👨‍💻 Dev Mode ON';
+                devContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                button.textContent = '👨‍💻 Developer Mode';
+            }
+        }
+
         // Simple interactivity for demo
         document.querySelectorAll('.game-card').forEach(card => {
             card.addEventListener('click', () => {
