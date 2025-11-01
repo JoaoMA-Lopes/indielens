@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IndieLens Demo</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+    <style>
+        :root {
+            --primary: #BF4E30;
+            --primary-hover: #a03d26;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            background: white;
+            color: #1a1a1a;
+        }
+        .header {
+            background: #BF4E30;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        .nav-tabs {
+            display: flex;
+            gap: 1rem;
+            flex: 1;
+        }
+        .nav-tab {
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: none;
+            color: rgba(255,255,255,0.8);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .nav-tab:hover, .nav-tab.active {
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+        .demo-badge {
+            background: #ffc107;
+            color: #000;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        .game-card {
+            background: white;
+            border: 1px solid #000;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .game-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .game-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+        .game-card h3 {
+            margin: 0.5rem 1rem;
+            font-size: 1.1rem;
+        }
+        .badge {
+            background: #BF4E30;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: inline-block;
+            margin: 0.5rem 1rem;
+        }
+        .ai-section {
+            background: #f9f9f9;
+            border: 1px solid #000;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+        .ai-section h3 {
+            color: #BF4E30;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .ai-button {
+            background: #f5f5f5;
+            border: 1px solid #000;
+            padding: 0.5rem 1rem;
+            margin: 0.5rem 0;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .ai-button:hover {
+            background: #e5e5e5;
+        }
+        .highlight {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+        code {
+            background: #f5f5f5;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎮 IndieLens</h1>
+        <div class="nav-tabs">
+            <button class="nav-tab">Action</button>
+            <button class="nav-tab">Adventure</button>
+            <button class="nav-tab">Indie</button>
+            <button class="nav-tab">RPG</button>
+        </div>
+        <div style="margin-left: auto; display: flex; gap: 1rem; align-items: center;">
+            <button style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 0.5rem 1rem; cursor: pointer;">How it works</button>
+            <span class="demo-badge">DEMO MODE</span>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="highlight">
+            <strong>⚡ Demo Mode</strong> - This is a simplified demonstration of IndieLens for the Chrome Built-in AI Hackathon 2025.
+            <br><br>
+            <strong>What you're seeing:</strong> The complete UI design, Chrome AI integration points, and core functionality demonstration.
+            <br><br>
+            <strong>For full functionality:</strong> See <code>JUDGES_SETUP.md</code> in the GitHub repository for complete setup instructions.
+        </div>
+
+        <h2 style="color: #BF4E30; border-bottom: 2px solid #BF4E30; padding-bottom: 0.5rem;">
+            Browse Indie Games
+        </h2>
+
+        <div class="game-grid">
+            <div class="game-card">
+                <img src="https://via.placeholder.com/300x150?text=Terraria" alt="Game">
+                <h3>Terraria</h3>
+                <span class="badge">Score: 87</span>
+            </div>
+            <div class="game-card">
+                <img src="https://via.placeholder.com/300x150?text=Stardew+Valley" alt="Game">
+                <h3>Stardew Valley</h3>
+                <span class="badge">Score: 92</span>
+            </div>
+            <div class="game-card">
+                <img src="https://via.placeholder.com/300x150?text=Hades" alt="Game">
+                <h3>Hades</h3>
+                <span class="badge">Score: 95</span>
+            </div>
+            <div class="game-card">
+                <img src="https://via.placeholder.com/300x150?text=Outer+Wilds" alt="Game">
+                <h3>Outer Wilds</h3>
+                <span class="badge">Score: 89</span>
+            </div>
+            <div class="game-card">
+                <img src="https://via.placeholder.com/300x150?text=Celeste" alt="Game">
+                <h3>Celeste</h3>
+                <span class="badge">Score: 91</span>
+            </div>
+            <div class="game-card">
+                <img src="https://via.placeholder.com/300x150?text=Hollow+Knight" alt="Game">
+                <h3>Hollow Knight</h3>
+                <span class="badge">Score: 93</span>
+            </div>
+        </div>
+
+        <div class="ai-section">
+            <h3>🤖 Chrome Built-in AI Integration</h3>
+            <p>IndieLens integrates Chrome's Built-in AI APIs for enhanced user experience:</p>
+            
+            <div style="margin: 1.5rem 0;">
+                <strong>✏️ Proofreader API</strong>
+                <br><small>Grammar checking for user reviews</small>
+                <br><button class="ai-button">Check Grammar (Chrome AI)</button>
+            </div>
+
+            <div style="margin: 1.5rem 0;">
+                <strong>📝 Summarizer API</strong>
+                <br><small>Summarizing long game descriptions</small>
+                <br><button class="ai-button">Summarize (Chrome AI)</button>
+            </div>
+
+            <div style="margin: 1.5rem 0;">
+                <strong>💬 Prompt API</strong>
+                <br><small>Interactive game recommendations with AI explanations</small>
+                <br><button class="ai-button">Explain Match (Chrome AI)</button>
+            </div>
+
+            <div style="margin: 1.5rem 0;">
+                <strong>🌐 Translator API</strong>
+                <br><small>Multi-language website support</small>
+                <br><button class="ai-button">Enable Translation (Chrome AI)</button>
+            </div>
+        </div>
+
+        <div class="ai-section">
+            <h3>🧮 Personalized Weighting System</h3>
+            <p>Each rating is weighted using three factors:</p>
+            <ul>
+                <li><strong>Profile Match:</strong> How similar is this game to your library? (tags, genres, developer)</li>
+                <li><strong>Engagement:</strong> How much have you played? (hours + achievement completion)</li>
+                <li><strong>Soft Penalty:</strong> Are you achievement-focused or casual? (APH comparison)</li>
+            </ul>
+            <p><strong>Result:</strong> Your expertise areas get higher weight, ensuring recommendations match YOUR gaming style!</p>
+        </div>
+
+        <div class="highlight">
+            <h3>📦 Full Application Access</h3>
+            <p>To test the complete application with real Steam integration:</p>
+            <ol>
+                <li>Clone the repository: <code>git clone https://github.com/YOURUSERNAME/indielens</code></li>
+                <li>Follow <code>JUDGES_SETUP.md</code> for detailed setup instructions</li>
+                <li>Build and run locally with full C++ backend and MySQL database</li>
+            </ol>
+            <p>Or simply watch the <strong>demonstration video</strong> to see all features in action!</p>
+        </div>
+    </div>
+
+    <script>
+        // Simple interactivity for demo
+        document.querySelectorAll('.game-card').forEach(card => {
+            card.addEventListener('click', () => {
+                alert('In full version: Navigate to game detail page with Steam data, AI features, and rating submission!');
+            });
+        });
+
+        document.querySelectorAll('.ai-button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                alert('Chrome AI integration is complete in the code. APIs require Chrome environments where they\'re fully deployed.\n\nSee JUDGES_SETUP.md for full details!');
+            });
+        });
+    </script>
+</body>
+</html>
+
