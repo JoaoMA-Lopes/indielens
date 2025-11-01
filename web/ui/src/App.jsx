@@ -388,7 +388,7 @@ export default function App() {
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
               <span>Achievements:</span>
-              <span>174 / 181 (96.1%)</span>
+              <span>110 / 115 (95.7%)</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
               <span>Profile Match:</span>
@@ -419,7 +419,7 @@ export default function App() {
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
               <span>Achievements:</span>
-              <span>102 / 181 (56.4%)</span>
+              <span>65 / 115 (56.5%)</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
               <span>Profile Match:</span>
@@ -450,7 +450,7 @@ export default function App() {
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
               <span>Achievements:</span>
-              <span>8 / 181 (4.4%)</span>
+              <span>5 / 115 (4.3%)</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
               <span>Profile Match:</span>
