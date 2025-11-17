@@ -50,7 +50,17 @@ export default function App() {
     setTab('browse');
   }
 
-  const apiBase = useMemo(() => (import.meta.env.VITE_API_BASE || 'http://localhost:5179'), []);
+  // Use relative path /api when served from same origin (production), otherwise use env var or localhost
+  const apiBase = useMemo(() => {
+    if (import.meta.env.VITE_API_BASE) {
+      return import.meta.env.VITE_API_BASE;
+    }
+    // In production (served via Nginx), use relative path /api
+    // In development, use localhost
+    return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+      ? 'http://localhost:5179' 
+      : '/api';
+  }, []);
 
   async function ingest() {
     setError(''); setResult(null); setLoading(true);
