@@ -74,6 +74,42 @@ function writeScores(obj) {
   fs.writeFileSync(scoresPath, JSON.stringify(obj));
 }
 
+// Calculate weighted mean score from database user_ratings table
+// Returns { score: number, popularity: number } or null if no ratings exist
+async function getGameScoreFromDB(appid) {
+  if (!dbPool) return null;
+  
+  try {
+    await initUserRatingsTable();
+    const [rows] = await dbPool.query(
+      `SELECT 
+        SUM(weight) as sum_weights,
+        SUM(rating * weight) as sum_weighted,
+        COUNT(*) as rating_count
+      FROM user_ratings
+      WHERE appid = ?`,
+      [appid]
+    );
+    
+    if (rows.length === 0 || !rows[0].sum_weights || rows[0].sum_weights === 0) {
+      return null; // No ratings
+    }
+    
+    const sumWeights = parseFloat(rows[0].sum_weights);
+    const sumWeighted = parseFloat(rows[0].sum_weighted);
+    const ratingCount = parseInt(rows[0].rating_count);
+    
+    return {
+      score: sumWeighted / sumWeights,
+      popularity: sumWeights,
+      ratingCount: ratingCount
+    };
+  } catch (e) {
+    console.error(`[ERROR] getGameScoreFromDB(${appid}):`, e.message);
+    return null;
+  }
+}
+
 function extractJson(text) {
   // Try strict parse first
   try { return JSON.parse(text); } catch {}
@@ -418,16 +454,21 @@ app.post('/rate', async (req, res) => {
       );
     }
     
-    // Update score aggregator
-    const scores = readScores();
-    const k = String(appid);
-    const weight = result?.breakdown?.weight ?? 0;
-    const raw = result?.raw ?? rating;
-    if (!scores[k]) scores[k] = { sumWeights: 0, sumWeighted: 0, base: 50 + Math.random()*35 };
-    scores[k].sumWeights += weight;
-    scores[k].sumWeighted += raw * weight;
-    writeScores(scores);
-    res.json({ ...result, aggregate: { score: scores[k].sumWeights > 0 ? (scores[k].sumWeighted / scores[k].sumWeights) : scores[k].base } });
+    // Calculate aggregate score from database (weighted mean of all ratings)
+    let aggregateScore = null;
+    if (dbPool) {
+      const scoreData = await getGameScoreFromDB(appid);
+      if (scoreData) {
+        aggregateScore = scoreData.score;
+      }
+    }
+    
+    res.json({ 
+      ...result, 
+      aggregate: { 
+        score: aggregateScore !== null ? aggregateScore : null  // Only show score if ratings exist
+      } 
+    });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
@@ -439,7 +480,6 @@ app.get('/browse', async (req, res) => {
     const idsPath = path.resolve(__dirname, '../../cpp/ConsoleApplication1/ConsoleApplication1/top1000_indie_ids.txt');
     const text = fs.readFileSync(idsPath, 'utf-8');
     const appids = text.split(/\r?\n/).map(s => s.trim()).filter(Boolean).slice(0, 1000);
-    const scores = readScores();
 
     let rows = [];
     let genreRows = [];
@@ -461,10 +501,41 @@ app.get('/browse', async (req, res) => {
     const genreFilter = (req.query.genre || '').toString().trim().toLowerCase();
     const tagFilter = (req.query.tag || '').toString().trim().toLowerCase();
 
-    const items = appids.map(id => {
-      const s = scores[id];
-      const score = s ? (s.sumWeights>0 ? (s.sumWeighted/s.sumWeights) : s.base) : Math.round(50 + Math.random()*35);
-      const popularity = s ? s.sumWeights : 0; // Use sumWeights as popularity metric
+    // Get scores from database for all games in a single query
+    let scoresById = new Map();
+    if (dbPool) {
+      try {
+        await initUserRatingsTable();
+        const [scoreRows] = await dbPool.query(
+          `SELECT 
+            appid,
+            SUM(weight) as sum_weights,
+            SUM(rating * weight) as sum_weighted,
+            COUNT(*) as rating_count
+          FROM user_ratings
+          WHERE appid IN (${appids.map(() => '?').join(',')})
+          GROUP BY appid`,
+          appids
+        );
+        
+        for (const row of scoreRows) {
+          if (row.sum_weights && row.sum_weights > 0) {
+            scoresById.set(row.appid, {
+              score: parseFloat(row.sum_weighted) / parseFloat(row.sum_weights),
+              popularity: parseFloat(row.sum_weights),
+              ratingCount: parseInt(row.rating_count)
+            });
+          }
+        }
+      } catch (e) {
+        console.error('[ERROR] Failed to fetch scores from DB:', e.message);
+      }
+    }
+
+    const items = appids.map((id) => {
+      const scoreData = scoresById.get(Number(id));
+      const score = scoreData ? scoreData.score : null; // null if no ratings
+      const popularity = scoreData ? scoreData.popularity : 0;
       const name = nameById.get(String(id)) || null;
       const developer = developerById.get(String(id)) || null;
       const gameGenres = genresById.get(String(id)) || [];
@@ -606,9 +677,9 @@ app.get('/game/:appid', async (req, res) => {
     const appid = parseInt(req.params.appid, 10);
     if (!appid) return res.status(400).json({ error: 'Invalid appid' });
     
-    const scores = readScores();
-    const s = scores[String(appid)];
-    const score = s ? (s.sumWeights>0 ? (s.sumWeighted/s.sumWeights) : s.base) : (50 + Math.random()*35);
+    // Get score from database (weighted mean of ratings)
+    const scoreData = await getGameScoreFromDB(appid);
+    const score = scoreData ? scoreData.score : null; // null if no ratings exist
 
     // Fetch from Steam Store API for description
     let steamData = {};
@@ -710,6 +781,57 @@ app.delete('/account/:email', async (req, res) => {
     res.json({ status: 'ok', message: `Deleted ${result.affectedRows} account(s)`, deleted: result.affectedRows });
   } catch (e) {
     console.error('[ERROR] Delete account:', e);
+    res.status(500).json({ status: 'error', error: e.message });
+  }
+});
+
+// Get latest reviews (recent reviews with game and user info)
+app.get('/latest-reviews', async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit || '20', 10);
+    
+    if (!dbPool) {
+      return res.json({ status: 'ok', reviews: [] });
+    }
+    
+    await initUserRatingsTable();
+    
+    // Get latest reviews with game info and user info
+    const [rows] = await dbPool.query(
+      `SELECT 
+        ur.appid,
+        ur.rating,
+        ur.weight,
+        ur.review_text,
+        ur.updated_at as review_date,
+        g.name as game_name,
+        g.developer,
+        u.persona_name,
+        u.steamid
+      FROM user_ratings ur
+      INNER JOIN games g ON g.appid = ur.appid
+      LEFT JOIN users u ON u.steamid = ur.steamid
+      WHERE ur.review_text IS NOT NULL AND ur.review_text != ''
+      ORDER BY ur.updated_at DESC
+      LIMIT ?`,
+      [limit]
+    );
+    
+    const reviews = rows.map(row => ({
+      appid: row.appid,
+      gameName: row.game_name,
+      developer: row.developer,
+      rating: row.rating,
+      weight: parseFloat(row.weight || 0),
+      reviewText: row.review_text,
+      reviewerName: row.persona_name || `User ${String(row.steamid).slice(-6)}`,
+      reviewDate: row.review_date,
+      imageUrl: `https://cdn.cloudflare.steamstatic.com/steam/apps/${row.appid}/header.jpg`
+    }));
+    
+    res.json({ status: 'ok', reviews });
+  } catch (e) {
+    console.error('[ERROR] /latest-reviews:', e);
     res.status(500).json({ status: 'error', error: e.message });
   }
 });

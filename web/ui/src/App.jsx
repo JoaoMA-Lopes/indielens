@@ -979,6 +979,110 @@ function Header({ onLogin, onRegister, steamId, username, onLogout, genres, sele
   );
 }
 
+function LatestReviews({ apiBase, onSelectGame }) {
+  const scrollRef = React.useRef(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+  const [reviews, setReviews] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  React.useEffect(() => {
+    async function loadReviews() {
+      try {
+        const res = await fetch(`${apiBase}/latest-reviews?limit=20`);
+        const json = await res.json();
+        setReviews(json.reviews || []);
+      } catch (e) {
+        console.error('Error loading reviews:', e);
+        setReviews([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadReviews();
+  }, [apiBase]);
+
+  const checkScroll = () => {
+    if (!scrollRef.current) return;
+    const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+    setCanScrollLeft(scrollLeft > 0);
+    setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
+  };
+
+  React.useEffect(() => {
+    checkScroll();
+    const el = scrollRef.current;
+    if (el) {
+      el.addEventListener('scroll', checkScroll);
+      window.addEventListener('resize', checkScroll);
+      return () => {
+        el.removeEventListener('scroll', checkScroll);
+        window.removeEventListener('resize', checkScroll);
+      };
+    }
+  }, [reviews]);
+
+  const scroll = (dir) => {
+    if (!scrollRef.current) return;
+    const amount = 400;
+    scrollRef.current.scrollBy({ left: dir * amount, behavior: 'smooth' });
+  };
+
+  if (loading) return null;
+  if (!reviews || reviews.length === 0) {
+    return (
+      <div className="tag-segment">
+        <div className="tag-segment-header">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16, flex: 1 }}>
+            <h3 className="tag-segment-title">Latest Reviews</h3>
+          </div>
+        </div>
+        <div className="tag-segment-content">
+          <p style={{ padding: '40px 0', textAlign: 'center', color: '#666' }}>No reviews yet</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="tag-segment">
+      <div className="tag-segment-header">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16, flex: 1 }}>
+          <h3 className="tag-segment-title">Latest Reviews</h3>
+        </div>
+        <div className="tag-segment-nav-wrapper">
+          <button className="tag-segment-nav tag-segment-nav-left" onClick={() => scroll(-1)} disabled={!canScrollLeft}>‹</button>
+          <button className="tag-segment-nav tag-segment-nav-right" onClick={() => scroll(1)} disabled={!canScrollRight}>›</button>
+        </div>
+      </div>
+      <div className="tag-segment-content">
+        <div className="tag-segment-scroll" ref={scrollRef}>
+          {reviews.map((review, idx) => (
+            <div key={`${review.appid}-${review.reviewDate}-${idx}`} className="tag-segment-card" onClick={() => onSelectGame({ appid: review.appid, name: review.gameName })} style={{ minHeight: 'auto' }}>
+              <img src={review.imageUrl} alt={review.gameName || 'Game'} onError={(e)=>{e.currentTarget.style.display='none';}} style={{ height: '180px' }} />
+              <div className="tag-segment-card-title" style={{ marginBottom: '6px' }}>{review.gameName || 'Unknown title'}</div>
+              <div style={{ fontSize: '12px', color: '#666' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px', flexWrap: 'wrap' }}>
+                  <span className="badge" style={{ fontSize: '11px', padding: '3px 8px' }}>{review.rating}</span>
+                  <span style={{ fontSize: '10px', color: '#8f98a0' }}>Weight: {(review.weight * 100).toFixed(1)}%</span>
+                </div>
+                <div style={{ fontSize: '11px', color: '#666', marginBottom: '6px', fontWeight: 500 }}>
+                  {review.reviewerName}
+                </div>
+                <div style={{ fontSize: '11px', color: '#8f98a0', lineHeight: '1.4', 
+                  display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden', 
+                  textOverflow: 'ellipsis', maxHeight: '48px' }}>
+                  {review.reviewText}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function TagSegment({ title, games, onSelectGame }) {
   const scrollRef = React.useRef(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -1281,38 +1385,43 @@ function Browse({ apiBase, data, setData, onSelectGame, selectedGenre, searchQue
   return (
     <div>
       {!selectedGenre && !searchQuery && (
-        <div style={{ maxWidth: '1400px', margin: '0 auto 40px auto', padding: '0 40px', textAlign: 'center' }}>
-          <img 
-            src={getAllGamesImagePath()} 
-            alt="All Games" 
-            style={{ maxWidth: '100%', height: 'auto', display: 'block', margin: '0 auto' }}
-            onError={(e) => { e.currentTarget.style.display = 'none'; }}
-          />
-          <div style={{ marginTop: 20, marginBottom: 20 }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
-              <span style={{ fontSize: 14, color: '#1a1a1a', fontWeight: 600 }}>All Games</span>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <label style={{ fontSize: 14, color: '#666', fontWeight: 500 }}>Sort By:</label>
-                <select 
-                  value={sortBy} 
-                  onChange={(e) => setSortBy(e.target.value)}
-                  style={{ 
-                    padding: '6px 12px', 
-                    border: '1px solid #ddd', 
-                    borderRadius: '4px', 
-                    fontSize: 14,
-                    background: '#fff',
-                    cursor: 'pointer'
-                  }}
-                >
-                  <option value="score">Score</option>
-                  <option value="popular">Popular</option>
-                </select>
+        <>
+          <div style={{ maxWidth: '1400px', margin: '0 auto 40px auto', padding: '0 40px', textAlign: 'center' }}>
+            <img 
+              src={getAllGamesImagePath()} 
+              alt="All Games" 
+              style={{ maxWidth: '100%', height: 'auto', display: 'block', margin: '0 auto' }}
+              onError={(e) => { e.currentTarget.style.display = 'none'; }}
+            />
+            <div style={{ marginTop: 20, marginBottom: 20 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+                <span style={{ fontSize: 14, color: '#1a1a1a', fontWeight: 600 }}>All Games</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <label style={{ fontSize: 14, color: '#666', fontWeight: 500 }}>Sort By:</label>
+                  <select 
+                    value={sortBy} 
+                    onChange={(e) => setSortBy(e.target.value)}
+                    style={{ 
+                      padding: '6px 12px', 
+                      border: '1px solid #ddd', 
+                      borderRadius: '4px', 
+                      fontSize: 14,
+                      background: '#fff',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <option value="score">Score</option>
+                    <option value="popular">Popular</option>
+                  </select>
+                </div>
               </div>
+              <div style={{ width: '100%', height: '1px', backgroundColor: '#1a1a1a', marginTop: 12 }}></div>
             </div>
-            <div style={{ width: '100%', height: '1px', backgroundColor: '#1a1a1a', marginTop: 12 }}></div>
           </div>
-        </div>
+          <div className="tag-segments-wrapper" style={{ padding: '20px 0' }}>
+            <LatestReviews apiBase={apiBase} onSelectGame={onSelectGame} />
+          </div>
+        </>
       )}
       {(!selectedGenre && !searchQuery) ? null : (
         <div className="container">

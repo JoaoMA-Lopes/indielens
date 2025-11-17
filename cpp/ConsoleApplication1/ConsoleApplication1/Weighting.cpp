@@ -122,7 +122,7 @@ double engagementcalc(mysqlx::Session& sess, uint64_t steamid, const User& u, co
     // Ordered most severe -> least severe; first match wins.
     struct Rule { double min_h; double max_A; double mult; };
  
-    const int a = 0.5; // weighting between hours and achievements, for now set to 0.5 (they have the same weighting)
+    const double a = 0.5; // weighting between hours and achievements, for now set to 0.5 (they have the same weighting)
 	const double hours = std::max(0, ug.playtime_forever) / 60.0;
 
     const double percentageachieved = achievementpercentage(sess, ug.appid, &ug, u.steamid);
@@ -130,7 +130,27 @@ double engagementcalc(mysqlx::Session& sess, uint64_t steamid, const User& u, co
     const double hhalf = 20; // point in hours at which there is credit for beating half the game
     const double nonlinearhours = hours / (hours + hhalf); // equation  to make it so the credit you get for hours played isnt linear
 
-    return (a * nonlinearhours) + ((1.0 - a) * percentageachieved);
+    // Raw engagement score [0..1]
+    double raw_engagement = (a * nonlinearhours) + ((1.0 - a) * percentageachieved);
+    
+    // Scale to achieve 12x ratio: 200h+100% = 12x weight of 2h+2%
+    // Base case (2h, 2%): raw ≈ 0.0555, target case (200h, 100%): raw ≈ 0.9545
+    // We want: engagement(200h,100%) = 12 * engagement(2h,2%)
+    // Using formula: engagement = base_weight + scale * (raw_engagement - base_raw)
+    const double base_raw = 0.0555;  // approximate raw engagement for 2h+2%
+    const double base_weight = 0.01;  // minimum weight for base case
+    // Solve: base_weight + scale * (0.9545 - 0.0555) = 12 * base_weight
+    // scale * 0.899 = 11 * base_weight
+    // scale = 11 * 0.01 / 0.899 ≈ 0.1224
+    const double scale = 0.1224;     // scaling factor to achieve 12x ratio
+    
+    double engagement = base_weight + scale * (raw_engagement - base_raw);
+    
+    // Clamp to reasonable bounds [0.01, 1.0]
+    if (engagement < 0.01) engagement = 0.01;
+    if (engagement > 1.0) engagement = 1.0;
+    
+    return engagement;
 }
 
 double jaccard(const std::vector<std::string>& A, const std::vector<std::string>& B) // jaccard function to measure similarity between two string vectors, between 0 and 1.
@@ -233,7 +253,7 @@ struct APHpenaltyparameters {
 inline double soft_penalty_aph(mysqlx::Session& sess,
     const User& user,
     const Usergame& targetUG,
-    const APHpenaltyparameters& P = {})
+    const APHpenaltyparameters& P)
 {
     // --- Build target Game metadata for similarity ---
     Game targetG = convertUsergameToGame(sess, targetUG);
@@ -286,6 +306,13 @@ inline double soft_penalty_aph(mysqlx::Session& sess,
     if (mult < P.min_multiplier) mult = P.min_multiplier;
     if (mult > 1.0)               mult = 1.0;
     return mult;
+}
+
+// 3-argument wrapper to match header and external calls
+double soft_penalty_aph(mysqlx::Session& sess, const User& user, const Usergame& targetUG)
+{
+    APHpenaltyparameters P;
+    return soft_penalty_aph(sess, user, targetUG, P);
 }
 
 void dotherating(mysqlx::Session& sess, uint64_t steamid, const User& user)
