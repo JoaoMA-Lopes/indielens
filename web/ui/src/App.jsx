@@ -1398,6 +1398,7 @@ function Browse({ apiBase, data, setData, onSelectGame, selectedGenre, searchQue
       );
     }
     // Genre selected but no tags found - show games in grid format
+    console.log('[DEBUG] No tags - data.length:', data.length, 'loading:', loading);
     const genreImagePath = getGenreImagePath(selectedGenre);
     return (
       <div style={{ padding: '20px 0' }}>
