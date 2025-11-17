@@ -1222,6 +1222,7 @@ function Browse({ apiBase, data, setData, onSelectGame, selectedGenre, searchQue
       setTagGames({});
       return;
     }
+    setLoading(true);
     try {
       // Load tags and all games for the genre in parallel
       const [tagsRes, gamesRes] = await Promise.all([
@@ -1257,6 +1258,9 @@ function Browse({ apiBase, data, setData, onSelectGame, selectedGenre, searchQue
       console.error('Error loading tags:', e);
       setTags([]);
       setTagGames({});
+      setData([]);
+    } finally {
+      setLoading(false);
     }
   }
   
