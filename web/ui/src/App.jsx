@@ -1236,6 +1236,8 @@ function Browse({ apiBase, data, setData, onSelectGame, selectedGenre, searchQue
       const tagList = tagsJson.tags || [];
       const allGames = gamesJson.items || [];
       
+      console.log('[DEBUG] loadTags - Genre:', selectedGenre, 'Games found:', allGames.length, 'Tags found:', tagList.length);
+      
       // Update data state with games from this genre
       setData(allGames);
       
@@ -1337,6 +1339,8 @@ function Browse({ apiBase, data, setData, onSelectGame, selectedGenre, searchQue
     if (tags.length > 0) {
       // Check if any tag has games
       const hasGamesInTags = tags.some(tag => tagGames[tag] && tagGames[tag].length > 0);
+      
+      console.log('[DEBUG] Render - tags.length:', tags.length, 'hasGamesInTags:', hasGamesInTags, 'data.length:', data.length);
       
       // If tags exist but no games in any tag, fall back to grid view
       if (!hasGamesInTags && data.length > 0) {
