@@ -1265,8 +1265,13 @@ function Browse({ apiBase, data, setData, onSelectGame, selectedGenre, searchQue
   }, []);
 
   useEffect(() => {
-    load({ genre: selectedGenre || '', q: searchQuery || '', sort: sortBy });
-    loadTags();
+    if (selectedGenre) {
+      // When genre is selected, loadTags() handles loading games
+      loadTags();
+    } else {
+      // When no genre, use load() for search/browse
+      load({ genre: '', q: searchQuery || '', sort: sortBy });
+    }
   }, [selectedGenre, searchQuery, sortBy, load]);
 
   // If search query exists, show search results in grid format with sort option
