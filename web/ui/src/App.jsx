@@ -1235,6 +1235,9 @@ function Browse({ apiBase, data, setData, onSelectGame, selectedGenre, searchQue
       const tagList = tagsJson.tags || [];
       const allGames = gamesJson.items || [];
       
+      // Update data state with games from this genre
+      setData(allGames);
+      
       setTags(tagList);
       
       // Filter games by tag client-side (much faster than multiple API calls)
