@@ -404,11 +404,80 @@ async function initUserRatingsTable() {
   }
 }
 
+// Simplified weight calculation when C++ backend is unavailable
+async function calculateWeightFallback(steamId, appid) {
+  if (!dbPool) {
+    return { weight: 0.5, profileMatch: 0.75, engagement: 0.5, penaltyAPH: 1.0 };
+  }
+  
+  try {
+    // Get user's playtime and achievements for this game
+    const [gameRows] = await dbPool.query(
+      `SELECT ug.playtime_forever,
+              (SELECT COUNT(*) FROM user_achievements ua WHERE ua.steamid = ? AND ua.appid = ?) as unlocked_count,
+              (SELECT COUNT(*) FROM game_achievements ga WHERE ga.appid = ?) as total_achievements
+       FROM user_games ug
+       WHERE ug.steamid = ? AND ug.appid = ?`,
+      [steamId, appid, appid, steamId, appid]
+    );
+    
+    if (gameRows.length === 0) {
+      return { weight: 0.5, profileMatch: 0.75, engagement: 0.5, penaltyAPH: 1.0 };
+    }
+    
+    const row = gameRows[0];
+    const hours = Math.max(0, (row.playtime_forever || 0) / 60.0);
+    const totalAch = row.total_achievements || 0;
+    const unlockedAch = row.unlocked_count || 0;
+    const achievementPct = totalAch > 0 ? unlockedAch / totalAch : 0;
+    
+    // Calculate engagement using same formula as C++
+    const a = 0.5;
+    const hhalf = 20;
+    const nonlinearhours = hours / (hours + hhalf);
+    const raw_engagement = (a * nonlinearhours) + ((1.0 - a) * achievementPct);
+    
+    const base_raw = 0.0555;
+    const base_weight = 0.01;
+    const scale = 0.1224;
+    let engagement = base_weight + scale * (raw_engagement - base_raw);
+    if (engagement < 0.01) engagement = 0.01;
+    if (engagement > 1.0) engagement = 1.0;
+    
+    // Simplified: use default profile match and penalty
+    const profileMatch = 0.75; // Default neutral-positive
+    const penaltyAPH = 1.0; // No penalty by default
+    const weight = profileMatch * engagement * penaltyAPH;
+    
+    return { weight, profileMatch, engagement, penaltyAPH };
+  } catch (e) {
+    console.error('[ERROR] calculateWeightFallback:', e.message);
+    return { weight: 0.5, profileMatch: 0.75, engagement: 0.5, penaltyAPH: 1.0 };
+  }
+}
+
 app.post('/rate', async (req, res) => {
   try {
     const { steamId, appid, rating, reviewText } = req.body;
     if (!steamId || !appid || rating == null) return res.status(400).json({ error: 'steamId, appid, rating required' });
-    const result = await runCli(['--rate', String(steamId), String(appid), String(rating)]);
+    
+    let result;
+    try {
+      result = await runCli(['--rate', String(steamId), String(appid), String(rating)]);
+    } catch (e) {
+      // C++ backend unavailable, use fallback calculation
+      console.warn('[WARN] C++ backend unavailable, using fallback weight calculation:', e.message);
+      const fallback = await calculateWeightFallback(steamId, appid);
+      result = {
+        raw: Number(rating),
+        breakdown: {
+          weight: fallback.weight,
+          profileMatch: fallback.profileMatch,
+          engagement: fallback.engagement,
+          penaltyAPH: fallback.penaltyAPH
+        }
+      };
+    }
     
     // Store rating in database
     if (dbPool) {
