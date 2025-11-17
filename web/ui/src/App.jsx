@@ -1323,6 +1323,45 @@ function Browse({ apiBase, data, setData, onSelectGame, selectedGenre, searchQue
       return <div style={{ padding: '20px 0', width: '100%' }}><p>Loading tag segments…</p></div>;
     }
     if (tags.length > 0) {
+      // Check if any tag has games
+      const hasGamesInTags = tags.some(tag => tagGames[tag] && tagGames[tag].length > 0);
+      
+      // If tags exist but no games in any tag, fall back to grid view
+      if (!hasGamesInTags && data.length > 0) {
+        const genreImagePath = getGenreImagePath(selectedGenre);
+        return (
+          <div style={{ padding: '20px 0' }}>
+            {genreImagePath && (
+              <div style={{ maxWidth: '1400px', margin: '0 auto 40px auto', padding: '0 40px', textAlign: 'center' }}>
+                <img 
+                  src={genreImagePath} 
+                  alt={selectedGenre} 
+                  style={{ maxWidth: '100%', height: 'auto', display: 'block', margin: '0 auto' }}
+                  onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                />
+              </div>
+            )}
+            <div className="container">
+              <div className="grid">
+                {data.map(item => (
+                  <div key={item.appid} className="game-card" onClick={() => onSelectGame(item)}>
+                    <img src={item.imageUrl} alt={item.name || 'Game'} onError={(e)=>{e.currentTarget.style.display='none';}} />
+                    <div className="meta">
+                      <div style={{ flex: 1, paddingRight: 8 }}>
+                        <div style={{ fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.name || 'Unknown title'}</div>
+                        <div style={{ fontSize: 12, opacity: 0.8 }}>{(item.genres||[]).slice(0,2).join(', ')}</div>
+                      </div>
+                      <div className="badge">{item.score?.toFixed(1) ?? '—'}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+      }
+      
+      // Show tag segments if they have games
       const genreImagePath = getGenreImagePath(selectedGenre);
       return (
         <div className="tag-segments-wrapper" style={{ padding: '20px 0' }}>
