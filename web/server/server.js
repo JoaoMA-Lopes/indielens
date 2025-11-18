@@ -446,23 +446,28 @@ async function calculateWeightFallback(steamId, appid) {
     }
     
     // Scale engagement to achieve 12x ratio: 200h+100% = 12x weight of 2h+2%
-    // For 213h+92%: raw_engagement ≈ 0.917, should give much higher weight
-    // Use a better scaling that doesn't compress high values
+    // For 213h+92%: raw_engagement ≈ 0.917, should give much higher engagement
+    // Use a scaling that properly rewards high engagement
     const base_raw = 0.0555;  // 2h+2% baseline
     const target_raw = 0.9545; // 200h+100% target
-    const base_weight = 0.01;  // Minimum weight
-    const target_weight = 0.12; // 12x the base (12 * 0.01)
+    const base_engagement = 0.01;  // Minimum engagement (2h+2%)
+    // For 200h+100%, engagement should be 12x base = 0.12
+    // But we want higher values for very engaged players, so scale more aggressively
+    const target_engagement = 0.50; // Higher target for 200h+100% (allows room for 213h+92%)
     
-    // Linear interpolation between base and target
+    let engagement;
     if (raw_engagement <= base_raw) {
-      engagement = base_weight;
+      engagement = base_engagement;
     } else if (raw_engagement >= target_raw) {
-      // For values above target, scale proportionally
-      engagement = target_weight + ((raw_engagement - target_raw) / (1.0 - target_raw)) * (1.0 - target_weight);
+      // For very high engagement (above 200h+100%), scale up to near maximum
+      const excess = (raw_engagement - target_raw) / (1.0 - target_raw);
+      engagement = target_engagement + excess * (0.90 - target_engagement);
     } else {
       // Interpolate between base and target
       const ratio = (raw_engagement - base_raw) / (target_raw - base_raw);
-      engagement = base_weight + ratio * (target_weight - base_weight);
+      // Use a curve that accelerates for higher values
+      const curvedRatio = Math.pow(ratio, 0.7);
+      engagement = base_engagement + curvedRatio * (target_engagement - base_engagement);
     }
     
     // Clamp to reasonable bounds [0.01, 1.0]
