@@ -445,16 +445,73 @@ async function calculateWeightFallback(steamId, appid) {
       raw_engagement = (a * nonlinearhours) + ((1.0 - a) * achievementPct);
     }
     
-    const base_raw = 0.0555;
-    const base_weight = 0.01;
-    const scale = 0.1224;
-    let engagement = base_weight + scale * (raw_engagement - base_raw);
+    // Scale engagement to achieve 12x ratio: 200h+100% = 12x weight of 2h+2%
+    // For 213h+92%: raw_engagement ≈ 0.917, should give much higher weight
+    // Use a better scaling that doesn't compress high values
+    const base_raw = 0.0555;  // 2h+2% baseline
+    const target_raw = 0.9545; // 200h+100% target
+    const base_weight = 0.01;  // Minimum weight
+    const target_weight = 0.12; // 12x the base (12 * 0.01)
+    
+    // Linear interpolation between base and target
+    if (raw_engagement <= base_raw) {
+      engagement = base_weight;
+    } else if (raw_engagement >= target_raw) {
+      // For values above target, scale proportionally
+      engagement = target_weight + ((raw_engagement - target_raw) / (1.0 - target_raw)) * (1.0 - target_weight);
+    } else {
+      // Interpolate between base and target
+      const ratio = (raw_engagement - base_raw) / (target_raw - base_raw);
+      engagement = base_weight + ratio * (target_weight - base_weight);
+    }
+    
+    // Clamp to reasonable bounds [0.01, 1.0]
     if (engagement < 0.01) engagement = 0.01;
     if (engagement > 1.0) engagement = 1.0;
     
-    // Simplified: use default profile match and penalty
-    const profileMatch = 0.75; // Default neutral-positive
-    const penaltyAPH = 1.0; // No penalty by default
+    // Calculate profile match: check how many similar games user has
+    // Similar = same genre or tag overlap
+    let profileMatch = 0.75; // Default neutral-positive
+    try {
+      const [similarRows] = await dbPool.query(
+        `SELECT COUNT(DISTINCT ug2.appid) as similar_count
+         FROM user_games ug2
+         INNER JOIN game_genres gg1 ON gg1.appid = ?
+         INNER JOIN game_genres gg2 ON gg2.appid = ug2.appid AND gg2.genre = gg1.genre
+         WHERE ug2.steamid = ? AND ug2.appid != ?
+         UNION ALL
+         SELECT COUNT(DISTINCT ug2.appid) as similar_count
+         FROM user_games ug2
+         INNER JOIN game_tags gt1 ON gt1.appid = ?
+         INNER JOIN game_tags gt2 ON gt2.appid = ug2.appid AND gt2.tag = gt1.tag
+         WHERE ug2.steamid = ? AND ug2.appid != ?`,
+        [appid, steamId, appid, appid, steamId, appid]
+      );
+      
+      // If user has similar games, increase profile match
+      // Scale: 0 similar = 0.5, 5+ similar = 0.9, 10+ similar = 1.0
+      const similarCount = similarRows.reduce((sum, r) => sum + (r.similar_count || 0), 0);
+      if (similarCount > 0) {
+        profileMatch = Math.min(0.5 + (similarCount * 0.08), 1.0);
+      } else {
+        // If no similar games but high hours, still give decent match
+        profileMatch = hours > 50 ? 0.7 : 0.5;
+      }
+    } catch (e) {
+      // If profile match calculation fails, use hours-based estimate
+      profileMatch = hours > 100 ? 0.85 : hours > 50 ? 0.75 : 0.65;
+    }
+    
+    // Achievement penalty: if user has very low achievement rate compared to hours, apply penalty
+    let penaltyAPH = 1.0;
+    if (totalAch > 0 && hours > 2) {
+      const achievementsPerHour = achievementPct / hours;
+      // If achievements per hour is very low (< 0.01), apply gentle penalty
+      if (achievementsPerHour < 0.01 && hours > 10) {
+        penaltyAPH = Math.max(0.8, achievementsPerHour * 100);
+      }
+    }
+    
     const weight = profileMatch * engagement * penaltyAPH;
     
     return { weight, profileMatch, engagement, penaltyAPH };
