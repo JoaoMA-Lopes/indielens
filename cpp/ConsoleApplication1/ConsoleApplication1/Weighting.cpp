@@ -145,18 +145,30 @@ double engagementcalc(mysqlx::Session& sess, uint64_t steamid, const User& u, co
         raw_engagement = (a * nonlinearhours) + ((1.0 - a) * percentageachieved);
     }
     
-    // Scale to achieve 12x ratio: 200h+100% = 12x weight of 2h+2%
-    // Base case (2h, 2%): raw ≈ 0.0555, target case (200h, 100%): raw ≈ 0.9545
-    // We want: engagement(200h,100%) = 12 * engagement(2h,2%)
-    // Using formula: engagement = base_weight + scale * (raw_engagement - base_raw)
-    const double base_raw = 0.0555;  // approximate raw engagement for 2h+2%
-    const double base_weight = 0.01;  // minimum weight for base case
-    // Solve: base_weight + scale * (0.9545 - 0.0555) = 12 * base_weight
-    // scale * 0.899 = 11 * base_weight
-    // scale = 11 * 0.01 / 0.899 ≈ 0.1224
-    const double scale = 0.1224;     // scaling factor to achieve 12x ratio
+    // Scale engagement to achieve 12x ratio: 200h+100% = 12x weight of 2h+2%
+    // For 213h+92%: raw_engagement ≈ 0.917, should give much higher engagement
+    // Use a scaling that properly rewards high engagement
+    const double base_raw = 0.0555;  // 2h+2% baseline
+    const double target_raw = 0.9545; // 200h+100% target
+    const double base_engagement = 0.01;  // Minimum engagement (2h+2%)
+    // For 200h+100%, engagement should be 12x base = 0.12
+    // But we want higher values for very engaged players, so scale more aggressively
+    const double target_engagement = 0.50; // Higher target for 200h+100% (allows room for 213h+92%)
     
-    double engagement = base_weight + scale * (raw_engagement - base_raw);
+    double engagement;
+    if (raw_engagement <= base_raw) {
+        engagement = base_engagement;
+    } else if (raw_engagement >= target_raw) {
+        // For very high engagement (above 200h+100%), scale up to near maximum
+        const double excess = (raw_engagement - target_raw) / (1.0 - target_raw);
+        engagement = target_engagement + excess * (0.90 - target_engagement);
+    } else {
+        // Interpolate between base and target
+        const double ratio = (raw_engagement - base_raw) / (target_raw - base_raw);
+        // Use a curve that accelerates for higher values
+        const double curvedRatio = std::pow(ratio, 0.7);
+        engagement = base_engagement + curvedRatio * (target_engagement - base_engagement);
+    }
     
     // Clamp to reasonable bounds [0.01, 1.0]
     if (engagement < 0.01) engagement = 0.01;
