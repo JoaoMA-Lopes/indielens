@@ -361,8 +361,26 @@ app.post('/preview-weighting', async (req, res) => {
     const { steamId, appid, rating } = req.body;
     if (!steamId || !appid || rating == null) return res.status(400).json({ status: 'error', error: 'steamId, appid, rating required' });
     
-    // Use a dummy rating (50) to calculate the breakdown structure, then apply the actual rating for weighted score
-    const result = await runCli(['--rate', String(steamId), String(appid), String(rating)]);
+    let result;
+    try {
+      result = await runCli(['--rate', String(steamId), String(appid), String(rating)]);
+    } catch (e) {
+      // C++ backend unavailable, use fallback calculation
+      // Only log if it's not the expected ENOENT error (executable not found)
+      if (!e.message.includes('ENOENT') && !e.message.includes('spawn')) {
+        console.warn('[WARN] C++ backend unavailable for preview, using fallback weight calculation:', e.message);
+      }
+      const fallback = await calculateWeightFallback(steamId, appid);
+      result = {
+        raw: Number(rating),
+        breakdown: {
+          weight: fallback.weight,
+          profileMatch: fallback.profileMatch,
+          engagement: fallback.engagement,
+          penaltyAPH: fallback.penaltyAPH
+        }
+      };
+    }
     
     // Return the breakdown without updating scores
     res.json({ 
@@ -939,6 +957,7 @@ app.get('/latest-reviews', async (req, res) => {
     await initUserRatingsTable();
     
     // Get latest reviews with game info and user info
+    // Show all reviews, but prefer those with review_text
     const [rows] = await dbPool.query(
       `SELECT 
         ur.appid,
@@ -953,7 +972,6 @@ app.get('/latest-reviews', async (req, res) => {
       FROM user_ratings ur
       INNER JOIN games g ON g.appid = ur.appid
       LEFT JOIN users u ON u.steamid = ur.steamid
-      WHERE ur.review_text IS NOT NULL AND ur.review_text != ''
       ORDER BY ur.updated_at DESC
       LIMIT ?`,
       [limit]

@@ -1000,7 +1000,14 @@ function LatestReviews({ apiBase, onSelectGame }) {
     async function loadReviews() {
       try {
         const res = await fetch(`${apiBase}/latest-reviews?limit=20`);
+        if (!res.ok) {
+          console.error('Failed to load reviews:', res.status, res.statusText);
+          setReviews([]);
+          setLoading(false);
+          return;
+        }
         const json = await res.json();
+        console.log('[DEBUG] LatestReviews loaded:', json.reviews?.length || 0, 'reviews');
         setReviews(json.reviews || []);
       } catch (e) {
         console.error('Error loading reviews:', e);
@@ -1103,11 +1110,18 @@ function LatestReviews({ apiBase, onSelectGame }) {
                     })}
                   </div>
                 )}
-                <div style={{ fontSize: '11px', color: '#8f98a0', lineHeight: '1.4', 
-                  display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden', 
-                  textOverflow: 'ellipsis', maxHeight: '48px' }}>
-                  {review.reviewText}
-                </div>
+                {review.reviewText && (
+                  <div style={{ fontSize: '11px', color: '#8f98a0', lineHeight: '1.4', 
+                    display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden', 
+                    textOverflow: 'ellipsis', maxHeight: '48px' }}>
+                    {review.reviewText}
+                  </div>
+                )}
+                {!review.reviewText && (
+                  <div style={{ fontSize: '11px', color: '#8f98a0', fontStyle: 'italic' }}>
+                    No review text
+                  </div>
+                )}
               </div>
             </div>
           ))}
