@@ -255,6 +255,19 @@ app.post('/register', async (req, res) => {
     await initUserAccountsTable();
     
     try {
+      // Check if steamId already exists
+      const [existingRows] = await dbPool.query(
+        'SELECT id, username, email FROM user_accounts WHERE steamid = ?',
+        [steamId]
+      );
+      
+      if (existingRows.length > 0) {
+        const existing = existingRows[0];
+        return res.status(400).json({ 
+          error: `This Steam account is already registered as "${existing.username}" (${existing.email}). Please log in instead.` 
+        });
+      }
+      
       console.log(`[DEBUG] Inserting user: email=${email}, username=${username}, steamFriendCode=${steamFriendCode}, steamId=${steamId}`);
       const [result] = await dbPool.query(
         'INSERT INTO user_accounts (email, username, password_hash, steam_friend_code, steamid) VALUES (?, ?, ?, ?, ?)',
