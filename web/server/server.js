@@ -432,10 +432,18 @@ async function calculateWeightFallback(steamId, appid) {
     const achievementPct = totalAch > 0 ? unlockedAch / totalAch : 0;
     
     // Calculate engagement using same formula as C++
-    const a = 0.5;
     const hhalf = 20;
     const nonlinearhours = hours / (hours + hhalf);
-    const raw_engagement = (a * nonlinearhours) + ((1.0 - a) * achievementPct);
+    
+    let raw_engagement;
+    if (totalAch === 0) {
+      // Games with no achievements: use only hours (nonlinear)
+      raw_engagement = nonlinearhours;
+    } else {
+      // Games with achievements: use weighted combination
+      const a = 0.5;
+      raw_engagement = (a * nonlinearhours) + ((1.0 - a) * achievementPct);
+    }
     
     const base_raw = 0.0555;
     const base_weight = 0.01;

@@ -122,16 +122,28 @@ double engagementcalc(mysqlx::Session& sess, uint64_t steamid, const User& u, co
     // Ordered most severe -> least severe; first match wins.
     struct Rule { double min_h; double max_A; double mult; };
  
-    const double a = 0.5; // weighting between hours and achievements, for now set to 0.5 (they have the same weighting)
-	const double hours = std::max(0, ug.playtime_forever) / 60.0;
-
-    const double percentageachieved = achievementpercentage(sess, ug.appid, &ug, u.steamid);
-
+    const double hours = std::max(0, ug.playtime_forever) / 60.0;
     const double hhalf = 20; // point in hours at which there is credit for beating half the game
     const double nonlinearhours = hours / (hours + hhalf); // equation  to make it so the credit you get for hours played isnt linear
 
-    // Raw engagement score [0..1]
-    double raw_engagement = (a * nonlinearhours) + ((1.0 - a) * percentageachieved);
+    // Check if game has achievements
+    int totalAchievements = 0;
+    {
+        auto q = sess.sql("SELECT COUNT(*) FROM steam_data.game_achievements WHERE appid = ?").bind(ug.appid).execute();
+        mysqlx::Row r = q.fetchOne();
+        totalAchievements = static_cast<int>(r[0]);
+    }
+
+    double raw_engagement;
+    if (totalAchievements == 0) {
+        // Games with no achievements: use only hours (nonlinear)
+        raw_engagement = nonlinearhours;
+    } else {
+        // Games with achievements: use weighted combination
+        const double a = 0.5; // weighting between hours and achievements
+        const double percentageachieved = achievementpercentage(sess, ug.appid, &ug, u.steamid);
+        raw_engagement = (a * nonlinearhours) + ((1.0 - a) * percentageachieved);
+    }
     
     // Scale to achieve 12x ratio: 200h+100% = 12x weight of 2h+2%
     // Base case (2h, 2%): raw ≈ 0.0555, target case (200h, 100%): raw ≈ 0.9545
