@@ -474,7 +474,10 @@ app.post('/rate', async (req, res) => {
       result = await runCli(['--rate', String(steamId), String(appid), String(rating)]);
     } catch (e) {
       // C++ backend unavailable, use fallback calculation
-      console.warn('[WARN] C++ backend unavailable, using fallback weight calculation:', e.message);
+      // Only log if it's not the expected ENOENT error (executable not found)
+      if (!e.message.includes('ENOENT') && !e.message.includes('spawn')) {
+        console.warn('[WARN] C++ backend unavailable, using fallback weight calculation:', e.message);
+      }
       const fallback = await calculateWeightFallback(steamId, appid);
       result = {
         raw: Number(rating),
