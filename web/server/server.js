@@ -425,6 +425,7 @@ async function initUserRatingsTable() {
 // Simplified weight calculation when C++ backend is unavailable
 async function calculateWeightFallback(steamId, appid) {
   if (!dbPool) {
+    console.log(`[DEBUG] calculateWeightFallback: No dbPool for steamId=${steamId}, appid=${appid}`);
     return { weight: 0.5, profileMatch: 0.75, engagement: 0.5, penaltyAPH: 1.0 };
   }
   
@@ -439,7 +440,10 @@ async function calculateWeightFallback(steamId, appid) {
       [steamId, appid, appid, steamId, appid]
     );
     
+    console.log(`[DEBUG] calculateWeightFallback: steamId=${steamId}, appid=${appid}, found ${gameRows.length} rows`);
+    
     if (gameRows.length === 0) {
+      console.log(`[DEBUG] calculateWeightFallback: No game data found, using defaults`);
       return { weight: 0.5, profileMatch: 0.75, engagement: 0.5, penaltyAPH: 1.0 };
     }
     
@@ -448,6 +452,8 @@ async function calculateWeightFallback(steamId, appid) {
     const totalAch = row.total_achievements || 0;
     const unlockedAch = row.unlocked_count || 0;
     const achievementPct = totalAch > 0 ? unlockedAch / totalAch : 0;
+    
+    console.log(`[DEBUG] calculateWeightFallback: hours=${hours.toFixed(2)}, totalAch=${totalAch}, unlockedAch=${unlockedAch}, achievementPct=${(achievementPct * 100).toFixed(1)}%`);
     
     // Calculate engagement using same formula as C++
     const hhalf = 20;
@@ -462,6 +468,8 @@ async function calculateWeightFallback(steamId, appid) {
       const a = 0.5;
       raw_engagement = (a * nonlinearhours) + ((1.0 - a) * achievementPct);
     }
+    
+    console.log(`[DEBUG] calculateWeightFallback: nonlinearhours=${nonlinearhours.toFixed(3)}, raw_engagement=${raw_engagement.toFixed(3)}`);
     
     // Scale engagement to achieve 12x ratio: 200h+100% = 12x weight of 2h+2%
     // For 213h+92%: raw_engagement ≈ 0.917, should give much higher engagement
@@ -491,6 +499,8 @@ async function calculateWeightFallback(steamId, appid) {
     // Clamp to reasonable bounds [0.01, 1.0]
     if (engagement < 0.01) engagement = 0.01;
     if (engagement > 1.0) engagement = 1.0;
+    
+    console.log(`[DEBUG] calculateWeightFallback: engagement=${(engagement * 100).toFixed(1)}%`);
     
     // Calculate profile match: check how many similar games user has
     // Similar = same genre or tag overlap
@@ -536,6 +546,8 @@ async function calculateWeightFallback(steamId, appid) {
     }
     
     const weight = profileMatch * engagement * penaltyAPH;
+    
+    console.log(`[DEBUG] calculateWeightFallback: profileMatch=${(profileMatch * 100).toFixed(1)}%, penaltyAPH=${(penaltyAPH * 100).toFixed(1)}%, final_weight=${weight.toFixed(4)}`);
     
     return { weight, profileMatch, engagement, penaltyAPH };
   } catch (e) {
