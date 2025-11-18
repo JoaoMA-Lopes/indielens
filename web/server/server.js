@@ -361,14 +361,19 @@ app.post('/preview-weighting', async (req, res) => {
     const { steamId, appid, rating } = req.body;
     if (!steamId || !appid || rating == null) return res.status(400).json({ status: 'error', error: 'steamId, appid, rating required' });
     
+    console.log(`[DEBUG] /preview-weighting called: steamId=${steamId}, appid=${appid}, rating=${rating}`);
+    
     let result;
     try {
       result = await runCli(['--rate', String(steamId), String(appid), String(rating)]);
+      console.log(`[DEBUG] /preview-weighting: C++ backend returned result`);
     } catch (e) {
       // C++ backend unavailable, use fallback calculation
       // Only log if it's not the expected ENOENT error (executable not found)
       if (!e.message.includes('ENOENT') && !e.message.includes('spawn')) {
         console.warn('[WARN] C++ backend unavailable for preview, using fallback weight calculation:', e.message);
+      } else {
+        console.log(`[DEBUG] /preview-weighting: C++ backend not found, using fallback calculation`);
       }
       const fallback = await calculateWeightFallback(steamId, appid);
       result = {
@@ -380,6 +385,7 @@ app.post('/preview-weighting', async (req, res) => {
           penaltyAPH: fallback.penaltyAPH
         }
       };
+      console.log(`[DEBUG] /preview-weighting: Fallback result: weight=${result.breakdown.weight}, engagement=${result.breakdown.engagement}`);
     }
     
     // Return the breakdown without updating scores
