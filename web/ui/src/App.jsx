@@ -1038,7 +1038,20 @@ function LatestReviews({ apiBase, onSelectGame }) {
     scrollRef.current.scrollBy({ left: dir * amount, behavior: 'smooth' });
   };
 
-  if (loading) return null;
+  if (loading) {
+    return (
+      <div className="tag-segment">
+        <div className="tag-segment-header">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16, flex: 1 }}>
+            <h3 className="tag-segment-title">Latest Reviews</h3>
+          </div>
+        </div>
+        <div className="tag-segment-content">
+          <p style={{ padding: '40px 0', textAlign: 'center', color: '#666' }}>Loading reviews...</p>
+        </div>
+      </div>
+    );
+  }
   if (!reviews || reviews.length === 0) {
     return (
       <div className="tag-segment">
@@ -1076,9 +1089,20 @@ function LatestReviews({ apiBase, onSelectGame }) {
                   <span className="badge" style={{ fontSize: '11px', padding: '3px 8px' }}>{review.rating}</span>
                   <span style={{ fontSize: '10px', color: '#8f98a0' }}>Weight: {(review.weight * 100).toFixed(1)}%</span>
                 </div>
-                <div style={{ fontSize: '11px', color: '#666', marginBottom: '6px', fontWeight: 500 }}>
+                <div style={{ fontSize: '11px', color: '#666', marginBottom: '4px', fontWeight: 500 }}>
                   {review.reviewerName}
                 </div>
+                {review.reviewDate && (
+                  <div style={{ fontSize: '10px', color: '#8f98a0', marginBottom: '6px' }}>
+                    {new Date(review.reviewDate).toLocaleDateString('en-US', { 
+                      month: 'short', 
+                      day: 'numeric', 
+                      year: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
+                  </div>
+                )}
                 <div style={{ fontSize: '11px', color: '#8f98a0', lineHeight: '1.4', 
                   display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden', 
                   textOverflow: 'ellipsis', maxHeight: '48px' }}>

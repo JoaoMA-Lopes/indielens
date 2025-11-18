@@ -905,7 +905,7 @@ app.get('/latest-reviews', async (req, res) => {
       weight: parseFloat(row.weight || 0),
       reviewText: row.review_text,
       reviewerName: row.persona_name || `User ${String(row.steamid).slice(-6)}`,
-      reviewDate: row.review_date,
+      reviewDate: row.review_date ? new Date(row.review_date).toISOString() : null,
       imageUrl: `https://cdn.cloudflare.steamstatic.com/steam/apps/${row.appid}/header.jpg`
     }));
     
