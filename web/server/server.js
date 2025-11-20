@@ -920,6 +920,78 @@ app.get('/game/:appid', async (req, res) => {
   }
 });
 
+// Get score breakdown showing each user's contribution
+app.get('/game/:appid/score-breakdown', async (req, res) => {
+  try {
+    const appid = parseInt(req.params.appid, 10);
+    const { steamId } = req.query;
+    if (!appid) return res.status(400).json({ status: 'error', error: 'Invalid appid' });
+    
+    if (!dbPool) {
+      return res.json({ status: 'ok', breakdown: null, message: 'Database not configured' });
+    }
+    
+    await initUserRatingsTable();
+    
+    // Get all ratings for this game with user info
+    const [rows] = await dbPool.query(
+      `SELECT 
+        ur.steamid,
+        ur.rating,
+        ur.weight,
+        ur.weighted_score,
+        u.persona_name,
+        ua.username
+      FROM user_ratings ur
+      LEFT JOIN users u ON u.steamid = ur.steamid
+      LEFT JOIN user_accounts ua ON CAST(ua.steamid AS CHAR) = CAST(ur.steamid AS CHAR)
+      WHERE ur.appid = ?
+      ORDER BY ur.weight DESC`,
+      [appid]
+    );
+    
+    if (rows.length === 0) {
+      return res.json({ status: 'ok', breakdown: null, message: 'No ratings yet' });
+    }
+    
+    // Calculate total weighted score
+    const totalWeight = rows.reduce((sum, r) => sum + parseFloat(r.weight || 0), 0);
+    const totalWeightedScore = rows.reduce((sum, r) => sum + parseFloat(r.weighted_score || 0), 0);
+    const finalScore = totalWeight > 0 ? totalWeightedScore / totalWeight : null;
+    
+    // Format breakdown with user identification
+    const breakdown = rows.map(row => ({
+      steamid: String(row.steamid),
+      rating: parseFloat(row.rating || 0),
+      weight: parseFloat(row.weight || 0),
+      weightedScore: parseFloat(row.weighted_score || 0),
+      contribution: totalWeight > 0 ? (parseFloat(row.weight || 0) / totalWeight) * 100 : 0,
+      reviewerName: row.persona_name || row.username || `User ${String(row.steamid).slice(-6)}`,
+      isCurrentUser: steamId ? String(row.steamid) === String(steamId) : false
+    }));
+    
+    // Calculate current user's contribution if provided
+    const currentUserContribution = steamId 
+      ? breakdown.find(b => String(b.steamid) === String(steamId))
+      : null;
+    
+    res.json({
+      status: 'ok',
+      breakdown: {
+        finalScore,
+        totalWeight,
+        totalWeightedScore,
+        ratingCount: rows.length,
+        contributions: breakdown,
+        currentUser: currentUserContribution
+      }
+    });
+  } catch (e) {
+    console.error('[ERROR] /game/:appid/score-breakdown:', e);
+    res.status(500).json({ status: 'error', error: e.message });
+  }
+});
+
 // Get user account details
 app.get('/account', async (req, res) => {
   try {
@@ -999,10 +1071,12 @@ app.get('/latest-reviews', async (req, res) => {
         g.name as game_name,
         g.developer,
         u.persona_name,
-        u.steamid
+        ua.username,
+        ur.steamid
       FROM user_ratings ur
       INNER JOIN games g ON g.appid = ur.appid
-      LEFT JOIN users u ON u.steamid = ur.steamid
+      LEFT JOIN users u ON CAST(u.steamid AS CHAR) = CAST(ur.steamid AS CHAR)
+      LEFT JOIN user_accounts ua ON CAST(ua.steamid AS CHAR) = CAST(ur.steamid AS CHAR)
       ORDER BY ur.updated_at DESC
       LIMIT ?`,
       [limit]
@@ -1015,7 +1089,7 @@ app.get('/latest-reviews', async (req, res) => {
       rating: row.rating,
       weight: parseFloat(row.weight || 0),
       reviewText: row.review_text,
-      reviewerName: row.persona_name || `User ${String(row.steamid).slice(-6)}`,
+      reviewerName: row.persona_name || row.username || `User ${String(row.steamid).slice(-6)}`,
       reviewDate: row.review_date ? new Date(row.review_date).toISOString() : null,
       imageUrl: `https://cdn.cloudflare.steamstatic.com/steam/apps/${row.appid}/header.jpg`
     }));

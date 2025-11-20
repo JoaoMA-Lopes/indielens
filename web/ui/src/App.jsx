@@ -989,6 +989,88 @@ function Header({ onLogin, onRegister, steamId, username, onLogout, genres, sele
   );
 }
 
+function ScorePieChart({ currentUserContribution, othersContribution }) {
+  const size = 120;
+  const radius = size / 2 - 5;
+  const centerX = size / 2;
+  const centerY = size / 2;
+  
+  // Calculate angles for pie slices
+  const currentUserAngle = (currentUserContribution / 100) * 360;
+  const othersAngle = 360 - currentUserAngle;
+  
+  // Create path for current user slice
+  const currentUserPath = currentUserContribution > 0 ? (() => {
+    const startAngle = -90; // Start at top
+    const endAngle = startAngle + currentUserAngle;
+    const largeArcFlag = currentUserAngle > 180 ? 1 : 0;
+    
+    const x1 = centerX + radius * Math.cos((startAngle * Math.PI) / 180);
+    const y1 = centerY + radius * Math.sin((startAngle * Math.PI) / 180);
+    const x2 = centerX + radius * Math.cos((endAngle * Math.PI) / 180);
+    const y2 = centerY + radius * Math.sin((endAngle * Math.PI) / 180);
+    
+    return `M ${centerX} ${centerY} L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2} Z`;
+  })() : '';
+  
+  // Create path for others slice
+  const othersPath = othersContribution > 0 ? (() => {
+    const startAngle = -90 + currentUserAngle;
+    const endAngle = startAngle + othersAngle;
+    const largeArcFlag = othersAngle > 180 ? 1 : 0;
+    
+    const x1 = centerX + radius * Math.cos((startAngle * Math.PI) / 180);
+    const y1 = centerY + radius * Math.sin((startAngle * Math.PI) / 180);
+    const x2 = centerX + radius * Math.cos((endAngle * Math.PI) / 180);
+    const y2 = centerY + radius * Math.sin((endAngle * Math.PI) / 180);
+    
+    return `M ${centerX} ${centerY} L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2} Z`;
+  })() : '';
+  
+  return (
+    <div style={{ position: 'relative', display: 'inline-block' }}>
+      <svg width={size} height={size} style={{ display: 'block' }}>
+        {othersContribution > 0 && othersPath && (
+          <path
+            d={othersPath}
+            fill="#cccccc"
+            stroke="#fff"
+            strokeWidth="2"
+          />
+        )}
+        {currentUserContribution > 0 && currentUserPath && (
+          <path
+            d={currentUserPath}
+            fill="#BF4E30"
+            stroke="#fff"
+            strokeWidth="2"
+          />
+        )}
+        <circle cx={centerX} cy={centerY} r={radius * 0.35} fill="#fff" />
+        <text
+          x={centerX}
+          y={centerY - 5}
+          textAnchor="middle"
+          fontSize="18"
+          fontWeight="600"
+          fill="#BF4E30"
+        >
+          {currentUserContribution.toFixed(0)}%
+        </text>
+        <text
+          x={centerX}
+          y={centerY + 12}
+          textAnchor="middle"
+          fontSize="10"
+          fill="#999"
+        >
+          You
+        </text>
+      </svg>
+    </div>
+  );
+}
+
 function LatestReviews({ apiBase, onSelectGame }) {
   const scrollRef = React.useRef(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -1593,6 +1675,8 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
   const [ratingError, setRatingError] = useState(null);
   const [previewBreakdown, setPreviewBreakdown] = useState(null);
   const [loadingPreview, setLoadingPreview] = useState(false);
+  const [scoreBreakdown, setScoreBreakdown] = useState(null);
+  const [loadingBreakdown, setLoadingBreakdown] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -1609,13 +1693,33 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
         setLoading(false);
       }
     }
+    
+    async function loadScoreBreakdown() {
+      if (!game?.appid || !steamId) return;
+      try {
+        setLoadingBreakdown(true);
+        const res = await fetch(`${apiBase}/game/${game.appid}/score-breakdown?steamId=${steamId}`);
+        if (res.ok) {
+          const json = await res.json();
+          if (json.status === 'ok' && json.breakdown) {
+            setScoreBreakdown(json.breakdown);
+          }
+        }
+      } catch (e) {
+        console.error('Score breakdown load error:', e);
+      } finally {
+        setLoadingBreakdown(false);
+      }
+    }
+    
     if (game && game.appid) {
       load();
+      loadScoreBreakdown();
     } else {
       setLoading(false);
       setError('No game selected');
     }
-  }, [game?.appid, apiBase]);
+  }, [game?.appid, apiBase, steamId]);
 
   if (loading) {
     return (
@@ -1725,6 +1829,51 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
           {!score && (
             <div style={{ padding: '12px 0', color: '#BF4E30', fontStyle: 'italic' }}>
               No scores yet. Be the first to rate this game!
+            </div>
+          )}
+          {score && scoreBreakdown && scoreBreakdown.currentUser && (
+            <div style={{ marginTop: 24, padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px', border: '1px solid #e0e0e0' }}>
+              <h3 style={{ marginTop: 0, marginBottom: 16, fontSize: '18px', fontWeight: 600, color: '#1a1a1a' }}>
+                Your Contribution to Score
+              </h3>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 24, flexWrap: 'wrap' }}>
+                <ScorePieChart 
+                  currentUserContribution={scoreBreakdown.currentUser.contribution} 
+                  othersContribution={100 - scoreBreakdown.currentUser.contribution}
+                />
+                <div style={{ flex: 1, minWidth: 200 }}>
+                  <div style={{ marginBottom: 12 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                      <div style={{ width: 12, height: 12, backgroundColor: '#BF4E30', borderRadius: 2 }}></div>
+                      <span style={{ fontSize: '14px', fontWeight: 500, color: '#1a1a1a' }}>
+                        Your Rating
+                      </span>
+                    </div>
+                    <div style={{ fontSize: '13px', color: '#666', marginLeft: 20 }}>
+                      {scoreBreakdown.currentUser.contribution.toFixed(1)}% of total score
+                      <br />
+                      <span style={{ fontSize: '12px', color: '#999' }}>
+                        Weight: {(scoreBreakdown.currentUser.weight * 100).toFixed(1)}% • Rating: {scoreBreakdown.currentUser.rating}
+                      </span>
+                    </div>
+                  </div>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                      <div style={{ width: 12, height: 12, backgroundColor: '#cccccc', borderRadius: 2 }}></div>
+                      <span style={{ fontSize: '14px', fontWeight: 500, color: '#1a1a1a' }}>
+                        Other Users
+                      </span>
+                    </div>
+                    <div style={{ fontSize: '13px', color: '#666', marginLeft: 20 }}>
+                      {(100 - scoreBreakdown.currentUser.contribution).toFixed(1)}% of total score
+                      <br />
+                      <span style={{ fontSize: '12px', color: '#999' }}>
+                        {scoreBreakdown.ratingCount - 1} other rating{scoreBreakdown.ratingCount - 1 !== 1 ? 's' : ''}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
         </div>
@@ -1981,6 +2130,16 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                     if (detailRes.ok) {
                       const detailJson = await detailRes.json();
                       setDetails(detailJson);
+                    }
+                    // Reload score breakdown to show updated contribution
+                    if (steamId) {
+                      const breakdownRes = await fetch(`${apiBase}/game/${game.appid}/score-breakdown?steamId=${steamId}`);
+                      if (breakdownRes.ok) {
+                        const breakdownJson = await breakdownRes.json();
+                        if (breakdownJson.status === 'ok' && breakdownJson.breakdown) {
+                          setScoreBreakdown(breakdownJson.breakdown);
+                        }
+                      }
                     }
                   } catch (e) {
                     setRatingError(e.message);
