@@ -1714,6 +1714,12 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
           const json = await res.json();
           console.log('[DEBUG] Score breakdown response:', json);
           if (json.status === 'ok' && json.breakdown) {
+            console.log('[DEBUG] Breakdown data:', {
+              ratingCount: json.breakdown.ratingCount,
+              currentUser: json.breakdown.currentUser ? 'found' : 'not found',
+              currentUserSteamId: json.breakdown.currentUser?.steamid,
+              contributions: json.breakdown.contributions?.length
+            });
             setScoreBreakdown(json.breakdown);
           } else {
             console.log('[DEBUG] No breakdown data:', json.message);
@@ -1849,7 +1855,17 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
             </div>
           )}
           {score && scoreBreakdown && scoreBreakdown.ratingCount > 0 && (
-            scoreBreakdown.currentUser ? (
+            (() => {
+              console.log('[DEBUG] Render pie chart check:', {
+                hasScore: !!score,
+                hasBreakdown: !!scoreBreakdown,
+                ratingCount: scoreBreakdown?.ratingCount,
+                hasCurrentUser: !!scoreBreakdown?.currentUser,
+                currentUserSteamId: scoreBreakdown?.currentUser?.steamid,
+                currentUserContribution: scoreBreakdown?.currentUser?.contribution
+              });
+              return scoreBreakdown.currentUser;
+            })() ? (
             <div style={{ marginTop: 24, padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px', border: '1px solid #e0e0e0' }}>
               <h3 style={{ marginTop: 0, marginBottom: 16, fontSize: '18px', fontWeight: 600, color: '#1a1a1a' }}>
                 Your Contribution to Score
@@ -2306,19 +2322,26 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                     </div>
                   )}
                   
-                  {(previewBreakdown.breakdown.softPenaltyAPH !== undefined || previewBreakdown.breakdown.penaltyAPH !== undefined) && (
-                    <div style={{ padding: 12, background: '#fff', borderRadius: '4px', border: '1px solid #000' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                        <span style={{ fontWeight: 600, color: '#BF4E30' }}>Achievement Penalty</span>
-                        <span style={{ fontSize: 18, fontWeight: 700, color: '#BF4E30' }}>
-                          {((previewBreakdown.breakdown.softPenaltyAPH ?? previewBreakdown.breakdown.penaltyAPH ?? 0) * 100).toFixed(1)}%
-                        </span>
-                      </div>
-                      <div style={{ fontSize: 12, color: '#BF4E30' }}>
-                        Adjusts for games with unusually low achievements-per-hour compared to your similar games
-                      </div>
-                    </div>
-                  )}
+                  {(() => {
+                    const penalty = previewBreakdown.breakdown.softPenaltyAPH ?? previewBreakdown.breakdown.penaltyAPH ?? 1.0;
+                    // Only show penalty if it's less than 100% (actual penalty applied)
+                    if (penalty < 1.0) {
+                      return (
+                        <div style={{ padding: 12, background: '#fff', borderRadius: '4px', border: '1px solid #000' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                            <span style={{ fontWeight: 600, color: '#BF4E30' }}>Achievement Penalty</span>
+                            <span style={{ fontSize: 18, fontWeight: 700, color: '#BF4E30' }}>
+                              {(penalty * 100).toFixed(1)}%
+                            </span>
+                          </div>
+                          <div style={{ fontSize: 12, color: '#BF4E30' }}>
+                            Adjusts for games with unusually low achievements-per-hour compared to your similar games
+                          </div>
+                        </div>
+                      );
+                    }
+                    return null;
+                  })()}
                   
                   <div style={{ padding: 12, background: '#fff', borderRadius: '4px', border: '2px solid #000' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
