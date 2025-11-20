@@ -1896,8 +1896,8 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
             ) : (
               <div style={{ marginTop: 24, padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px', border: '1px solid #e0e0e0' }}>
                 <p style={{ margin: 0, color: '#666', fontSize: '14px' }}>
-                  This game has {scoreBreakdown.ratingCount} rating{scoreBreakdown.ratingCount !== 1 ? 's' : ''} from other users. 
-                  {steamId ? ' Submit a rating above to see your contribution!' : ' Log in to submit a rating and see your contribution.'}
+                  This game has {scoreBreakdown.ratingCount} rating{scoreBreakdown.ratingCount !== 1 ? 's' : ''} total. 
+                  {steamId ? ' Submit a rating below to see your contribution!' : ' Log in to submit a rating and see your contribution.'}
                 </p>
               </div>
             )

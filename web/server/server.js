@@ -606,12 +606,15 @@ async function calculateWeightFallback(steamId, appid) {
     }
     
     // Achievement penalty: if user has very low achievement rate compared to hours, apply penalty
+    // But only penalize if achievement percentage is low (not if it's high!)
     let penaltyAPH = 1.0;
     if (totalAch > 0 && hours > 2) {
-      const achievementsPerHour = achievementPct / hours;
-      // If achievements per hour is very low (< 0.01), apply gentle penalty
-      if (achievementsPerHour < 0.01 && hours > 10) {
-        penaltyAPH = Math.max(0.8, achievementsPerHour * 100);
+      // Only apply penalty if achievement percentage is low (< 20%) AND hours are high (> 10h)
+      // High achievement percentage (like 92.6%) should never be penalized
+      if (achievementPct < 0.20 && hours > 10) {
+        // Apply penalty based on how low the achievement percentage is
+        // At 20% = no penalty, at 0% = max penalty (0.8)
+        penaltyAPH = 0.8 + (achievementPct / 0.20) * 0.2; // Scales from 0.8 to 1.0
       }
     }
     
@@ -1011,20 +1014,28 @@ app.get('/game/:appid/score-breakdown', async (req, res) => {
     const finalScore = totalWeight > 0 ? totalWeightedScore / totalWeight : null;
     
     // Format breakdown with user identification
-    const breakdown = rows.map(row => ({
-      steamid: String(row.steamid),
-      rating: parseFloat(row.rating || 0),
-      weight: parseFloat(row.weight || 0),
-      weightedScore: parseFloat(row.weighted_score || 0),
-      contribution: totalWeight > 0 ? (parseFloat(row.weight || 0) / totalWeight) * 100 : 0,
-      reviewerName: row.persona_name || row.username || `User ${String(row.steamid).slice(-6)}`,
-      isCurrentUser: steamId ? String(row.steamid) === String(steamId) : false
-    }));
+    // Normalize steamIds to strings for comparison (avoid precision issues)
+    const steamIdStr = steamId ? String(steamId).trim() : null;
+    const breakdown = rows.map(row => {
+      const rowSteamIdStr = String(row.steamid || row.steamid_str || row.steamid).trim();
+      const isCurrent = steamIdStr ? (rowSteamIdStr === steamIdStr) : false;
+      return {
+        steamid: rowSteamIdStr,
+        rating: parseFloat(row.rating || 0),
+        weight: parseFloat(row.weight || 0),
+        weightedScore: parseFloat(row.weighted_score || 0),
+        contribution: totalWeight > 0 ? (parseFloat(row.weight || 0) / totalWeight) * 100 : 0,
+        reviewerName: row.persona_name || row.username || `User ${rowSteamIdStr.slice(-6)}`,
+        isCurrentUser: isCurrent
+      };
+    });
     
-    // Calculate current user's contribution if provided
-    const currentUserContribution = steamId 
-      ? breakdown.find(b => String(b.steamid) === String(steamId))
+    // Calculate current user's contribution if provided - use exact string match
+    const currentUserContribution = steamIdStr 
+      ? breakdown.find(b => b.steamid === steamIdStr)
       : null;
+    
+    console.log(`[DEBUG] /game/:appid/score-breakdown: steamId param="${steamIdStr}", found ${rows.length} ratings, currentUser=${currentUserContribution ? 'found' : 'not found'}`);
     
     res.json({
       status: 'ok',
