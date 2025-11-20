@@ -1038,7 +1038,14 @@ app.get('/game/:appid/score-breakdown', async (req, res) => {
       ? breakdown.find(b => b.steamid === steamIdStr)
       : null;
     
-    console.log(`[DEBUG] /game/:appid/score-breakdown: steamId param="${steamIdStr}", found ${rows.length} ratings, currentUser=${currentUserContribution ? 'found' : 'not found'}`);
+    console.log(`[DEBUG] /game/:appid/score-breakdown: steamId param="${steamIdStr}", found ${rows.length} ratings`);
+    if (rows.length > 0) {
+      console.log(`[DEBUG] /game/:appid/score-breakdown: Rating steamIds:`, rows.map(r => String(r.steamid_str || r.steamid).trim()));
+    }
+    console.log(`[DEBUG] /game/:appid/score-breakdown: currentUser=${currentUserContribution ? 'found' : 'not found'}`);
+    if (currentUserContribution) {
+      console.log(`[DEBUG] /game/:appid/score-breakdown: currentUser contribution=${currentUserContribution.contribution.toFixed(1)}%, weight=${currentUserContribution.weight.toFixed(4)}`);
+    }
     
     res.json({
       status: 'ok',
