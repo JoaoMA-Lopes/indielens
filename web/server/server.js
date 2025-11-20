@@ -988,8 +988,10 @@ app.get('/game/:appid/score-breakdown', async (req, res) => {
     await initUserRatingsTable();
     
     // Get all ratings for this game with user info
+    // Use CAST to get steamid as string to avoid precision issues
     const [rows] = await dbPool.query(
       `SELECT 
+        CAST(ur.steamid AS CHAR) as steamid_str,
         ur.steamid,
         ur.rating,
         ur.weight,
@@ -997,7 +999,7 @@ app.get('/game/:appid/score-breakdown', async (req, res) => {
         u.persona_name,
         ua.username
       FROM user_ratings ur
-      LEFT JOIN users u ON u.steamid = ur.steamid
+      LEFT JOIN users u ON CAST(u.steamid AS CHAR) = CAST(ur.steamid AS CHAR)
       LEFT JOIN user_accounts ua ON CAST(ua.steamid AS CHAR) = CAST(ur.steamid AS CHAR)
       WHERE ur.appid = ?
       ORDER BY ur.weight DESC`,
