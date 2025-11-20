@@ -450,16 +450,25 @@ async function calculateWeightFallback(steamId, appid) {
   
   try {
     // Get user's playtime and achievements for this game
+    // Convert steamId to string for comparison (MySQL might store as BIGINT)
+    const steamIdStr = String(steamId).trim();
+    const appidNum = parseInt(appid, 10);
+    
+    console.log(`[DEBUG] calculateWeightFallback: Querying for steamId="${steamIdStr}" (type: ${typeof steamIdStr}), appid=${appidNum} (type: ${typeof appidNum})`);
+    
     const [gameRows] = await dbPool.query(
       `SELECT ug.playtime_forever,
-              (SELECT COUNT(*) FROM user_achievements ua WHERE ua.steamid = ? AND ua.appid = ?) as unlocked_count,
+              (SELECT COUNT(*) FROM user_achievements ua WHERE CAST(ua.steamid AS CHAR) = ? AND ua.appid = ?) as unlocked_count,
               (SELECT COUNT(*) FROM game_achievements ga WHERE ga.appid = ?) as total_achievements
        FROM user_games ug
-       WHERE ug.steamid = ? AND ug.appid = ?`,
-      [steamId, appid, appid, steamId, appid]
+       WHERE CAST(ug.steamid AS CHAR) = ? AND ug.appid = ?`,
+      [steamIdStr, appidNum, appidNum, steamIdStr, appidNum]
     );
     
-    console.log(`[DEBUG] calculateWeightFallback: steamId=${steamId}, appid=${appid}, found ${gameRows.length} rows`);
+    console.log(`[DEBUG] calculateWeightFallback: Query returned ${gameRows.length} row(s)`);
+    if (gameRows.length > 0) {
+      console.log(`[DEBUG] calculateWeightFallback: Raw row data:`, JSON.stringify(gameRows[0]));
+    }
     
     if (gameRows.length === 0) {
       console.log(`[DEBUG] calculateWeightFallback: No game data found, using defaults`);
@@ -467,12 +476,14 @@ async function calculateWeightFallback(steamId, appid) {
     }
     
     const row = gameRows[0];
-    const hours = Math.max(0, (row.playtime_forever || 0) / 60.0);
+    const playtimeMinutes = row.playtime_forever || 0;
+    const hours = Math.max(0, playtimeMinutes / 60.0);
     const totalAch = row.total_achievements || 0;
     const unlockedAch = row.unlocked_count || 0;
     const achievementPct = totalAch > 0 ? unlockedAch / totalAch : 0;
     
-    console.log(`[DEBUG] calculateWeightFallback: hours=${hours.toFixed(2)}, totalAch=${totalAch}, unlockedAch=${unlockedAch}, achievementPct=${(achievementPct * 100).toFixed(1)}%`);
+    console.log(`[DEBUG] calculateWeightFallback: Raw data - playtime_forever=${playtimeMinutes} minutes, totalAch=${totalAch}, unlockedAch=${unlockedAch}`);
+    console.log(`[DEBUG] calculateWeightFallback: Calculated - hours=${hours.toFixed(2)}, achievementPct=${(achievementPct * 100).toFixed(1)}%`);
     
     // Calculate engagement using same formula as C++
     const hhalf = 20;
