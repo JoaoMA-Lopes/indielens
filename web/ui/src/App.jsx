@@ -2423,19 +2423,26 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                     </div>
                   )}
                   
-                  {(ratingResult.breakdown.softPenaltyAPH !== undefined || ratingResult.breakdown.penaltyAPH !== undefined) && (
-                    <div style={{ padding: 12, background: '#fff', borderRadius: '4px', border: '1px solid #000' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                        <span style={{ fontWeight: 600, color: '#BF4E30' }}>Achievement Penalty</span>
-                        <span style={{ fontSize: 18, fontWeight: 700, color: '#BF4E30' }}>
-                          {((ratingResult.breakdown.softPenaltyAPH ?? ratingResult.breakdown.penaltyAPH ?? 0) * 100).toFixed(1)}%
-                        </span>
-                      </div>
-                      <div style={{ fontSize: 12, color: '#BF4E30' }}>
-                        Adjusts for games with unusually low achievements-per-hour compared to your similar games
-                      </div>
-                    </div>
-                  )}
+                  {(() => {
+                    const penalty = ratingResult.breakdown.softPenaltyAPH ?? ratingResult.breakdown.penaltyAPH ?? 1.0;
+                    // Only show penalty if it's less than 100% (actual penalty applied)
+                    if (penalty < 1.0) {
+                      return (
+                        <div style={{ padding: 12, background: '#fff', borderRadius: '4px', border: '1px solid #000' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                            <span style={{ fontWeight: 600, color: '#BF4E30' }}>Achievement Penalty</span>
+                            <span style={{ fontSize: 18, fontWeight: 700, color: '#BF4E30' }}>
+                              {(penalty * 100).toFixed(1)}%
+                            </span>
+                          </div>
+                          <div style={{ fontSize: 12, color: '#BF4E30' }}>
+                            Adjusts for games with unusually low achievements-per-hour compared to your similar games
+                          </div>
+                        </div>
+                      );
+                    }
+                    return null;
+                  })()}
                   
                   <div style={{ padding: 12, background: '#fff', borderRadius: '4px', border: '2px solid #000' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
