@@ -1818,7 +1818,7 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
         </div>
 
         <div className="recent-scores-section">
-          <div className="recent-scores-title">Critic and User Scores</div>
+          <div className="recent-scores-title">Community Score</div>
           <div className="recent-score-item">
             <div className="recent-score-value" style={{ color: '#BF4E30' }}>{score ?? '—'}</div>
             <div>
