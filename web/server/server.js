@@ -374,7 +374,7 @@ app.post('/preview-weighting', async (req, res) => {
     const { steamId, appid, rating } = req.body;
     if (!steamId || !appid || rating == null) return res.status(400).json({ status: 'error', error: 'steamId, appid, rating required' });
     
-    console.log(`[DEBUG] /preview-weighting called: steamId=${steamId}, appid=${appid}, rating=${rating}`);
+    console.log(`[DEBUG] /preview-weighting called: steamId="${steamId}" (type: ${typeof steamId}, length: ${String(steamId).length}), appid=${appid}, rating=${rating}`);
     
     let result;
     try {
