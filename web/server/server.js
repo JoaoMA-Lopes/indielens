@@ -542,14 +542,15 @@ async function calculateWeightFallback(steamId, appid) {
     console.log(`[DEBUG] calculateWeightFallback: nonlinearhours=${nonlinearhours.toFixed(3)}, raw_engagement=${raw_engagement.toFixed(3)}`);
     
     // Scale engagement to achieve 12x ratio: 200h+100% = 12x weight of 2h+2%
-    // For 213h+92%: raw_engagement ≈ 0.917, should give much higher engagement
+    // For 213h+92%: raw_engagement ≈ 0.92, should give much higher engagement
     // Use a scaling that properly rewards high engagement
     const base_raw = 0.0555;  // 2h+2% baseline
     const target_raw = 0.9545; // 200h+100% target
-    const base_engagement = 0.01;  // Minimum engagement (2h+2%)
+    const base_engagement = 0.01;  // Minimum engagement (2h+2%) = 0.01
     // For 200h+100%, engagement should be 12x base = 0.12
-    // But we want higher values for very engaged players, so scale more aggressively
-    const target_engagement = 0.50; // Higher target for 200h+100% (allows room for 213h+92%)
+    // But we want much higher values for very engaged players (213h+92% should get ~0.70)
+    // Target higher engagement values to achieve the 12x ratio
+    const target_engagement = 0.70; // Much higher target for 200h+100% (213h+92% will get ~0.75)
     
     let engagement;
     if (raw_engagement <= base_raw) {
@@ -561,8 +562,8 @@ async function calculateWeightFallback(steamId, appid) {
     } else {
       // Interpolate between base and target
       const ratio = (raw_engagement - base_raw) / (target_raw - base_raw);
-      // Use a curve that accelerates for higher values
-      const curvedRatio = Math.pow(ratio, 0.7);
+      // Use a curve that accelerates for higher values (power of 0.6 instead of 0.7 for more aggressive scaling)
+      const curvedRatio = Math.pow(ratio, 0.6);
       engagement = base_engagement + curvedRatio * (target_engagement - base_engagement);
     }
     
