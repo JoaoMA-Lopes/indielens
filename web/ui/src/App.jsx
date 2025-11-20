@@ -2083,6 +2083,11 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                   
                   // Preview weighting breakdown when user enters a valid rating
                   if (value && Number(value) >= 0 && Number(value) <= 100 && !isNaN(value)) {
+                    if (!steamId) {
+                      // User not logged in, don't show preview
+                      setPreviewBreakdown(null);
+                      return;
+                    }
                     setLoadingPreview(true);
                     try {
                       const previewRes = await fetch(`${apiBase}/preview-weighting`, {
