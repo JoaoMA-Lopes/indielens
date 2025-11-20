@@ -328,10 +328,16 @@ app.post('/login', async (req, res) => {
     await initUserAccountsTable();
     
     // Find user by email
+    console.log(`[DEBUG] /login: Querying database for email="${email}"`);
     const [rows] = await dbPool.query(
       'SELECT id, email, username, password_hash, steamid, steam_friend_code FROM user_accounts WHERE email = ?',
       [email]
     );
+    
+    console.log(`[DEBUG] /login: Query returned ${rows.length} row(s)`);
+    if (rows.length > 0) {
+      console.log(`[DEBUG] /login: Raw row data:`, JSON.stringify(rows[0], null, 2));
+    }
     
     if (rows.length === 0) {
       return res.status(401).json({ error: 'Invalid email or password' });
