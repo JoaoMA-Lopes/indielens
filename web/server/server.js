@@ -327,14 +327,23 @@ app.post('/login', async (req, res) => {
     
     await initUserAccountsTable();
     
-    // Find user by email
+    // Find user by email - force fresh query
     console.log(`[DEBUG] /login: Querying database for email="${email}"`);
+    
+    // First, do a direct query to check what's actually in the database
+    const [checkRows] = await dbPool.query(
+      'SELECT id, username, email, steamid FROM user_accounts WHERE email = ?',
+      [email]
+    );
+    console.log(`[DEBUG] /login: Direct check query returned:`, JSON.stringify(checkRows, null, 2));
+    
+    // Now get full user data
     const [rows] = await dbPool.query(
       'SELECT id, email, username, password_hash, steamid, steam_friend_code FROM user_accounts WHERE email = ?',
       [email]
     );
     
-    console.log(`[DEBUG] /login: Query returned ${rows.length} row(s)`);
+    console.log(`[DEBUG] /login: Main query returned ${rows.length} row(s)`);
     if (rows.length > 0) {
       console.log(`[DEBUG] /login: Raw row data:`, JSON.stringify(rows[0], null, 2));
     }
