@@ -1705,10 +1705,15 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
       if (!game?.appid) return;
       try {
         setLoadingBreakdown(true);
-        const url = steamId 
-          ? `${apiBase}/game/${game.appid}/score-breakdown?steamId=${steamId}`
+        // Ensure steamId is a valid string (not null, undefined, or empty)
+        const validSteamId = steamId && steamId !== 'null' && steamId !== 'undefined' && String(steamId).trim() !== '' 
+          ? String(steamId).trim() 
+          : null;
+        console.log('[DEBUG] loadScoreBreakdown: steamId=', steamId, 'validSteamId=', validSteamId, 'game.appid=', game.appid);
+        const url = validSteamId 
+          ? `${apiBase}/game/${game.appid}/score-breakdown?steamId=${encodeURIComponent(validSteamId)}`
           : `${apiBase}/game/${game.appid}/score-breakdown`;
-        console.log('[DEBUG] Loading score breakdown from:', url);
+        console.log('[DEBUG] Loading score breakdown from:', url, 'steamId type:', typeof steamId, 'steamId value:', steamId);
         const res = await fetch(url);
         if (res.ok) {
           const json = await res.json();

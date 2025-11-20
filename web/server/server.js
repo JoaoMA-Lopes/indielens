@@ -979,7 +979,10 @@ app.get('/game/:appid', async (req, res) => {
 app.get('/game/:appid/score-breakdown', async (req, res) => {
   try {
     const appid = parseInt(req.params.appid, 10);
+    console.log(`[DEBUG] /game/:appid/score-breakdown: req.query=`, JSON.stringify(req.query));
+    console.log(`[DEBUG] /game/:appid/score-breakdown: req.url=`, req.url);
     const { steamId } = req.query;
+    console.log(`[DEBUG] /game/:appid/score-breakdown: extracted steamId=`, steamId, 'type:', typeof steamId);
     if (!appid) return res.status(400).json({ status: 'error', error: 'Invalid appid' });
     
     if (!dbPool) {
