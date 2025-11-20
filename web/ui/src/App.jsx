@@ -1695,15 +1695,25 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
     }
     
     async function loadScoreBreakdown() {
-      if (!game?.appid || !steamId) return;
+      if (!game?.appid) return;
       try {
         setLoadingBreakdown(true);
-        const res = await fetch(`${apiBase}/game/${game.appid}/score-breakdown?steamId=${steamId}`);
+        const url = steamId 
+          ? `${apiBase}/game/${game.appid}/score-breakdown?steamId=${steamId}`
+          : `${apiBase}/game/${game.appid}/score-breakdown`;
+        console.log('[DEBUG] Loading score breakdown from:', url);
+        const res = await fetch(url);
         if (res.ok) {
           const json = await res.json();
+          console.log('[DEBUG] Score breakdown response:', json);
           if (json.status === 'ok' && json.breakdown) {
             setScoreBreakdown(json.breakdown);
+          } else {
+            console.log('[DEBUG] No breakdown data:', json.message);
+            setScoreBreakdown(null);
           }
+        } else {
+          console.error('[DEBUG] Score breakdown HTTP error:', res.status, res.statusText);
         }
       } catch (e) {
         console.error('Score breakdown load error:', e);
@@ -1831,7 +1841,8 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
               No scores yet. Be the first to rate this game!
             </div>
           )}
-          {score && scoreBreakdown && scoreBreakdown.currentUser && (
+          {score && scoreBreakdown && scoreBreakdown.ratingCount > 0 && (
+            scoreBreakdown.currentUser ? (
             <div style={{ marginTop: 24, padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px', border: '1px solid #e0e0e0' }}>
               <h3 style={{ marginTop: 0, marginBottom: 16, fontSize: '18px', fontWeight: 600, color: '#1a1a1a' }}>
                 Your Contribution to Score
@@ -1875,6 +1886,14 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                 </div>
               </div>
             </div>
+            ) : (
+              <div style={{ marginTop: 24, padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px', border: '1px solid #e0e0e0' }}>
+                <p style={{ margin: 0, color: '#666', fontSize: '14px' }}>
+                  This game has {scoreBreakdown.ratingCount} rating{scoreBreakdown.ratingCount !== 1 ? 's' : ''} from other users. 
+                  {steamId ? ' Submit a rating above to see your contribution!' : ' Log in to submit a rating and see your contribution.'}
+                </p>
+              </div>
+            )
           )}
         </div>
         
