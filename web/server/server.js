@@ -345,6 +345,16 @@ app.post('/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
     
+    // Check if steamId exists in database
+    console.log(`[DEBUG] /login: User ${email} found, raw steamid from DB:`, user.steamid, `(type: ${typeof user.steamid}, is null: ${user.steamid === null}, is undefined: ${user.steamid === undefined})`);
+    
+    if (!user.steamid || user.steamid === null) {
+      console.error(`[ERROR] /login: User ${email} (id: ${user.id}) has no steamId in database!`);
+      return res.status(500).json({ 
+        error: 'Account configuration error: Steam ID not found. Please contact support or re-register with your Steam friend code.' 
+      });
+    }
+    
     // Return steamId for the frontend
     const steamIdStr = String(user.steamid);
     console.log(`[DEBUG] /login: User ${email} logged in, returning steamId="${steamIdStr}" (raw: ${user.steamid}, type: ${typeof user.steamid})`);

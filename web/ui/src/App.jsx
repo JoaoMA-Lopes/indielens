@@ -86,7 +86,14 @@ export default function App() {
       });
       const json = await res.json();
       if (!res.ok || json.status === 'error') throw new Error(json.error || json.message || 'Login failed');
-      setSteamId(json.steamId);
+      
+      console.log('[DEBUG] Login response:', { steamId: json.steamId, username: json.username });
+      
+      if (!json.steamId) {
+        throw new Error('Login succeeded but no steamId returned from server. Please contact support.');
+      }
+      
+      setSteamId(String(json.steamId)); // Ensure it's a string
       if (json.username) setUsername(json.username);
       setLoginEmail('');
       setLoginPassword('');
