@@ -346,9 +346,11 @@ app.post('/login', async (req, res) => {
     }
     
     // Return steamId for the frontend
+    const steamIdStr = String(user.steamid);
+    console.log(`[DEBUG] /login: User ${email} logged in, returning steamId="${steamIdStr}" (raw: ${user.steamid}, type: ${typeof user.steamid})`);
     res.json({ 
       status: 'ok', 
-      steamId: user.steamid.toString(),
+      steamId: steamIdStr,
       username: user.username
     });
   } catch (e) {
