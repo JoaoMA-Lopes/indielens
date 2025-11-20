@@ -330,16 +330,23 @@ app.post('/login', async (req, res) => {
     // Find user by email - force fresh query
     console.log(`[DEBUG] /login: Querying database for email="${email}"`);
     
+    // Force a fresh connection by ending any existing transaction
+    try {
+      await dbPool.query('SELECT 1'); // Simple query to ensure connection is fresh
+    } catch (e) {
+      console.warn('[WARN] /login: Connection check failed:', e.message);
+    }
+    
     // First, do a direct query to check what's actually in the database
     const [checkRows] = await dbPool.query(
-      'SELECT id, username, email, steamid FROM user_accounts WHERE email = ?',
+      'SELECT id, username, email, CAST(steamid AS CHAR) as steamid_str, steamid FROM user_accounts WHERE email = ?',
       [email]
     );
     console.log(`[DEBUG] /login: Direct check query returned:`, JSON.stringify(checkRows, null, 2));
     
-    // Now get full user data
+    // Now get full user data - explicitly cast steamid to ensure we get the right value
     const [rows] = await dbPool.query(
-      'SELECT id, email, username, password_hash, steamid, steam_friend_code FROM user_accounts WHERE email = ?',
+      'SELECT id, email, username, password_hash, CAST(steamid AS CHAR) as steamid_str, steamid, steam_friend_code FROM user_accounts WHERE email = ?',
       [email]
     );
     
@@ -354,6 +361,9 @@ app.post('/login', async (req, res) => {
     
     const user = rows[0];
     
+    // Use steamid_str if available (from CAST), otherwise use steamid
+    const dbSteamId = user.steamid_str || user.steamid;
+    
     // Verify password
     const passwordValid = await bcrypt.compare(password, user.password_hash);
     if (!passwordValid) {
@@ -361,18 +371,21 @@ app.post('/login', async (req, res) => {
     }
     
     // Check if steamId exists in database
-    console.log(`[DEBUG] /login: User ${email} found, raw steamid from DB:`, user.steamid, `(type: ${typeof user.steamid}, is null: ${user.steamid === null}, is undefined: ${user.steamid === undefined})`);
+    console.log(`[DEBUG] /login: User ${email} found:`);
+    console.log(`[DEBUG]   - steamid (raw): ${user.steamid} (type: ${typeof user.steamid})`);
+    console.log(`[DEBUG]   - steamid_str (cast): ${user.steamid_str} (type: ${typeof user.steamid_str})`);
+    console.log(`[DEBUG]   - Using: ${dbSteamId} (type: ${typeof dbSteamId})`);
     
-    if (!user.steamid || user.steamid === null) {
+    if (!dbSteamId || dbSteamId === null || dbSteamId === 'null') {
       console.error(`[ERROR] /login: User ${email} (id: ${user.id}) has no steamId in database!`);
       return res.status(500).json({ 
         error: 'Account configuration error: Steam ID not found. Please contact support or re-register with your Steam friend code.' 
       });
     }
     
-    // Return steamId for the frontend
-    const steamIdStr = String(user.steamid);
-    console.log(`[DEBUG] /login: User ${email} logged in, returning steamId="${steamIdStr}" (raw: ${user.steamid}, type: ${typeof user.steamid})`);
+    // Return steamId for the frontend - use the string version to avoid any number precision issues
+    const steamIdStr = String(dbSteamId).trim();
+    console.log(`[DEBUG] /login: User ${email} logged in, returning steamId="${steamIdStr}"`);
     res.json({ 
       status: 'ok', 
       steamId: steamIdStr,
