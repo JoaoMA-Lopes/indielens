@@ -1829,7 +1829,7 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
             </div>
             {scoreBreakdown && typeof scoreBreakdown.profileMatchScore === 'number' && !isNaN(scoreBreakdown.profileMatchScore) && (
               <div className="detail-score-box" style={{ marginTop: 16 }}>
-                <div className="detail-score-label">Profile Match Score</div>
+                <div className="detail-score-label" style={{ color: '#4A90E2' }}>Profile Match Score</div>
                 <div className="detail-score-number" style={{ color: '#4A90E2' }}>
                   {scoreBreakdown.profileMatchScore.toFixed(1)}
                 </div>
@@ -1877,7 +1877,7 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
             <div className="recent-score-item" style={{ marginTop: 12 }}>
               <div className="recent-score-value" style={{ color: '#4A90E2' }}>{scoreBreakdown.profileMatchScore.toFixed(1)}</div>
               <div>
-                <div className="recent-score-user">Profile Match Score</div>
+                <div className="recent-score-user" style={{ color: '#4A90E2' }}>Profile Match Score</div>
                 <div className="recent-score-date">Average from similar users</div>
               </div>
             </div>
