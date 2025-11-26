@@ -1406,6 +1406,10 @@ function Browse({ apiBase, data, setData, onSelectGame, selectedGenre, searchQue
   
   useEffect(() => { 
     loadGenres();
+    // Initial load when component mounts and no genre is selected
+    if (!selectedGenre && !searchQuery) {
+      load({ genre: '', q: '', sort: sortBy });
+    }
   }, []);
 
   useEffect(() => {
