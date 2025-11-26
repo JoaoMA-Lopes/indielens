@@ -981,7 +981,16 @@ app.get('/game/:appid/score-breakdown', async (req, res) => {
     const appid = parseInt(req.params.appid, 10);
     console.log(`[DEBUG] /game/:appid/score-breakdown: req.query=`, JSON.stringify(req.query));
     console.log(`[DEBUG] /game/:appid/score-breakdown: req.url=`, req.url);
-    const { steamId } = req.query;
+    let { steamId } = req.query;
+    // Handle case where steamId is the string "null" or "undefined"
+    if (steamId === 'null' || steamId === 'undefined' || steamId === null || steamId === undefined) {
+      steamId = null;
+    } else if (typeof steamId === 'string') {
+      steamId = steamId.trim();
+      if (steamId === '' || steamId === 'null' || steamId === 'undefined') {
+        steamId = null;
+      }
+    }
     console.log(`[DEBUG] /game/:appid/score-breakdown: extracted steamId=`, steamId, 'type:', typeof steamId);
     if (!appid) return res.status(400).json({ status: 'error', error: 'Invalid appid' });
     

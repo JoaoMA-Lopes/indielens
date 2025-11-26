@@ -27,8 +27,9 @@ export default function App() {
   useEffect(() => {
     const savedSteamId = localStorage.getItem('indielens_steamId');
     const savedUsername = localStorage.getItem('indielens_username');
-    if (savedSteamId) {
-      setSteamId(savedSteamId);
+    // Only set steamId if it's a valid value (not null, undefined, or the string "null")
+    if (savedSteamId && savedSteamId !== 'null' && savedSteamId !== 'undefined' && savedSteamId.trim() !== '') {
+      setSteamId(savedSteamId.trim());
       if (savedUsername) setUsername(savedUsername);
       setTab('browse');
     }
@@ -1705,8 +1706,8 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
       if (!game?.appid) return;
       try {
         setLoadingBreakdown(true);
-        // Ensure steamId is a valid string (not null, undefined, or empty)
-        const validSteamId = steamId && steamId !== 'null' && steamId !== 'undefined' && String(steamId).trim() !== '' 
+        // Ensure steamId is a valid string (not null, undefined, empty, or the string "null")
+        const validSteamId = steamId && steamId !== 'null' && steamId !== 'undefined' && String(steamId).trim() !== '' && String(steamId) !== 'null'
           ? String(steamId).trim() 
           : null;
         console.log('[DEBUG] loadScoreBreakdown: steamId=', steamId, 'validSteamId=', validSteamId, 'game.appid=', game.appid);
@@ -1923,56 +1924,11 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
           )}
           {score && scoreBreakdown && scoreBreakdown.ratingCount > 0 && !scoreBreakdown.currentUser && (
             <div style={{ marginTop: 24, padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px', border: '1px solid #e0e0e0' }}>
-              <h3 style={{ marginTop: 0, marginBottom: 16, fontSize: '18px', fontWeight: 600, color: '#1a1a1a' }}>
-                Your Contribution to Score
-              </h3>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 24, flexWrap: 'wrap' }}>
-                <ScorePieChart 
-                  currentUserContribution={scoreBreakdown.currentUser.contribution} 
-                  othersContribution={100 - scoreBreakdown.currentUser.contribution}
-                />
-                <div style={{ flex: 1, minWidth: 200 }}>
-                  <div style={{ marginBottom: 12 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                      <div style={{ width: 12, height: 12, backgroundColor: '#BF4E30', borderRadius: 2 }}></div>
-                      <span style={{ fontSize: '14px', fontWeight: 500, color: '#1a1a1a' }}>
-                        Your Rating
-                      </span>
-                    </div>
-                    <div style={{ fontSize: '13px', color: '#666', marginLeft: 20 }}>
-                      {scoreBreakdown.currentUser.contribution.toFixed(1)}% of total score
-                      <br />
-                      <span style={{ fontSize: '12px', color: '#999' }}>
-                        Weight: {(scoreBreakdown.currentUser.weight * 100).toFixed(1)}% • Rating: {scoreBreakdown.currentUser.rating}
-                      </span>
-                    </div>
-                  </div>
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                      <div style={{ width: 12, height: 12, backgroundColor: '#cccccc', borderRadius: 2 }}></div>
-                      <span style={{ fontSize: '14px', fontWeight: 500, color: '#1a1a1a' }}>
-                        Other Users
-                      </span>
-                    </div>
-                    <div style={{ fontSize: '13px', color: '#666', marginLeft: 20 }}>
-                      {(100 - scoreBreakdown.currentUser.contribution).toFixed(1)}% of total score
-                      <br />
-                      <span style={{ fontSize: '12px', color: '#999' }}>
-                        {scoreBreakdown.ratingCount - 1} other rating{scoreBreakdown.ratingCount - 1 !== 1 ? 's' : ''}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <p style={{ margin: 0, color: '#666', fontSize: '14px' }}>
+                This game has {scoreBreakdown.ratingCount} rating{scoreBreakdown.ratingCount !== 1 ? 's' : ''} total. 
+                {steamId ? ' Submit a rating below to see your contribution!' : ' Log in to submit a rating and see your contribution.'}
+              </p>
             </div>
-            ) : (
-              <div style={{ marginTop: 24, padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px', border: '1px solid #e0e0e0' }}>
-                <p style={{ margin: 0, color: '#666', fontSize: '14px' }}>
-                  This game has {scoreBreakdown.ratingCount} rating{scoreBreakdown.ratingCount !== 1 ? 's' : ''} total. 
-                  {steamId ? ' Submit a rating below to see your contribution!' : ' Log in to submit a rating and see your contribution.'}
-                </p>
-              </div>
-            )
           )}
         </div>
         
