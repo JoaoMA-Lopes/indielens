@@ -1000,6 +1000,7 @@ app.get('/game/:appid/score-breakdown', async (req, res) => {
         ur.rating,
         ur.weight,
         ur.weighted_score,
+        ur.profile_match,
         u.persona_name,
         ua.username
       FROM user_ratings ur
@@ -1041,6 +1042,38 @@ app.get('/game/:appid/score-breakdown', async (req, res) => {
       ? breakdown.find(b => b.steamid === steamIdStr)
       : null;
     
+    // Calculate Profile Match Score: average rating from users with similar profile match values
+    let profileMatchScore = null;
+    if (currentUserContribution && rows.length > 0) {
+      // Get current user's profile match value
+      const currentUserRow = rows.find(r => {
+        const rowSteamIdStr = String(r.steamid || r.steamid_str || r.steamid).trim();
+        return rowSteamIdStr === steamIdStr;
+      });
+      
+      if (currentUserRow && currentUserRow.profile_match !== null) {
+        const currentProfileMatch = parseFloat(currentUserRow.profile_match);
+        // Define similarity threshold: ±0.1 (10%) or ±10% of the value, whichever is larger
+        const threshold = Math.max(0.1, currentProfileMatch * 0.1);
+        const minMatch = currentProfileMatch - threshold;
+        const maxMatch = currentProfileMatch + threshold;
+        
+        // Find all ratings from users with similar profile match values
+        const similarRatings = rows
+          .filter(r => {
+            const rowProfileMatch = parseFloat(r.profile_match || 0);
+            return rowProfileMatch >= minMatch && rowProfileMatch <= maxMatch;
+          })
+          .map(r => parseFloat(r.rating || 0));
+        
+        if (similarRatings.length > 0) {
+          const sum = similarRatings.reduce((acc, rating) => acc + rating, 0);
+          profileMatchScore = sum / similarRatings.length;
+          console.log(`[DEBUG] /game/:appid/score-breakdown: Profile Match Score calculated: ${profileMatchScore.toFixed(2)} from ${similarRatings.length} users with profile match in range [${minMatch.toFixed(3)}, ${maxMatch.toFixed(3)}] (current: ${currentProfileMatch.toFixed(3)})`);
+        }
+      }
+    }
+    
     console.log(`[DEBUG] /game/:appid/score-breakdown: steamId param="${steamIdStr}", found ${rows.length} ratings`);
     if (rows.length > 0) {
       console.log(`[DEBUG] /game/:appid/score-breakdown: Rating steamIds:`, rows.map(r => String(r.steamid_str || r.steamid).trim()));
@@ -1058,7 +1091,8 @@ app.get('/game/:appid/score-breakdown', async (req, res) => {
         totalWeightedScore,
         ratingCount: rows.length,
         contributions: breakdown,
-        currentUser: currentUserContribution
+        currentUser: currentUserContribution,
+        profileMatchScore
       }
     });
   } catch (e) {

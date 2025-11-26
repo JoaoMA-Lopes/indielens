@@ -1816,6 +1816,14 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                 {score ?? '—'}
               </div>
             </div>
+            {scoreBreakdown?.profileMatchScore !== null && scoreBreakdown?.profileMatchScore !== undefined && (
+              <div className="detail-score-box" style={{ marginTop: 16 }}>
+                <div className="detail-score-label">Profile Match Score</div>
+                <div className="detail-score-number" style={{ color: '#4A90E2' }}>
+                  {scoreBreakdown.profileMatchScore.toFixed(1)}
+                </div>
+              </div>
+            )}
             
             {d.price && (
               <div className="detail-price-box">
@@ -1854,6 +1862,15 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
               <div className="recent-score-date">Weighted average</div>
             </div>
           </div>
+          {scoreBreakdown?.profileMatchScore !== null && scoreBreakdown?.profileMatchScore !== undefined && (
+            <div className="recent-score-item" style={{ marginTop: 12 }}>
+              <div className="recent-score-value" style={{ color: '#4A90E2' }}>{scoreBreakdown.profileMatchScore.toFixed(1)}</div>
+              <div>
+                <div className="recent-score-user">Profile Match Score</div>
+                <div className="recent-score-date">Average from similar users</div>
+              </div>
+            </div>
+          )}
           {!score && (
             <div style={{ padding: '12px 0', color: '#BF4E30', fontStyle: 'italic' }}>
               No scores yet. Be the first to rate this game!
