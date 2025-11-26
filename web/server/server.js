@@ -981,17 +981,24 @@ app.get('/game/:appid/score-breakdown', async (req, res) => {
     const appid = parseInt(req.params.appid, 10);
     console.log(`[DEBUG] /game/:appid/score-breakdown: req.query=`, JSON.stringify(req.query));
     console.log(`[DEBUG] /game/:appid/score-breakdown: req.url=`, req.url);
+    console.log(`[DEBUG] /game/:appid/score-breakdown: req.query.steamId=`, req.query.steamId, 'type:', typeof req.query.steamId);
     let { steamId } = req.query;
     // Handle case where steamId is the string "null" or "undefined"
     if (steamId === 'null' || steamId === 'undefined' || steamId === null || steamId === undefined) {
+      console.log(`[DEBUG] /game/:appid/score-breakdown: steamId is null/undefined/string "null", setting to null`);
       steamId = null;
     } else if (typeof steamId === 'string') {
       steamId = steamId.trim();
       if (steamId === '' || steamId === 'null' || steamId === 'undefined') {
+        console.log(`[DEBUG] /game/:appid/score-breakdown: steamId trimmed to empty/null string, setting to null`);
         steamId = null;
+      } else {
+        console.log(`[DEBUG] /game/:appid/score-breakdown: steamId is valid string: "${steamId}"`);
       }
+    } else {
+      console.log(`[DEBUG] /game/:appid/score-breakdown: steamId is not a string, type:`, typeof steamId);
     }
-    console.log(`[DEBUG] /game/:appid/score-breakdown: extracted steamId=`, steamId, 'type:', typeof steamId);
+    console.log(`[DEBUG] /game/:appid/score-breakdown: final steamId=`, steamId, 'type:', typeof steamId);
     if (!appid) return res.status(400).json({ status: 'error', error: 'Invalid appid' });
     
     if (!dbPool) {
@@ -1031,7 +1038,8 @@ app.get('/game/:appid/score-breakdown', async (req, res) => {
     
     // Format breakdown with user identification
     // Normalize steamIds to strings for comparison (avoid precision issues)
-    const steamIdStr = steamId ? String(steamId).trim() : null;
+    const steamIdStr = steamId && steamId !== 'null' && steamId !== 'undefined' ? String(steamId).trim() : null;
+    console.log(`[DEBUG] /game/:appid/score-breakdown: steamIdStr after normalization=`, steamIdStr);
     const breakdown = rows.map(row => {
       const rowSteamIdStr = String(row.steamid || row.steamid_str || row.steamid).trim();
       const isCurrent = steamIdStr ? (rowSteamIdStr === steamIdStr) : false;
@@ -1108,6 +1116,7 @@ app.get('/game/:appid/score-breakdown', async (req, res) => {
     }
     
     console.log(`[DEBUG] /game/:appid/score-breakdown: steamId param="${steamIdStr}", found ${rows.length} ratings`);
+    console.log(`[DEBUG] /game/:appid/score-breakdown: steamIdStr type:`, typeof steamIdStr, 'value:', steamIdStr);
     if (rows.length > 0) {
       console.log(`[DEBUG] /game/:appid/score-breakdown: Rating steamIds:`, rows.map(r => String(r.steamid_str || r.steamid).trim()));
     }
