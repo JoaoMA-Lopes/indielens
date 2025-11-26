@@ -1335,11 +1335,19 @@ function Browse({ apiBase, data, setData, onSelectGame, selectedGenre, searchQue
     setLoading(true);
     try {
       const qs = new URLSearchParams(params).toString();
-      const res = await fetch(`${apiBase}/browse${qs ? ('?'+qs) : ''}`);
+      const url = `${apiBase}/browse${qs ? ('?'+qs) : ''}`;
+      console.log('[DEBUG] Browse load: fetching from', url);
+      const res = await fetch(url);
+      if (!res.ok) {
+        console.error('[DEBUG] Browse load: HTTP error', res.status, res.statusText);
+        setData([]);
+        return;
+      }
       const json = await res.json();
+      console.log('[DEBUG] Browse load: received', json.items?.length || 0, 'games');
       setData(json.items || []);
     } catch (e) {
-      console.error('Browse load error:', e);
+      console.error('[DEBUG] Browse load error:', e);
       setData([]);
     } finally {
       setLoading(false);
