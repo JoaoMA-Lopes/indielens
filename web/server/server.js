@@ -1038,31 +1038,52 @@ app.get('/game/:appid/score-breakdown', async (req, res) => {
     });
     
     // Calculate current user's contribution if provided - use exact string match
-    const currentUserContribution = steamIdStr 
-      ? breakdown.find(b => b.steamid === steamIdStr)
-      : null;
+    let currentUserContribution = null;
+    if (steamIdStr) {
+      console.log(`[DEBUG] /game/:appid/score-breakdown: Looking for current user with steamId="${steamIdStr}"`);
+      console.log(`[DEBUG] /game/:appid/score-breakdown: Available steamIds in breakdown:`, breakdown.map(b => `"${b.steamid}"`));
+      currentUserContribution = breakdown.find(b => {
+        const match = b.steamid === steamIdStr;
+        if (match) {
+          console.log(`[DEBUG] /game/:appid/score-breakdown: Found match! b.steamid="${b.steamid}" === steamIdStr="${steamIdStr}"`);
+        }
+        return match;
+      });
+      if (!currentUserContribution) {
+        console.log(`[DEBUG] /game/:appid/score-breakdown: No match found. Trying case-insensitive and trimmed comparison...`);
+        // Try more lenient matching
+        currentUserContribution = breakdown.find(b => {
+          const bSteamId = String(b.steamid).trim();
+          const searchSteamId = String(steamIdStr).trim();
+          return bSteamId === searchSteamId;
+        });
+        if (currentUserContribution) {
+          console.log(`[DEBUG] /game/:appid/score-breakdown: Found match with trimmed comparison!`);
+        }
+      }
+    }
     
     // Calculate Profile Match Score: average rating from users with similar profile match values
     let profileMatchScore = null;
-    if (currentUserContribution && rows.length > 0) {
-      // Get current user's profile match value
+    if (steamIdStr && rows.length > 0) {
+      // Get current user's profile match value (even if they haven't rated yet, we can still calculate for others)
       const currentUserRow = rows.find(r => {
         const rowSteamIdStr = String(r.steamid || r.steamid_str || r.steamid).trim();
         return rowSteamIdStr === steamIdStr;
       });
       
-      if (currentUserRow && currentUserRow.profile_match !== null) {
+      if (currentUserRow && currentUserRow.profile_match !== null && currentUserRow.profile_match !== undefined) {
         const currentProfileMatch = parseFloat(currentUserRow.profile_match);
         // Define similarity threshold: ±0.1 (10%) or ±10% of the value, whichever is larger
         const threshold = Math.max(0.1, currentProfileMatch * 0.1);
         const minMatch = currentProfileMatch - threshold;
         const maxMatch = currentProfileMatch + threshold;
         
-        // Find all ratings from users with similar profile match values
+        // Find all ratings from users with similar profile match values (including the current user)
         const similarRatings = rows
           .filter(r => {
             const rowProfileMatch = parseFloat(r.profile_match || 0);
-            return rowProfileMatch >= minMatch && rowProfileMatch <= maxMatch;
+            return !isNaN(rowProfileMatch) && rowProfileMatch >= minMatch && rowProfileMatch <= maxMatch;
           })
           .map(r => parseFloat(r.rating || 0));
         
@@ -1071,6 +1092,9 @@ app.get('/game/:appid/score-breakdown', async (req, res) => {
           profileMatchScore = sum / similarRatings.length;
           console.log(`[DEBUG] /game/:appid/score-breakdown: Profile Match Score calculated: ${profileMatchScore.toFixed(2)} from ${similarRatings.length} users with profile match in range [${minMatch.toFixed(3)}, ${maxMatch.toFixed(3)}] (current: ${currentProfileMatch.toFixed(3)})`);
         }
+      } else if (currentUserRow) {
+        // User has rated but profile_match is null - try to calculate it or use default
+        console.log(`[DEBUG] /game/:appid/score-breakdown: Current user has rating but profile_match is null/undefined`);
       }
     }
     
