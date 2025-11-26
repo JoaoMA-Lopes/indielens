@@ -60,7 +60,9 @@ try {
     password: cfg.mysql.password,
     database: cfg.mysql.schema,
     waitForConnections: true,
-    connectionLimit: 5
+    connectionLimit: 5,
+    supportBigNumbers: true,
+    bigNumberStrings: true
   });
 } catch (e) {
   console.warn('DB pool not initialized, browse names may be missing:', e.message);
@@ -1072,8 +1074,18 @@ app.get('/game/:appid/score-breakdown', async (req, res) => {
     })));
     
     const breakdown = rows.map(row => {
-      // Prefer steamid_str (from CAST) over steamid (raw number) to avoid precision issues
-      const rowSteamIdStr = String(row.steamid_str || row.steamid || '').trim();
+      // CRITICAL: Always use steamid_str (from CAST) to avoid precision issues
+      // Never use row.steamid (raw number) as it loses precision for large SteamIDs
+      let rowSteamIdStr;
+      if (row.steamid_str !== undefined && row.steamid_str !== null) {
+        // steamid_str is the CAST result, use it directly as string
+        rowSteamIdStr = String(row.steamid_str).trim();
+      } else {
+        // Fallback: if steamid_str is missing, we have a problem, but try to recover
+        console.warn(`[WARN] /game/:appid/score-breakdown: steamid_str missing for row, using steamid (may lose precision)`);
+        rowSteamIdStr = String(row.steamid || '').trim();
+      }
+      
       const isCurrent = steamIdStr ? (rowSteamIdStr === steamIdStr) : false;
       console.log(`[DEBUG] /game/:appid/score-breakdown: Row steamId="${rowSteamIdStr}" (from steamid_str="${row.steamid_str}", steamid="${row.steamid}"), comparing with "${steamIdStr}", match=${isCurrent}`);
       return {
