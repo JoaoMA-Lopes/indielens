@@ -1134,7 +1134,10 @@ app.get('/game/:appid/score-breakdown', async (req, res) => {
     if (steamIdStr && rows.length > 0) {
       // Get current user's profile match value (even if they haven't rated yet, we can still calculate for others)
       const currentUserRow = rows.find(r => {
-        const rowSteamIdStr = String(r.steamid || r.steamid_str || r.steamid).trim();
+        // Use steamid_str (from CAST) to avoid precision issues
+        const rowSteamIdStr = r.steamid_str !== undefined && r.steamid_str !== null 
+          ? String(r.steamid_str).trim() 
+          : String(r.steamid || '').trim();
         return rowSteamIdStr === steamIdStr;
       });
       
