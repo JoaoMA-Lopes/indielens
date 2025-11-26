@@ -1873,7 +1873,7 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
               <div className="recent-score-date">Weighted average</div>
             </div>
           </div>
-          {scoreBreakdown?.profileMatchScore !== null && scoreBreakdown?.profileMatchScore !== undefined && (
+          {scoreBreakdown && typeof scoreBreakdown.profileMatchScore === 'number' && !isNaN(scoreBreakdown.profileMatchScore) && (
             <div className="recent-score-item" style={{ marginTop: 12 }}>
               <div className="recent-score-value" style={{ color: '#4A90E2' }}>{scoreBreakdown.profileMatchScore.toFixed(1)}</div>
               <div>
