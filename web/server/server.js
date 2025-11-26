@@ -1061,10 +1061,21 @@ app.get('/game/:appid/score-breakdown', async (req, res) => {
     // Format breakdown with user identification
     // Normalize steamIds to strings for comparison (avoid precision issues)
     const steamIdStr = steamId && steamId !== 'null' && steamId !== 'undefined' ? String(steamId).trim() : null;
-    console.log(`[DEBUG] /game/:appid/score-breakdown: steamIdStr after normalization=`, steamIdStr);
+    console.log(`[DEBUG] /game/:appid/score-breakdown: steamIdStr after normalization=`, steamIdStr, 'type:', typeof steamIdStr);
+    
+    // Debug: log raw row data
+    console.log(`[DEBUG] /game/:appid/score-breakdown: Raw rows from DB:`, rows.map(r => ({
+      steamid: r.steamid,
+      steamid_type: typeof r.steamid,
+      steamid_str: r.steamid_str,
+      steamid_str_type: typeof r.steamid_str
+    })));
+    
     const breakdown = rows.map(row => {
-      const rowSteamIdStr = String(row.steamid || row.steamid_str || row.steamid).trim();
+      // Prefer steamid_str (from CAST) over steamid (raw number) to avoid precision issues
+      const rowSteamIdStr = String(row.steamid_str || row.steamid || '').trim();
       const isCurrent = steamIdStr ? (rowSteamIdStr === steamIdStr) : false;
+      console.log(`[DEBUG] /game/:appid/score-breakdown: Row steamId="${rowSteamIdStr}" (from steamid_str="${row.steamid_str}", steamid="${row.steamid}"), comparing with "${steamIdStr}", match=${isCurrent}`);
       return {
         steamid: rowSteamIdStr,
         rating: parseFloat(row.rating || 0),
@@ -1094,10 +1105,14 @@ app.get('/game/:appid/score-breakdown', async (req, res) => {
         currentUserContribution = breakdown.find(b => {
           const bSteamId = String(b.steamid).trim();
           const searchSteamId = String(steamIdStr).trim();
-          return bSteamId === searchSteamId;
+          const match = bSteamId === searchSteamId;
+          console.log(`[DEBUG] /game/:appid/score-breakdown: Comparing "${bSteamId}" === "${searchSteamId}" = ${match}`);
+          return match;
         });
         if (currentUserContribution) {
           console.log(`[DEBUG] /game/:appid/score-breakdown: Found match with trimmed comparison!`);
+        } else {
+          console.log(`[DEBUG] /game/:appid/score-breakdown: Still no match. All breakdown steamIds:`, breakdown.map(b => `"${b.steamid}"`));
         }
       }
     }
