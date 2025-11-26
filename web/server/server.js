@@ -981,17 +981,28 @@ app.get('/game/:appid/score-breakdown', async (req, res) => {
     const appid = parseInt(req.params.appid, 10);
     console.log(`[DEBUG] /game/:appid/score-breakdown: req.query=`, JSON.stringify(req.query));
     console.log(`[DEBUG] /game/:appid/score-breakdown: req.url=`, req.url);
-    console.log(`[DEBUG] /game/:appid/score-breakdown: req.originalUrl=`, req.originalUrl);
+    console.log(`[DEBUG] /game/:appid/score-breakdown: req.originalUrl=`, req.originalUrl || 'NOT SET');
     console.log(`[DEBUG] /game/:appid/score-breakdown: req.query.steamId=`, req.query.steamId, 'type:', typeof req.query.steamId);
+    console.log(`[DEBUG] /game/:appid/score-breakdown: req.headers=`, JSON.stringify(req.headers));
     
     // Try to extract steamId from query string or URL manually if query parsing failed
     let { steamId } = req.query;
-    if (!steamId && req.originalUrl) {
+    if (!steamId) {
       // Try to parse from originalUrl if query string was stripped
-      const urlMatch = req.originalUrl.match(/[?&]steamId=([^&]+)/);
-      if (urlMatch) {
-        steamId = decodeURIComponent(urlMatch[1]);
-        console.log(`[DEBUG] /game/:appid/score-breakdown: Extracted steamId from originalUrl: "${steamId}"`);
+      if (req.originalUrl) {
+        const urlMatch = req.originalUrl.match(/[?&]steamId=([^&]+)/);
+        if (urlMatch) {
+          steamId = decodeURIComponent(urlMatch[1]);
+          console.log(`[DEBUG] /game/:appid/score-breakdown: Extracted steamId from originalUrl: "${steamId}"`);
+        }
+      }
+      // Also try parsing from req.url (though it usually doesn't have query string)
+      if (!steamId && req.url) {
+        const urlMatch = req.url.match(/[?&]steamId=([^&]+)/);
+        if (urlMatch) {
+          steamId = decodeURIComponent(urlMatch[1]);
+          console.log(`[DEBUG] /game/:appid/score-breakdown: Extracted steamId from req.url: "${steamId}"`);
+        }
       }
     }
     // Handle case where steamId is the string "null" or "undefined"
