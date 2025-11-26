@@ -2201,15 +2201,7 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                       setDetails(detailJson);
                     }
                     // Reload score breakdown to show updated contribution
-                    if (steamId) {
-                      const breakdownRes = await fetch(`${apiBase}/game/${game.appid}/score-breakdown?steamId=${steamId}`);
-                      if (breakdownRes.ok) {
-                        const breakdownJson = await breakdownRes.json();
-                        if (breakdownJson.status === 'ok' && breakdownJson.breakdown) {
-                          setScoreBreakdown(breakdownJson.breakdown);
-                        }
-                      }
-                    }
+                    loadScoreBreakdown();
                   } catch (e) {
                     setRatingError(e.message);
                   } finally {
