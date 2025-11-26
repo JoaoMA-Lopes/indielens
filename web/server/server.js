@@ -981,6 +981,7 @@ app.get('/game/:appid/score-breakdown', async (req, res) => {
     const appid = parseInt(req.params.appid, 10);
     console.log(`[DEBUG] /game/:appid/score-breakdown: req.query=`, JSON.stringify(req.query));
     console.log(`[DEBUG] /game/:appid/score-breakdown: req.url=`, req.url);
+    console.log(`[DEBUG] /game/:appid/score-breakdown: req.originalUrl=`, req.originalUrl);
     console.log(`[DEBUG] /game/:appid/score-breakdown: req.query.steamId=`, req.query.steamId, 'type:', typeof req.query.steamId);
     let { steamId } = req.query;
     // Handle case where steamId is the string "null" or "undefined"

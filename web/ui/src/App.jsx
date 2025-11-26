@@ -1743,6 +1743,8 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
     
     if (game && game.appid) {
       load();
+      // Only load score breakdown if we have a game - steamId might not be loaded yet, but that's OK
+      // The function will handle the case where steamId is null/undefined
       loadScoreBreakdown();
     } else {
       setLoading(false);
