@@ -6,16 +6,16 @@
     <title>IndieLens</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
     <style>
-      body { padding: 0; margin: 0; background: #fff; color: #1a1a1a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-      .header { background: #BF4E30; color: #fff; padding: 12px 40px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+      body { padding: 0; margin: 0; background: linear-gradient(180deg, #1b2838 0%, #0e1621 100%); color: #c7d5e0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; min-height: 100vh; }
+      .header { background: #171a21; color: #fff; padding: 12px 40px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
       .header-left { display: flex; align-items: center; gap: 32px; }
       .logo { font-size: 24px; font-weight: bold; color: #ffffff; text-decoration: none; }
       .nav-links { display: flex; gap: 24px; }
       .nav-link { color: #ffffff; text-decoration: none; font-size: 14px; }
       .nav-link:hover { opacity: 0.8; }
-      .header-search { display: flex; align-items: center; background: #fff; border-radius: 3px; padding: 0 8px; gap: 4px; height: 26px; box-sizing: border-box; overflow: hidden; }
-      .header-search input { border: none; outline: none; width: 200px; font-size: 13px; padding: 0; margin: 0; line-height: 26px; height: 26px; box-sizing: border-box; color: #1a1a1a; background: transparent; }
-      .header-search input::placeholder { color: #666; }
+      .header-search { display: flex; align-items: center; background: rgba(255, 255, 255, 0.1); border-radius: 3px; padding: 0 8px; gap: 4px; height: 26px; box-sizing: border-box; overflow: hidden; }
+      .header-search input { border: none; outline: none; width: 200px; font-size: 13px; padding: 0; margin: 0; line-height: 26px; height: 26px; box-sizing: border-box; color: #c7d5e0; background: transparent; }
+      .header-search input::placeholder { color: #8f98a0; }
       .header-search button { background: none; border: none; cursor: pointer; padding: 0; font-size: 16px; line-height: 1; height: 26px; width: 26px; display: flex; align-items: center; justify-content: center; box-sizing: border-box; flex-shrink: 0; margin: 0; }
       .register-btn { background: #66c0f4; color: #ffffff; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: 600; }
       .register-btn:hover { background: #419ed4; }
@@ -41,60 +41,60 @@
       .game-card .meta { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: #2a475e; gap: 8px; text-decoration: none !important; }
       .game-card .meta > div:first-child { flex: 1; min-width: 0; overflow: hidden; color: #c7d5e0; }
       .game-card * { text-decoration: none !important; border-bottom: none !important; }
-      .badge { background: #BF4E30; color: #ffffff; padding: 6px 12px; border-radius: 999px; font-weight: 700; font-size: 14px; white-space: nowrap; flex-shrink: 0; text-align: center; }
-      h2 { color: #1a1a1a; text-shadow: none; }
+      .badge { background: #d4af37; color: #000000; padding: 6px 12px; border-radius: 999px; font-weight: 700; font-size: 14px; white-space: nowrap; flex-shrink: 0; text-align: center; }
+      h2 { color: #c7d5e0; text-shadow: none; }
       input, select, button { border-radius: 8px; }
       button { background: linear-gradient(135deg, #66c0f4, #419ed4); border: none; transition: all 0.2s; color: #ffffff; }
       button:hover:not(:disabled) { transform: scale(1.05); box-shadow: 0 4px 12px rgba(102, 192, 244, 0.4); }
       .game-card { cursor: pointer; }
-      .game-detail-page { min-height: 100vh; padding: 0; background: #fff; }
+      .game-detail-page { min-height: 100vh; padding: 0; background: linear-gradient(180deg, #1b2838 0%, #0e1621 100%); }
       .game-header-img { width: 100%; max-height: 500px; object-fit: cover; margin-bottom: 0; display: block; }
-      .detail-back { background: #fff; border: 1px solid #000; padding: 8px 16px; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; margin: 20px 0; text-decoration: none; color: #BF4E30; font-size: 14px; }
-      .detail-back:hover { background: #f5f5f5; }
+      .detail-back { background: rgba(255, 255, 255, 0.1); border: 1px solid #415a79; padding: 8px 16px; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; margin: 20px 0; text-decoration: none; color: #c7d5e0; font-size: 14px; }
+      .detail-back:hover { background: rgba(255, 255, 255, 0.2); }
       .detail-content-wrapper { max-width: 1200px; margin: 0 auto; padding: 24px 40px; }
-      .detail-header-section { display: flex; gap: 24px; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 2px solid #000; }
+      .detail-header-section { display: flex; gap: 24px; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 2px solid #415a79; }
       .detail-header-left { flex: 1; }
       .detail-header-right { width: 280px; }
-      .detail-score-box { background: #fff; border: 1px solid #000; padding: 20px; text-align: center; margin-bottom: 20px; }
-      .detail-score-number { font-size: 48px; font-weight: 700; color: #BF4E30; margin: 8px 0; }
-      .detail-score-label { font-size: 12px; color: #BF4E30; text-transform: uppercase; letter-spacing: 0.5px; }
-      .detail-price-box { background: #fff; border: 1px solid #000; padding: 16px; text-align: center; }
-      .detail-price-amount { font-size: 24px; font-weight: 700; color: #BF4E30; margin: 8px 0; }
-      .detail-price-original { font-size: 14px; color: #BF4E30; text-decoration: line-through; margin-right: 8px; }
-      .detail-price-discount { background: #BF4E30; color: #ffffff; padding: 2px 6px; border-radius: 3px; font-size: 12px; font-weight: 600; }
-      .detail-price-free { font-size: 18px; font-weight: 700; color: #BF4E30; }
-      .recent-scores-section { margin: 32px 0; padding: 20px 0; border-top: 1px solid #000; border-bottom: 1px solid #000; }
-      .recent-scores-title { font-size: 20px; font-weight: 700; color: #BF4E30; margin-bottom: 16px; }
-      .recent-score-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #000; }
+      .detail-score-box { background: rgba(255, 255, 255, 0.05); border: 1px solid #415a79; padding: 20px; text-align: center; margin-bottom: 20px; }
+      .detail-score-number { font-size: 48px; font-weight: 700; color: #d4af37; margin: 8px 0; }
+      .detail-score-label { font-size: 12px; color: #c7d5e0; text-transform: uppercase; letter-spacing: 0.5px; }
+      .detail-price-box { background: rgba(255, 255, 255, 0.05); border: 1px solid #415a79; padding: 16px; text-align: center; }
+      .detail-price-amount { font-size: 24px; font-weight: 700; color: #c7d5e0; margin: 8px 0; }
+      .detail-price-original { font-size: 14px; color: #8f98a0; text-decoration: line-through; margin-right: 8px; }
+      .detail-price-discount { background: #66c0f4; color: #ffffff; padding: 2px 6px; border-radius: 3px; font-size: 12px; font-weight: 600; }
+      .detail-price-free { font-size: 18px; font-weight: 700; color: #c7d5e0; }
+      .recent-scores-section { margin: 32px 0; padding: 20px 0; border-top: 1px solid #415a79; border-bottom: 1px solid #415a79; }
+      .recent-scores-title { font-size: 20px; font-weight: 700; color: #c7d5e0; margin-bottom: 16px; }
+      .recent-score-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #415a79; }
       .recent-score-item:last-child { border-bottom: none; }
-      .recent-score-value { font-size: 24px; font-weight: 700; color: #BF4E30; min-width: 50px; }
-      .recent-score-user { font-size: 14px; color: #BF4E30; }
-      .recent-score-date { font-size: 12px; color: #BF4E30; margin-left: auto; }
-      .description-box { background: #fff; border: 1px solid #000; padding: 24px; margin: 24px 0; line-height: 1.7; }
-      .description-box h3 { margin-top: 0; font-size: 20px; font-weight: 700; color: #BF4E30; margin-bottom: 12px; }
-      .description-box p { color: #BF4E30; margin: 12px 0; }
+      .recent-score-value { font-size: 24px; font-weight: 700; color: #d4af37; min-width: 50px; }
+      .recent-score-user { font-size: 14px; color: #c7d5e0; }
+      .recent-score-date { font-size: 12px; color: #8f98a0; margin-left: auto; }
+      .description-box { background: rgba(255, 255, 255, 0.05); border: 1px solid #415a79; padding: 24px; margin: 24px 0; line-height: 1.7; }
+      .description-box h3 { margin-top: 0; font-size: 20px; font-weight: 700; color: #c7d5e0; margin-bottom: 12px; }
+      .description-box p { color: #c7d5e0; margin: 12px 0; }
       .detail-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin: 24px 0; }
-      .detail-item { padding: 12px; background: #fff; border: 1px solid #000; border-radius: 4px; }
-      .detail-label { font-size: 12px; color: #BF4E30; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; font-weight: 600; }
-      .detail-value { font-size: 14px; color: #BF4E30; }
+      .detail-item { padding: 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid #415a79; border-radius: 4px; }
+      .detail-label { font-size: 12px; color: #8f98a0; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; font-weight: 600; }
+      .detail-value { font-size: 14px; color: #c7d5e0; }
       .tags-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
       .tag-chip { background: rgba(102, 192, 244, 0.2); padding: 4px 10px; border-radius: 12px; font-size: 12px; border: 1px solid rgba(102, 192, 244, 0.3); }
-      .tag-segments-wrapper { width: 100vw; position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; background: #fff; }
+      .tag-segments-wrapper { width: 100vw; position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; background: transparent; }
       .tag-segment { margin: 50px 0; width: 100%; }
       .tag-segment-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px; padding: 0 40px; max-width: 1400px; margin-left: auto; margin-right: auto; position: relative; padding-bottom: 8px; border-bottom: 1px solid #415a79; }
-      .tag-segment-title { font-size: 28px; font-weight: 700; color: #1a1a1a; margin: 0; letter-spacing: -0.5px; }
-      .tag-segment-see-all { color: #666; text-decoration: none; font-size: 13px; font-weight: 500; transition: color 0.2s; }
-      .tag-segment-see-all:hover { color: #8f98a0; text-decoration: none; }
+      .tag-segment-title { font-size: 28px; font-weight: 700; color: #c7d5e0; margin: 0; letter-spacing: -0.5px; }
+      .tag-segment-see-all { color: #8f98a0; text-decoration: none; font-size: 13px; font-weight: 500; transition: color 0.2s; }
+      .tag-segment-see-all:hover { color: #c7d5e0; text-decoration: none; }
       .tag-segment-content { position: relative; padding: 0 40px; width: 100%; max-width: 1400px; margin: 0 auto; }
       .tag-segment-scroll { display: flex; gap: 20px; overflow-x: auto; overflow-y: hidden; scroll-behavior: smooth; padding: 10px 0 20px 0; scrollbar-width: none; -ms-overflow-style: none; }
       .tag-segment-scroll::-webkit-scrollbar { display: none; }
       .tag-segment-card { flex: 0 0 160px; cursor: pointer; transition: transform 0.2s; }
       .tag-segment-card:hover { transform: translateY(-2px); }
       .tag-segment-card img { width: 100%; height: 220px; object-fit: cover; border-radius: 4px; box-shadow: 0 2px 8px rgba(34, 42, 104, 0.1); }
-      .tag-segment-card-title { font-weight: 500; margin-top: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 13px; color: #1a1a1a; line-height: 1.4; }
-      .tag-segment-card-developer { font-size: 11px; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .tag-segment-card-title { font-weight: 500; margin-top: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 13px; color: #c7d5e0; line-height: 1.4; }
+      .tag-segment-card-developer { font-size: 11px; color: #8f98a0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
       .tag-segment-card-score { margin-top: 6px; }
-      .tag-segment-card-score .badge { background: #BF4E30; color: #ffffff; padding: 4px 10px; border-radius: 4px; font-weight: 700; font-size: 12px; display: inline-block; }
+      .tag-segment-card-score .badge { background: #d4af37; color: #000000; padding: 4px 10px; border-radius: 4px; font-weight: 700; font-size: 12px; display: inline-block; }
       .tag-segment-nav-wrapper { display: flex; align-items: center; gap: 8px; position: absolute; right: 0; top: 0; }
       .tag-segment-nav { background: transparent; color: #c7d5e0; border: 1px solid #415a79; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; z-index: 10; transition: all 0.2s; padding: 0; line-height: 1; font-weight: 400; }
       .tag-segment-nav:hover { background: #326280; }

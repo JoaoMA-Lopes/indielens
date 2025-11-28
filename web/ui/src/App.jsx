@@ -273,72 +273,72 @@ export default function App() {
       <hr className="separator" />
       {tab === 'howitworks' ? (
         <div className="container" style={{ maxWidth: '900px', margin: '40px auto', padding: '40px' }}>
-          <h1 style={{ color: '#BF4E30', fontSize: '3em', marginBottom: 30 }}>How IndieLens Weighting Works</h1>
-          <div style={{ lineHeight: 1.8, color: '#BF4E30' }}>
-            <div style={{ marginBottom: 40, padding: 30, border: '2px solid #000', borderRadius: 8 }}>
-              <h2 style={{ color: '#BF4E30', fontSize: '2em', marginTop: 0 }}>Overview</h2>
-              <p style={{ fontSize: 18, color: '#BF4E30' }}>
+          <h1 style={{ color: '#c7d5e0', fontSize: '3em', marginBottom: 30 }}>How IndieLens Weighting Works</h1>
+          <div style={{ lineHeight: 1.8, color: '#c7d5e0' }}>
+            <div style={{ marginBottom: 40, padding: 30, border: '2px solid #415a79', borderRadius: 8 }}>
+              <h2 style={{ color: '#c7d5e0', fontSize: '2em', marginTop: 0 }}>Overview</h2>
+              <p style={{ fontSize: 18, color: '#c7d5e0' }}>
                 IndieLens uses a sophisticated weighting system to ensure your game ratings have appropriate influence on aggregate scores. 
                 Your raw rating (0-100) is transformed into a weighted score based on three key factors that measure your expertise and engagement.
               </p>
             </div>
             
-            <div style={{ marginBottom: 40, padding: 30, border: '2px solid #000', borderRadius: 8 }}>
-              <h2 style={{ color: '#BF4E30', fontSize: '2em', marginTop: 0 }}>The Formula</h2>
-              <p style={{ fontSize: 18, color: '#BF4E30', marginBottom: 20 }}>
+            <div style={{ marginBottom: 40, padding: 30, border: '2px solid #415a79', borderRadius: 8 }}>
+              <h2 style={{ color: '#c7d5e0', fontSize: '2em', marginTop: 0 }}>The Formula</h2>
+              <p style={{ fontSize: 18, color: '#c7d5e0', marginBottom: 20 }}>
                 <strong>Weight = ProfileMatch × Engagement × SoftPenaltyAPH</strong>
               </p>
-              <p style={{ fontSize: 16, color: '#BF4E30' }}>
+              <p style={{ fontSize: 16, color: '#c7d5e0' }}>
                 Your final weight determines how much your rating contributes to the game's overall IndieLens score. 
                 Higher weights mean your opinion has more impact.
               </p>
             </div>
             
-            <div style={{ marginBottom: 40, padding: 30, border: '2px solid #000', borderRadius: 8 }}>
-              <h2 style={{ color: '#BF4E30', fontSize: '2em', marginTop: 0 }}>1. Profile Match</h2>
-              <p style={{ fontSize: 16, color: '#BF4E30', marginBottom: 15 }}>
+            <div style={{ marginBottom: 40, padding: 30, border: '2px solid #415a79', borderRadius: 8 }}>
+              <h2 style={{ color: '#c7d5e0', fontSize: '2em', marginTop: 0 }}>1. Profile Match</h2>
+              <p style={{ fontSize: 16, color: '#c7d5e0', marginBottom: 15 }}>
                 Measures how well the target game aligns with your gaming history using:
               </p>
-              <ul style={{ fontSize: 16, color: '#BF4E30', paddingLeft: 30 }}>
+              <ul style={{ fontSize: 16, color: '#c7d5e0', paddingLeft: 30 }}>
                 <li><strong>Tag Similarity:</strong> Jaccard similarity over game tags (how many tags overlap with games you've played)</li>
                 <li><strong>Genre Similarity:</strong> Jaccard similarity over genres</li>
                 <li><strong>Developer Match:</strong> Bonus if you've played other games by the same developer</li>
               </ul>
-              <p style={{ fontSize: 16, color: '#BF4E30', marginTop: 15 }}>
+              <p style={{ fontSize: 16, color: '#c7d5e0', marginTop: 15 }}>
                 Each similarity is weighted by your engagement with those similar games, so games similar to games you loved 
                 count more than games similar to games you barely played.
               </p>
             </div>
             
-            <div style={{ marginBottom: 40, padding: 30, border: '2px solid #000', borderRadius: 8 }}>
-              <h2 style={{ color: '#BF4E30', fontSize: '2em', marginTop: 0 }}>2. Engagement</h2>
-              <p style={{ fontSize: 16, color: '#BF4E30', marginBottom: 15 }}>
+            <div style={{ marginBottom: 40, padding: 30, border: '2px solid #415a79', borderRadius: 8 }}>
+              <h2 style={{ color: '#c7d5e0', fontSize: '2em', marginTop: 0 }}>2. Engagement</h2>
+              <p style={{ fontSize: 16, color: '#c7d5e0', marginBottom: 15 }}>
                 Combines your playtime and achievement completion for the target game:
               </p>
-              <p style={{ fontSize: 16, color: '#BF4E30', marginBottom: 15 }}>
+              <p style={{ fontSize: 16, color: '#c7d5e0', marginBottom: 15 }}>
                 <strong>E = α × (H / (H + H^(1/2))) + (1 - α) × A</strong>
               </p>
-              <p style={{ fontSize: 16, color: '#BF4E30' }}>
+              <p style={{ fontSize: 16, color: '#c7d5e0' }}>
                 Where H is normalized playtime and A is achievement completion rate. This rewards meaningful play 
                 while damping the effect of idle time. High engagement means you've actually played the game, not just left it running.
               </p>
             </div>
             
-            <div style={{ marginBottom: 40, padding: 30, border: '2px solid #000', borderRadius: 8 }}>
-              <h2 style={{ color: '#BF4E30', fontSize: '2em', marginTop: 0 }}>3. Soft Penalty (Achievements Per Hour)</h2>
-              <p style={{ fontSize: 16, color: '#BF4E30', marginBottom: 15 }}>
+            <div style={{ marginBottom: 40, padding: 30, border: '2px solid #415a79', borderRadius: 8 }}>
+              <h2 style={{ color: '#c7d5e0', fontSize: '2em', marginTop: 0 }}>3. Soft Penalty (Achievements Per Hour)</h2>
+              <p style={{ fontSize: 16, color: '#c7d5e0', marginBottom: 15 }}>
                 Compares your achievements-per-hour on this game to a similarity-weighted baseline from your similar games.
               </p>
-              <p style={{ fontSize: 16, color: '#BF4E30' }}>
+              <p style={{ fontSize: 16, color: '#c7d5e0' }}>
                 This gently down-weights only extreme outliers where you have many hours but very few achievements compared 
                 to your typical pattern. It doesn't penalize genres that naturally use quirky or rare achievements, 
                 since the baseline is calculated from your similar games.
               </p>
             </div>
             
-            <div style={{ marginBottom: 40, padding: 30, border: '2px solid #000', borderRadius: 8 }}>
+            <div style={{ marginBottom: 40, padding: 30, border: '2px solid #415a79', borderRadius: 8 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 15 }}>
-                <h2 style={{ color: '#BF4E30', fontSize: '2em', marginTop: 0 }}>The Result</h2>
+                <h2 style={{ color: '#c7d5e0', fontSize: '2em', marginTop: 0 }}>The Result</h2>
                 {'ai' in window && 'summarizer' in window.ai && (
                   <button
                     onClick={async () => {
@@ -348,7 +348,7 @@ export default function App() {
                         if (result && result.summary) {
                           const summaryDiv = document.getElementById('summary-result');
                           if (summaryDiv) {
-                            summaryDiv.innerHTML = `<p style="color: #BF4E30; font-style: italic; margin-top: 12px;"><strong>Summary:</strong> ${result.summary}</p>`;
+                            summaryDiv.innerHTML = `<p style="color: #c7d5e0; font-style: italic; margin-top: 12px;"><strong>Summary:</strong> ${result.summary}</p>`;
                           }
                         }
                       } catch (e) {
@@ -358,19 +358,19 @@ export default function App() {
                     }}
                     style={{
                       padding: '6px 12px',
-                      background: '#f5f5f5',
-                      border: '1px solid #000',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      border: '1px solid #415a79',
                       borderRadius: '4px',
                       fontSize: 12,
                       cursor: 'pointer',
-                      color: '#1a1a1a'
+                      color: '#c7d5e0'
                     }}
                   >
                     📝 Summarize (Chrome AI)
                   </button>
                 )}
               </div>
-              <p style={{ fontSize: 16, color: '#BF4E30' }}>
+              <p style={{ fontSize: 16, color: '#c7d5e0' }}>
                 When you rate a game, your rating is multiplied by your calculated weight. Games where you have high profile match, 
                 high engagement, and normal achievement patterns will have the most influence. This ensures that scores reflect 
                 the opinions of players who are genuinely familiar with similar games and have actually engaged with the title.
@@ -389,112 +389,112 @@ export default function App() {
         </div>
       ) : tab === 'developer' && steamId ? (
         <div className="container" style={{ maxWidth: '1200px', margin: '40px auto', padding: '40px' }}>
-          <h1 style={{ color: '#BF4E30', fontSize: '3em', marginBottom: 20 }}>👨‍💻 Developer Mode</h1>
-          <p style={{ color: '#BF4E30', fontSize: '1.2em', marginBottom: 30 }}>My Game: <strong>Terraria</strong></p>
-          <p style={{ color: '#1a1a1a', marginBottom: 30 }}>
+          <h1 style={{ color: '#c7d5e0', fontSize: '3em', marginBottom: 20 }}>👨‍💻 Developer Mode</h1>
+          <p style={{ color: '#c7d5e0', fontSize: '1.2em', marginBottom: 30 }}>My Game: <strong>Terraria</strong></p>
+          <p style={{ color: '#c7d5e0', marginBottom: 30 }}>
             Recent ratings from users for your game, with detailed weighting breakdowns:
           </p>
           
-          <div style={{ marginBottom: 30, padding: 20, border: '1px solid #000', background: '#fff' }}>
+          <div style={{ marginBottom: 30, padding: 20, border: '1px solid #415a79', background: 'rgba(255, 255, 255, 0.05)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 15 }}>
               <span style={{ fontWeight: 'bold' }}>Player: Alex_Summers92</span>
-              <span style={{ color: '#BF4E30', fontWeight: 'bold' }}>Rating: 94/100</span>
+              <span style={{ color: '#d4af37', fontWeight: 'bold' }}>Rating: 94/100</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #415a79' }}>
               <span>Hours Played:</span>
               <span>312 hours</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #415a79' }}>
               <span>Achievements:</span>
               <span>108 / 115 (93.9%)</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #415a79' }}>
               <span>Profile Match:</span>
               <span>0.94</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #415a79' }}>
               <span>Engagement:</span>
               <span>0.96</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #415a79' }}>
               <span>Achievement Penalty:</span>
               <span>0.99</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '15px 0', marginTop: 10, borderTop: '2px solid #BF4E30', fontWeight: 'bold', color: '#BF4E30' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '15px 0', marginTop: 10, borderTop: '2px solid #415a79', fontWeight: 'bold', color: '#c7d5e0' }}>
               <span>Weighted Score Contribution:</span>
               <span>84.71 points</span>
             </div>
           </div>
 
-          <div style={{ marginBottom: 30, padding: 20, border: '1px solid #000', background: '#fff' }}>
+          <div style={{ marginBottom: 30, padding: 20, border: '1px solid #415a79', background: 'rgba(255, 255, 255, 0.05)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 15 }}>
               <span style={{ fontWeight: 'bold' }}>Player: Marcus_Indie</span>
-              <span style={{ color: '#BF4E30', fontWeight: 'bold' }}>Rating: 87/100</span>
+              <span style={{ color: '#d4af37', fontWeight: 'bold' }}>Rating: 87/100</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #415a79' }}>
               <span>Hours Played:</span>
               <span>156 hours</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #415a79' }}>
               <span>Achievements:</span>
               <span>71 / 115 (61.7%)</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #415a79' }}>
               <span>Profile Match:</span>
               <span>0.78</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #415a79' }}>
               <span>Engagement:</span>
               <span>0.74</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #415a79' }}>
               <span>Achievement Penalty:</span>
               <span>0.96</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '15px 0', marginTop: 10, borderTop: '2px solid #BF4E30', fontWeight: 'bold', color: '#BF4E30' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '15px 0', marginTop: 10, borderTop: '2px solid #415a79', fontWeight: 'bold', color: '#c7d5e0' }}>
               <span>Weighted Score Contribution:</span>
               <span>48.62 points</span>
             </div>
           </div>
 
-          <div style={{ marginBottom: 30, padding: 20, border: '1px solid #000', background: '#fff' }}>
+          <div style={{ marginBottom: 30, padding: 20, border: '1px solid #415a79', background: 'rgba(255, 255, 255, 0.05)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 15 }}>
               <span style={{ fontWeight: 'bold' }}>Player: Sam_Green</span>
-              <span style={{ color: '#BF4E30', fontWeight: 'bold' }}>Rating: 72/100</span>
+              <span style={{ color: '#d4af37', fontWeight: 'bold' }}>Rating: 72/100</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #415a79' }}>
               <span>Hours Played:</span>
               <span>22 hours</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #415a79' }}>
               <span>Achievements:</span>
               <span>12 / 115 (10.4%)</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #415a79' }}>
               <span>Profile Match:</span>
               <span>0.51</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #415a79' }}>
               <span>Engagement:</span>
               <span>0.38</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #415a79' }}>
               <span>Achievement Penalty:</span>
               <span>0.76</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '15px 0', marginTop: 10, borderTop: '2px solid #BF4E30', fontWeight: 'bold', color: '#BF4E30' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '15px 0', marginTop: 10, borderTop: '2px solid #415a79', fontWeight: 'bold', color: '#c7d5e0' }}>
               <span>Weighted Score Contribution:</span>
               <span>10.69 points</span>
             </div>
           </div>
 
-          <p style={{ marginTop: 30, fontSize: '0.9rem', color: '#666' }}>
+          <p style={{ marginTop: 30, fontSize: '0.9rem', color: '#8f98a0' }}>
             <strong>Note:</strong> Higher hours and achievement completion result in greater weight for each rating, ensuring experienced players have more impact on your game's score.
           </p>
         </div>
       ) : !steamId && tab === 'login' ? (
         <div className="container" style={{ maxWidth: '500px', margin: '40px auto', padding: '40px' }}>
-          <div style={{ display: 'flex', gap: 0, borderBottom: '2px solid #ddd', marginBottom: 30 }}>
+          <div style={{ display: 'flex', gap: 0, borderBottom: '2px solid #415a79', marginBottom: 30 }}>
             <button
               onClick={() => setAuthMode('register')}
               style={{
@@ -531,7 +531,7 @@ export default function App() {
 
           {authMode === 'register' ? (
             <>
-              <p style={{ textAlign: 'center', color: '#666', marginBottom: 30, lineHeight: 1.6 }}>
+              <p style={{ textAlign: 'center', color: '#8f98a0', marginBottom: 30, lineHeight: 1.6 }}>
                 Get started with a free IndieLens account to rate, review, and discover top indie games!
               </p>
               <div style={{ marginBottom: 20 }}>
@@ -544,7 +544,7 @@ export default function App() {
                   style={{
                     width: '100%',
                     padding: '10px 12px',
-                    border: '1px solid #ddd',
+                    border: '1px solid #415a79',
                     borderRadius: '4px',
                     fontSize: 14,
                     boxSizing: 'border-box'
@@ -562,7 +562,7 @@ export default function App() {
                   style={{
                     width: '100%',
                     padding: '10px 12px',
-                    border: '1px solid #ddd',
+                    border: '1px solid #415a79',
                     borderRadius: '4px',
                     fontSize: 14,
                     boxSizing: 'border-box'
@@ -582,7 +582,7 @@ export default function App() {
                   style={{
                     width: '100%',
                     padding: '10px 12px',
-                    border: '1px solid #ddd',
+                    border: '1px solid #415a79',
                     borderRadius: '4px',
                     fontSize: 14,
                     boxSizing: 'border-box'
@@ -602,7 +602,7 @@ export default function App() {
                   style={{
                     width: '100%',
                     padding: '10px 12px',
-                    border: '1px solid #ddd',
+                    border: '1px solid #415a79',
                     borderRadius: '4px',
                     fontSize: 14,
                     boxSizing: 'border-box'
@@ -644,7 +644,7 @@ export default function App() {
                   style={{
                     width: '100%',
                     padding: '10px 12px',
-                    border: '1px solid #ddd',
+                    border: '1px solid #415a79',
                     borderRadius: '4px',
                     fontSize: 14,
                     boxSizing: 'border-box'
@@ -652,7 +652,7 @@ export default function App() {
                 />
               </div>
               <div style={{ marginBottom: 30 }}>
-                <label style={{ display: 'block', marginBottom: 8, color: '#1a1a1a', fontWeight: 500 }}>Password</label>
+                <label style={{ display: 'block', marginBottom: 8, color: '#c7d5e0', fontWeight: 500 }}>Password</label>
                 <input
                   type="password"
                   value={loginPassword}
@@ -661,7 +661,7 @@ export default function App() {
                   style={{
                     width: '100%',
                     padding: '10px 12px',
-                    border: '1px solid #ddd',
+                    border: '1px solid #415a79',
                     borderRadius: '4px',
                     fontSize: 14,
                     boxSizing: 'border-box'
@@ -885,8 +885,8 @@ function Header({ onLogin, onRegister, steamId, username, onLogout, genres, sele
                   position: 'absolute',
                   top: '100%',
                   right: 0,
-                  background: '#fff',
-                  border: '1px solid #ddd',
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  border: '1px solid #415a79',
                   borderRadius: '4px',
                   minWidth: '200px',
                   zIndex: 1000,
@@ -895,7 +895,7 @@ function Header({ onLogin, onRegister, steamId, username, onLogout, genres, sele
                 }}
               >
                 <div style={{ padding: '12px 16px', borderBottom: '1px solid #eee' }}>
-                  <div style={{ fontWeight: 700, color: '#000', fontSize: 14 }}>
+                  <div style={{ fontWeight: 700, color: '#c7d5e0', fontSize: 14 }}>
                     Hi {username || 'User'}!
                   </div>
                 </div>
@@ -909,7 +909,7 @@ function Header({ onLogin, onRegister, steamId, username, onLogout, genres, sele
                   style={{
                     display: 'block',
                     padding: '10px 16px',
-                    color: '#000',
+                    color: '#c7d5e0',
                     textDecoration: 'none',
                     fontSize: 14,
                     transition: 'background 0.2s'
@@ -929,7 +929,7 @@ function Header({ onLogin, onRegister, steamId, username, onLogout, genres, sele
                   style={{
                     display: 'block',
                     padding: '10px 16px',
-                    color: '#000',
+                    color: '#c7d5e0',
                     textDecoration: 'none',
                     fontSize: 14,
                     transition: 'background 0.2s'
@@ -949,7 +949,7 @@ function Header({ onLogin, onRegister, steamId, username, onLogout, genres, sele
                   style={{
                     display: 'block',
                     padding: '10px 16px',
-                    color: '#000',
+                    color: '#c7d5e0',
                     textDecoration: 'none',
                     fontSize: 14,
                     transition: 'background 0.2s'
@@ -970,7 +970,7 @@ function Header({ onLogin, onRegister, steamId, username, onLogout, genres, sele
                     style={{
                       display: 'block',
                       padding: '10px 16px',
-                      color: '#000',
+                      color: '#c7d5e0',
                       textDecoration: 'none',
                       fontSize: 14,
                       transition: 'background 0.2s'
@@ -1144,7 +1144,7 @@ function LatestReviews({ apiBase, onSelectGame }) {
           </div>
         </div>
         <div className="tag-segment-content">
-          <p style={{ padding: '40px 0', textAlign: 'center', color: '#666' }}>Loading reviews...</p>
+          <p style={{ padding: '40px 0', textAlign: 'center', color: '#8f98a0' }}>Loading reviews...</p>
         </div>
       </div>
     );
@@ -1158,7 +1158,7 @@ function LatestReviews({ apiBase, onSelectGame }) {
           </div>
         </div>
         <div className="tag-segment-content">
-          <p style={{ padding: '40px 0', textAlign: 'center', color: '#666' }}>No reviews yet</p>
+          <p style={{ padding: '40px 0', textAlign: 'center', color: '#8f98a0' }}>No reviews yet</p>
         </div>
       </div>
     );
@@ -1181,12 +1181,12 @@ function LatestReviews({ apiBase, onSelectGame }) {
             <div key={`${review.appid}-${review.reviewDate}-${idx}`} className="tag-segment-card" onClick={() => onSelectGame({ appid: review.appid, name: review.gameName })} style={{ minHeight: 'auto' }}>
               <img src={review.imageUrl} alt={review.gameName || 'Game'} onError={(e)=>{e.currentTarget.style.display='none';}} style={{ height: '180px' }} />
               <div className="tag-segment-card-title" style={{ marginBottom: '6px' }}>{review.gameName || 'Unknown title'}</div>
-              <div style={{ fontSize: '12px', color: '#666' }}>
+              <div style={{ fontSize: '12px', color: '#8f98a0' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px', flexWrap: 'wrap' }}>
                   <span className="badge" style={{ fontSize: '11px', padding: '3px 8px' }}>{review.rating}</span>
                   <span style={{ fontSize: '10px', color: '#8f98a0' }}>Weight: {(review.weight * 100).toFixed(1)}%</span>
                 </div>
-                <div style={{ fontSize: '11px', color: '#666', marginBottom: '4px', fontWeight: 500 }}>
+                <div style={{ fontSize: '11px', color: '#8f98a0', marginBottom: '4px', fontWeight: 500 }}>
                   {review.reviewerName}
                 </div>
                 {review.reviewDate && (
@@ -1434,16 +1434,16 @@ function Browse({ apiBase, data, setData, onSelectGame, selectedGenre, searchQue
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, padding: '0 20px' }}>
             <h2 style={{ margin: 0, fontSize: '24px', fontWeight: 700, color: '#c7d5e0' }}>Search: "{searchQuery}"</h2>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <label style={{ fontSize: 14, color: '#666', fontWeight: 500 }}>Sort By:</label>
+              <label style={{ fontSize: 14, color: '#8f98a0', fontWeight: 500 }}>Sort By:</label>
               <select 
                 value={sortBy} 
                 onChange={(e) => setSortBy(e.target.value)}
                 style={{ 
                   padding: '6px 12px', 
-                  border: '1px solid #ddd', 
+                  border: '1px solid #415a79', 
                   borderRadius: '4px', 
                   fontSize: 14,
-                  background: '#fff',
+                  background: 'rgba(255, 255, 255, 0.05)',
                   cursor: 'pointer'
                 }}
               >
@@ -1455,7 +1455,7 @@ function Browse({ apiBase, data, setData, onSelectGame, selectedGenre, searchQue
         </div>
         <div className="container">
           {loading ? <p style={{ textAlign: 'center', padding: '40px' }}>Loading…</p> : data.length === 0 ? (
-            <p style={{ textAlign: 'center', padding: '40px', color: '#666' }}>No games found matching "{searchQuery}"{selectedGenre ? ` in genre "${selectedGenre}"` : ''}.</p>
+            <p style={{ textAlign: 'center', padding: '40px', color: '#8f98a0' }}>No games found matching "{searchQuery}"{selectedGenre ? ` in genre "${selectedGenre}"` : ''}.</p>
           ) : (
             <div className="grid">
               {data.map(item => (
@@ -1559,9 +1559,9 @@ function Browse({ apiBase, data, setData, onSelectGame, selectedGenre, searchQue
           </div>
         )}
         {loading ? (
-          <p style={{ textAlign: 'center', padding: '40px', color: '#666' }}>Loading games...</p>
+          <p style={{ textAlign: 'center', padding: '40px', color: '#8f98a0' }}>Loading games...</p>
         ) : data.length === 0 ? (
-          <p style={{ textAlign: 'center', padding: '40px', color: '#666' }}>No games found in genre "{selectedGenre}".</p>
+          <p style={{ textAlign: 'center', padding: '40px', color: '#8f98a0' }}>No games found in genre "{selectedGenre}".</p>
         ) : (
           <div className="container">
             <div className="grid">
@@ -1597,18 +1597,18 @@ function Browse({ apiBase, data, setData, onSelectGame, selectedGenre, searchQue
             />
             <div style={{ marginTop: 20, marginBottom: 20 }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
-                <span style={{ fontSize: 14, color: '#1a1a1a', fontWeight: 600 }}>All Games</span>
+                <span style={{ fontSize: 14, color: '#c7d5e0', fontWeight: 600 }}>All Games</span>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <label style={{ fontSize: 14, color: '#666', fontWeight: 500 }}>Sort By:</label>
+                  <label style={{ fontSize: 14, color: '#8f98a0', fontWeight: 500 }}>Sort By:</label>
                   <select 
                     value={sortBy} 
                     onChange={(e) => setSortBy(e.target.value)}
                     style={{ 
                       padding: '6px 12px', 
-                      border: '1px solid #ddd', 
+                      border: '1px solid #415a79', 
                       borderRadius: '4px', 
                       fontSize: 14,
-                      background: '#fff',
+                      background: 'rgba(255, 255, 255, 0.05)',
                       cursor: 'pointer'
                     }}
                   >
@@ -1617,7 +1617,7 @@ function Browse({ apiBase, data, setData, onSelectGame, selectedGenre, searchQue
                   </select>
                 </div>
               </div>
-              <div style={{ width: '100%', height: '1px', backgroundColor: '#1a1a1a', marginTop: 12 }}></div>
+              <div style={{ width: '100%', height: '1px', backgroundColor: '#415a79', marginTop: 12 }}></div>
             </div>
           </div>
           <div className="tag-segments-wrapper" style={{ padding: '20px 0' }}>
@@ -1628,20 +1628,20 @@ function Browse({ apiBase, data, setData, onSelectGame, selectedGenre, searchQue
       {(!selectedGenre && !searchQuery) ? null : (
         <div className="container">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, padding: '0 20px' }}>
-            <h2 style={{ margin: 0, fontSize: '24px', fontWeight: 700, color: '#1a1a1a' }}>
+            <h2 style={{ margin: 0, fontSize: '24px', fontWeight: 700, color: '#c7d5e0' }}>
               {selectedGenre ? selectedGenre : searchQuery ? `Search: "${searchQuery}"` : 'All Games'}
             </h2>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <label style={{ fontSize: 14, color: '#666', fontWeight: 500 }}>Sort By:</label>
+              <label style={{ fontSize: 14, color: '#8f98a0', fontWeight: 500 }}>Sort By:</label>
               <select 
                 value={sortBy} 
                 onChange={(e) => setSortBy(e.target.value)}
                 style={{ 
                   padding: '6px 12px', 
-                  border: '1px solid #ddd', 
+                  border: '1px solid #415a79', 
                   borderRadius: '4px', 
                   fontSize: 14,
-                  background: '#fff',
+                  background: 'rgba(255, 255, 255, 0.05)',
                   cursor: 'pointer'
                 }}
               >
@@ -1654,9 +1654,9 @@ function Browse({ apiBase, data, setData, onSelectGame, selectedGenre, searchQue
       )}
       <div className="container">
         {loading ? (
-          <p style={{ textAlign: 'center', padding: '40px', color: '#666' }}>Loading…</p>
+          <p style={{ textAlign: 'center', padding: '40px', color: '#8f98a0' }}>Loading…</p>
         ) : data.length === 0 ? (
-          <p style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+          <p style={{ textAlign: 'center', padding: '40px', color: '#8f98a0' }}>
             No games found{selectedGenre ? ` in genre "${selectedGenre}"` : searchQuery ? ` matching "${searchQuery}"` : ''}.
           </p>
         ) : (
@@ -1809,11 +1809,11 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
         
         <div className="detail-header-section">
           <div className="detail-header-left">
-            <h1 style={{ marginTop: 0, marginBottom: 16, fontSize: '4em', fontWeight: 700, color: '#BF4E30', lineHeight: 1.1 }}>
+            <h1 style={{ marginTop: 0, marginBottom: 16, fontSize: '4em', fontWeight: 700, color: '#c7d5e0', lineHeight: 1.1 }}>
               {d.name || game.name || 'Unknown Game'}
             </h1>
             {d.developer && (
-              <p style={{ fontSize: 18, color: '#BF4E30', margin: '12px 0' }}>
+              <p style={{ fontSize: 18, color: '#c7d5e0', margin: '12px 0' }}>
                 Developer: <strong>{d.developer}</strong>
                 {d.publisher && ` • Publisher: ${d.publisher}`}
               </p>
@@ -1823,7 +1823,7 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
           <div className="detail-header-right">
               <div className="detail-score-box">
               <div className="detail-score-label">IndieLens Score</div>
-              <div className="detail-score-number" style={{ color: '#BF4E30' }}>
+              <div className="detail-score-number" style={{ color: '#d4af37' }}>
                 {score ?? '—'}
               </div>
             </div>
@@ -1855,7 +1855,7 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                       ${d.price.final?.toFixed(2) ?? 'N/A'}
                     </div>
                     {d.price.currency && d.price.currency !== 'USD' && (
-                      <div style={{ fontSize: 12, color: '#BF4E30', marginTop: 4 }}>{d.price.currency}</div>
+                      <div style={{ fontSize: 12, color: '#c7d5e0', marginTop: 4 }}>{d.price.currency}</div>
                     )}
                   </>
                 )}
@@ -1867,7 +1867,7 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
         <div className="recent-scores-section">
           <div className="recent-scores-title">Community Score</div>
           <div className="recent-score-item">
-            <div className="recent-score-value" style={{ color: '#BF4E30' }}>{score ?? '—'}</div>
+            <div className="recent-score-value" style={{ color: '#d4af37' }}>{score ?? '—'}</div>
             <div>
               <div className="recent-score-user">IndieLens Score</div>
               <div className="recent-score-date">Weighted average</div>
@@ -1883,13 +1883,13 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
             </div>
           )}
           {!score && (
-            <div style={{ padding: '12px 0', color: '#BF4E30', fontStyle: 'italic' }}>
+            <div style={{ padding: '12px 0', color: '#c7d5e0', fontStyle: 'italic' }}>
               No scores yet. Be the first to rate this game!
             </div>
           )}
           {score && scoreBreakdown && scoreBreakdown.ratingCount > 0 && scoreBreakdown.currentUser && (
-            <div style={{ marginTop: 24, padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px', border: '1px solid #e0e0e0' }}>
-              <h3 style={{ marginTop: 0, marginBottom: 16, fontSize: '18px', fontWeight: 600, color: '#1a1a1a' }}>
+            <div style={{ marginTop: 24, padding: '20px', backgroundColor: 'rgba(255, 255, 255, 0.05)', borderRadius: '8px', border: '1px solid #415a79' }}>
+              <h3 style={{ marginTop: 0, marginBottom: 16, fontSize: '18px', fontWeight: 600, color: '#c7d5e0' }}>
                 Your Contribution to Score
               </h3>
               <div style={{ display: 'flex', alignItems: 'center', gap: 24, flexWrap: 'wrap' }}>
@@ -1901,11 +1901,11 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                   <div style={{ marginBottom: 12 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
                       <div style={{ width: 12, height: 12, backgroundColor: '#BF4E30', borderRadius: 2 }}></div>
-                      <span style={{ fontSize: '14px', fontWeight: 500, color: '#1a1a1a' }}>
+                      <span style={{ fontSize: '14px', fontWeight: 500, color: '#c7d5e0' }}>
                         Your Rating
                       </span>
                     </div>
-                    <div style={{ fontSize: '13px', color: '#666', marginLeft: 20 }}>
+                    <div style={{ fontSize: '13px', color: '#8f98a0', marginLeft: 20 }}>
                       {scoreBreakdown.currentUser.contribution.toFixed(1)}% of total score
                       <br />
                       <span style={{ fontSize: '12px', color: '#999' }}>
@@ -1916,11 +1916,11 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
                       <div style={{ width: 12, height: 12, backgroundColor: '#cccccc', borderRadius: 2 }}></div>
-                      <span style={{ fontSize: '14px', fontWeight: 500, color: '#1a1a1a' }}>
+                      <span style={{ fontSize: '14px', fontWeight: 500, color: '#c7d5e0' }}>
                         Other Users
                       </span>
                     </div>
-                    <div style={{ fontSize: '13px', color: '#666', marginLeft: 20 }}>
+                    <div style={{ fontSize: '13px', color: '#8f98a0', marginLeft: 20 }}>
                       {(100 - scoreBreakdown.currentUser.contribution).toFixed(1)}% of total score
                       <br />
                       <span style={{ fontSize: '12px', color: '#999' }}>
@@ -1933,8 +1933,8 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
             </div>
           )}
           {score && scoreBreakdown && scoreBreakdown.ratingCount > 0 && !scoreBreakdown.currentUser && (
-            <div style={{ marginTop: 24, padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px', border: '1px solid #e0e0e0' }}>
-              <p style={{ margin: 0, color: '#666', fontSize: '14px' }}>
+            <div style={{ marginTop: 24, padding: '20px', backgroundColor: 'rgba(255, 255, 255, 0.05)', borderRadius: '8px', border: '1px solid #415a79' }}>
+              <p style={{ margin: 0, color: '#8f98a0', fontSize: '14px' }}>
                 This game has {scoreBreakdown.ratingCount} rating{scoreBreakdown.ratingCount !== 1 ? 's' : ''} total. 
                 {steamId ? ' Submit a rating below to see your contribution!' : ' Log in to submit a rating and see your contribution.'}
               </p>
@@ -1960,7 +1960,7 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                         const summaryDiv = document.getElementById('summary-about');
                         if (summaryDiv) {
                           const summaryText = result.summary || result.text || result;
-                          summaryDiv.innerHTML = `<p style="color: #BF4E30; font-style: italic; margin-top: 12px;"><strong>Summary:</strong> ${summaryText}</p>`;
+                          summaryDiv.innerHTML = `<p style="color: #c7d5e0; font-style: italic; margin-top: 12px;"><strong>Summary:</strong> ${summaryText}</p>`;
                         }
                       }
                     } catch (e) {
@@ -1970,12 +1970,12 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                   }}
                   style={{
                     padding: '6px 12px',
-                    background: '#f5f5f5',
-                    border: '1px solid #000',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    border: '1px solid #415a79',
                     borderRadius: '4px',
                     fontSize: 12,
                     cursor: 'pointer',
-                    color: '#1a1a1a'
+                    color: '#c7d5e0'
                   }}
                 >
                   📝 Summarize (Chrome AI)
@@ -2009,7 +2009,7 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                         const summaryDiv = document.getElementById('summary-description');
                         if (summaryDiv) {
                           const summaryText = result.summary || result.text || result;
-                          summaryDiv.innerHTML = `<p style="color: #BF4E30; font-style: italic; margin-top: 12px;"><strong>Summary:</strong> ${summaryText}</p>`;
+                          summaryDiv.innerHTML = `<p style="color: #c7d5e0; font-style: italic; margin-top: 12px;"><strong>Summary:</strong> ${summaryText}</p>`;
                         }
                       }
                     } catch (e) {
@@ -2020,12 +2020,12 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                   }}
                   style={{
                     padding: '6px 12px',
-                    background: '#f5f5f5',
-                    border: '1px solid #000',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    border: '1px solid #415a79',
                     borderRadius: '4px',
                     fontSize: 12,
                     cursor: 'pointer',
-                    color: '#1a1a1a'
+                    color: '#c7d5e0'
                   }}
                 >
                   📝 Summarize (Chrome AI)
@@ -2074,7 +2074,7 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                         const explanationDiv = document.getElementById('ai-explanation');
                         if (explanationDiv) {
                           const responseText = result.text || result.response || String(result);
-                          explanationDiv.innerHTML = `<div style="padding: 16px; background: #f9f9f9; border: 1px solid #000; border-radius: 4px; margin-top: 12px;"><p style="color: #BF4E30; white-space: pre-wrap; line-height: 1.6;">${responseText}</p></div>`;
+                          explanationDiv.innerHTML = `<div style="padding: 16px; background: rgba(255, 255, 255, 0.05); border: 1px solid #415a79; border-radius: 4px; margin-top: 12px;"><p style="color: #c7d5e0; white-space: pre-wrap; line-height: 1.6;">${responseText}</p></div>`;
                         }
                       }
                     } catch (e) {
@@ -2086,23 +2086,23 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                   }}
                   style={{
                     padding: '6px 12px',
-                    background: '#f5f5f5',
-                    border: '1px solid #000',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    border: '1px solid #415a79',
                     borderRadius: '4px',
                     fontSize: 12,
                     cursor: 'pointer',
-                    color: '#1a1a1a'
+                    color: '#c7d5e0'
                   }}
                 >
                   🤖 Explain Match (Chrome AI)
                 </button>
               )}
             </div>
-            <p style={{ color: '#666', fontSize: 14, marginBottom: 0 }}>
+            <p style={{ color: '#8f98a0', fontSize: 14, marginBottom: 0 }}>
               Get an AI-powered explanation of why this game matches your gaming profile, with mathematical details and user data.
             </p>
             {!('ai' in window) || !('prompt' in window.ai) ? (
-              <div style={{ marginTop: 12, padding: 12, background: '#fff3cd', border: '1px solid #ffc107', borderRadius: '4px', fontSize: 12, color: '#856404' }}>
+              <div style={{ marginTop: 12, padding: 12, background: 'rgba(255, 193, 7, 0.2)', border: '1px solid #ffc107', borderRadius: '4px', fontSize: 12, color: '#ffc107' }}>
                 <strong>Note:</strong> Prompt API not available. Enable it in <code>chrome://flags</code> by searching for "Prompt API" or "on-device prompt".
               </div>
             ) : null}
@@ -2113,7 +2113,7 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
         {steamId && (
           <div className="description-box" style={{ marginBottom: 40 }}>
             <h3>Submit Your Rating</h3>
-            <p style={{ color: '#666', marginBottom: 20, fontSize: 14 }}>
+            <p style={{ color: '#8f98a0', marginBottom: 20, fontSize: 14 }}>
               Rate this game from 0-100. Your rating will be weighted based on your gaming profile and engagement.
             </p>
             <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 16 }}>
@@ -2160,7 +2160,7 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                 disabled={submitting}
                 style={{
                   padding: '10px 12px',
-                  border: '1px solid #000',
+                  border: '1px solid #415a79',
                   borderRadius: '4px',
                   fontSize: 16,
                   width: '120px',
@@ -2213,7 +2213,7 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                   padding: '10px 24px',
                   background: '#BF4E30',
                   color: '#ffffff',
-                  border: '1px solid #000',
+                  border: '1px solid #415a79',
                   borderRadius: '4px',
                   fontSize: 16,
                   fontWeight: 600,
@@ -2227,7 +2227,7 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
             
             {/* Review Text Input */}
             <div style={{ marginBottom: 20 }}>
-              <label style={{ display: 'block', marginBottom: 8, color: '#BF4E30', fontWeight: 600, fontSize: 14 }}>
+              <label style={{ display: 'block', marginBottom: 8, color: '#c7d5e0', fontWeight: 600, fontSize: 14 }}>
                 Write a Review (Optional)
               </label>
               <textarea
@@ -2239,14 +2239,14 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                 style={{
                   width: '100%',
                   padding: '12px',
-                  border: '1px solid #000',
+                  border: '1px solid #415a79',
                   borderRadius: '4px',
                   fontSize: 14,
                   fontFamily: 'inherit',
                   resize: 'vertical',
                   boxSizing: 'border-box',
-                  backgroundColor: '#fff',
-                  color: '#1a1a1a'
+                  backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                  color: '#c7d5e0'
                 }}
               />
               {reviewText && (
@@ -2271,12 +2271,12 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                   style={{
                     marginTop: 8,
                     padding: '6px 12px',
-                    background: '#f5f5f5',
-                    border: '1px solid #000',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    border: '1px solid #415a79',
                     borderRadius: '4px',
                     fontSize: 12,
                     cursor: 'pointer',
-                    color: '#1a1a1a'
+                    color: '#c7d5e0'
                   }}
                 >
                   ✏️ Check Grammar (Chrome AI)
@@ -2290,47 +2290,47 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
             
             {/* Preview Weighting Breakdown */}
             {loadingPreview && (
-              <p style={{ color: '#666', marginTop: 12, fontSize: 14 }}>Calculating your weighting...</p>
+              <p style={{ color: '#8f98a0', marginTop: 12, fontSize: 14 }}>Calculating your weighting...</p>
             )}
             
             {previewBreakdown && previewBreakdown.breakdown && !ratingResult && (
               <div style={{ 
                 marginTop: 24, 
                 padding: 20, 
-                background: '#fff', 
+                background: 'rgba(255, 255, 255, 0.05)', 
                 borderRadius: '8px',
-                border: '1px solid #000'
+                border: '1px solid #415a79'
               }}>
-                <h4 style={{ marginTop: 0, marginBottom: 16, color: '#BF4E30', fontSize: 18 }}>
+                <h4 style={{ marginTop: 0, marginBottom: 16, color: '#c7d5e0', fontSize: 18 }}>
                   Your Weighting Preview
                 </h4>
-                <p style={{ color: '#666', marginBottom: 16, fontSize: 12, fontStyle: 'italic' }}>
+                <p style={{ color: '#8f98a0', marginBottom: 16, fontSize: 12, fontStyle: 'italic' }}>
                   This shows how your rating would be weighted. Submit to save your rating.
                 </p>
                 <div style={{ display: 'grid', gap: 16 }}>
                   {previewBreakdown.breakdown.profileMatch !== undefined && (
-                    <div style={{ padding: 12, background: '#fff', borderRadius: '4px', border: '1px solid #000' }}>
+                    <div style={{ padding: 12, background: 'rgba(255, 255, 255, 0.05)', borderRadius: '4px', border: '1px solid #415a79' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                        <span style={{ fontWeight: 600, color: '#BF4E30' }}>Profile Match</span>
-                        <span style={{ fontSize: 18, fontWeight: 700, color: '#BF4E30' }}>
+                        <span style={{ fontWeight: 600, color: '#c7d5e0' }}>Profile Match</span>
+                        <span style={{ fontSize: 18, fontWeight: 700, color: '#c7d5e0' }}>
                           {(previewBreakdown.breakdown.profileMatch * 100).toFixed(1)}%
                         </span>
                       </div>
-                      <div style={{ fontSize: 12, color: '#BF4E30' }}>
+                      <div style={{ fontSize: 12, color: '#c7d5e0' }}>
                         How well this game matches your gaming history based on genres, tags, and developers
                       </div>
                     </div>
                   )}
                   
                   {previewBreakdown.breakdown.engagement !== undefined && (
-                    <div style={{ padding: 12, background: '#fff', borderRadius: '4px', border: '1px solid #000' }}>
+                    <div style={{ padding: 12, background: 'rgba(255, 255, 255, 0.05)', borderRadius: '4px', border: '1px solid #415a79' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                        <span style={{ fontWeight: 600, color: '#BF4E30' }}>Engagement</span>
-                        <span style={{ fontSize: 18, fontWeight: 700, color: '#BF4E30' }}>
+                        <span style={{ fontWeight: 600, color: '#c7d5e0' }}>Engagement</span>
+                        <span style={{ fontSize: 18, fontWeight: 700, color: '#c7d5e0' }}>
                           {(previewBreakdown.breakdown.engagement * 100).toFixed(1)}%
                         </span>
                       </div>
-                      <div style={{ fontSize: 12, color: '#BF4E30' }}>
+                      <div style={{ fontSize: 12, color: '#c7d5e0' }}>
                         Your engagement level with this game, considering playtime and achievement completion
                       </div>
                     </div>
@@ -2341,14 +2341,14 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                     // Only show penalty if it's less than 100% (actual penalty applied)
                     if (penalty < 1.0) {
                       return (
-                        <div style={{ padding: 12, background: '#fff', borderRadius: '4px', border: '1px solid #000' }}>
+                        <div style={{ padding: 12, background: 'rgba(255, 255, 255, 0.05)', borderRadius: '4px', border: '1px solid #415a79' }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                            <span style={{ fontWeight: 600, color: '#BF4E30' }}>Achievement Penalty</span>
-                            <span style={{ fontSize: 18, fontWeight: 700, color: '#BF4E30' }}>
+                            <span style={{ fontWeight: 600, color: '#c7d5e0' }}>Achievement Penalty</span>
+                            <span style={{ fontSize: 18, fontWeight: 700, color: '#c7d5e0' }}>
                               {(penalty * 100).toFixed(1)}%
                             </span>
                           </div>
-                          <div style={{ fontSize: 12, color: '#BF4E30' }}>
+                          <div style={{ fontSize: 12, color: '#c7d5e0' }}>
                             Adjusts for games with unusually low achievements-per-hour compared to your similar games
                           </div>
                         </div>
@@ -2357,26 +2357,26 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                     return null;
                   })()}
                   
-                  <div style={{ padding: 12, background: '#fff', borderRadius: '4px', border: '2px solid #000' }}>
+                  <div style={{ padding: 12, background: 'rgba(255, 255, 255, 0.05)', borderRadius: '4px', border: '2px solid #415a79' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                      <span style={{ fontWeight: 700, color: '#BF4E30', fontSize: 16 }}>Final Weight</span>
-                      <span style={{ fontSize: 24, fontWeight: 700, color: '#BF4E30' }}>
+                      <span style={{ fontWeight: 700, color: '#c7d5e0', fontSize: 16 }}>Final Weight</span>
+                      <span style={{ fontSize: 24, fontWeight: 700, color: '#c7d5e0' }}>
                         {previewBreakdown.weight?.toFixed(2) ?? '—'}
                       </span>
                     </div>
-                    <div style={{ fontSize: 12, color: '#BF4E30' }}>
+                    <div style={{ fontSize: 12, color: '#c7d5e0' }}>
                       Your rating will be weighted by this value in the aggregate score
                     </div>
                   </div>
                   
-                  <div style={{ padding: 12, background: '#fff', borderRadius: '4px', border: '2px solid #000' }}>
+                  <div style={{ padding: 12, background: 'rgba(255, 255, 255, 0.05)', borderRadius: '4px', border: '2px solid #415a79' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                      <span style={{ fontWeight: 700, color: '#BF4E30', fontSize: 16 }}>Weighted Score Contribution</span>
-                      <span style={{ fontSize: 24, fontWeight: 700, color: '#BF4E30' }}>
+                      <span style={{ fontWeight: 700, color: '#c7d5e0', fontSize: 16 }}>Weighted Score Contribution</span>
+                      <span style={{ fontSize: 24, fontWeight: 700, color: '#c7d5e0' }}>
                         {previewBreakdown.weightedScore ?? ((previewBreakdown.raw ?? userRating) * (previewBreakdown.weight ?? 0)).toFixed(1)}
                       </span>
                     </div>
-                    <div style={{ fontSize: 12, color: '#BF4E30' }}>
+                    <div style={{ fontSize: 12, color: '#c7d5e0' }}>
                       Your contribution to the game's aggregate IndieLens score
                     </div>
                   </div>
@@ -2389,49 +2389,49 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
               <div style={{ 
                 marginTop: 24, 
                 padding: 20, 
-                background: '#fff', 
+                background: 'rgba(255, 255, 255, 0.05)', 
                 borderRadius: '8px',
-                border: '1px solid #000'
+                border: '1px solid #415a79'
               }}>
-                <h4 style={{ marginTop: 0, marginBottom: 16, color: '#BF4E30', fontSize: 18 }}>
+                <h4 style={{ marginTop: 0, marginBottom: 16, color: '#c7d5e0', fontSize: 18 }}>
                   Your Weighting Breakdown
                 </h4>
                 <div style={{ display: 'grid', gap: 16 }}>
-                  <div style={{ padding: 12, background: '#fff', borderRadius: '4px', border: '1px solid #000' }}>
+                  <div style={{ padding: 12, background: 'rgba(255, 255, 255, 0.05)', borderRadius: '4px', border: '1px solid #415a79' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                      <span style={{ fontWeight: 600, color: '#BF4E30' }}>Raw Rating</span>
-                      <span style={{ fontSize: 18, fontWeight: 700, color: '#BF4E30' }}>
+                      <span style={{ fontWeight: 600, color: '#c7d5e0' }}>Raw Rating</span>
+                      <span style={{ fontSize: 18, fontWeight: 700, color: '#c7d5e0' }}>
                         {ratingResult.raw ?? userRating}
                       </span>
                     </div>
-                    <div style={{ fontSize: 12, color: '#BF4E30' }}>
+                    <div style={{ fontSize: 12, color: '#c7d5e0' }}>
                       Your original rating for this game
                     </div>
                   </div>
                   
                   {ratingResult.breakdown.profileMatch !== undefined && (
-                    <div style={{ padding: 12, background: '#fff', borderRadius: '4px', border: '1px solid #000' }}>
+                    <div style={{ padding: 12, background: 'rgba(255, 255, 255, 0.05)', borderRadius: '4px', border: '1px solid #415a79' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                        <span style={{ fontWeight: 600, color: '#BF4E30' }}>Profile Match</span>
-                        <span style={{ fontSize: 18, fontWeight: 700, color: '#BF4E30' }}>
+                        <span style={{ fontWeight: 600, color: '#c7d5e0' }}>Profile Match</span>
+                        <span style={{ fontSize: 18, fontWeight: 700, color: '#c7d5e0' }}>
                           {(ratingResult.breakdown.profileMatch * 100).toFixed(1)}%
                         </span>
                       </div>
-                      <div style={{ fontSize: 12, color: '#BF4E30' }}>
+                      <div style={{ fontSize: 12, color: '#c7d5e0' }}>
                         How well this game matches your gaming history based on genres, tags, and developers
                       </div>
                     </div>
                   )}
                   
                   {ratingResult.breakdown.engagement !== undefined && (
-                    <div style={{ padding: 12, background: '#fff', borderRadius: '4px', border: '1px solid #000' }}>
+                    <div style={{ padding: 12, background: 'rgba(255, 255, 255, 0.05)', borderRadius: '4px', border: '1px solid #415a79' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                        <span style={{ fontWeight: 600, color: '#BF4E30' }}>Engagement</span>
-                        <span style={{ fontSize: 18, fontWeight: 700, color: '#BF4E30' }}>
+                        <span style={{ fontWeight: 600, color: '#c7d5e0' }}>Engagement</span>
+                        <span style={{ fontSize: 18, fontWeight: 700, color: '#c7d5e0' }}>
                           {(ratingResult.breakdown.engagement * 100).toFixed(1)}%
                         </span>
                       </div>
-                      <div style={{ fontSize: 12, color: '#BF4E30' }}>
+                      <div style={{ fontSize: 12, color: '#c7d5e0' }}>
                         Your engagement level with this game, considering playtime and achievement completion
                       </div>
                     </div>
@@ -2442,14 +2442,14 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                     // Only show penalty if it's less than 100% (actual penalty applied)
                     if (penalty < 1.0) {
                       return (
-                        <div style={{ padding: 12, background: '#fff', borderRadius: '4px', border: '1px solid #000' }}>
+                        <div style={{ padding: 12, background: 'rgba(255, 255, 255, 0.05)', borderRadius: '4px', border: '1px solid #415a79' }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                            <span style={{ fontWeight: 600, color: '#BF4E30' }}>Achievement Penalty</span>
-                            <span style={{ fontSize: 18, fontWeight: 700, color: '#BF4E30' }}>
+                            <span style={{ fontWeight: 600, color: '#c7d5e0' }}>Achievement Penalty</span>
+                            <span style={{ fontSize: 18, fontWeight: 700, color: '#c7d5e0' }}>
                               {(penalty * 100).toFixed(1)}%
                             </span>
                           </div>
-                          <div style={{ fontSize: 12, color: '#BF4E30' }}>
+                          <div style={{ fontSize: 12, color: '#c7d5e0' }}>
                             Adjusts for games with unusually low achievements-per-hour compared to your similar games
                           </div>
                         </div>
@@ -2458,26 +2458,26 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                     return null;
                   })()}
                   
-                  <div style={{ padding: 12, background: '#fff', borderRadius: '4px', border: '2px solid #000' }}>
+                  <div style={{ padding: 12, background: 'rgba(255, 255, 255, 0.05)', borderRadius: '4px', border: '2px solid #415a79' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                      <span style={{ fontWeight: 700, color: '#BF4E30', fontSize: 16 }}>Final Weight</span>
-                      <span style={{ fontSize: 24, fontWeight: 700, color: '#BF4E30' }}>
+                      <span style={{ fontWeight: 700, color: '#c7d5e0', fontSize: 16 }}>Final Weight</span>
+                      <span style={{ fontSize: 24, fontWeight: 700, color: '#c7d5e0' }}>
                         {ratingResult.breakdown.weight?.toFixed(2) ?? '—'}
                       </span>
                     </div>
-                    <div style={{ fontSize: 12, color: '#BF4E30' }}>
+                    <div style={{ fontSize: 12, color: '#c7d5e0' }}>
                       Your rating will be weighted by this value in the aggregate score
                     </div>
                   </div>
                   
-                  <div style={{ padding: 12, background: '#fff', borderRadius: '4px', border: '2px solid #000' }}>
+                  <div style={{ padding: 12, background: 'rgba(255, 255, 255, 0.05)', borderRadius: '4px', border: '2px solid #415a79' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                      <span style={{ fontWeight: 700, color: '#BF4E30', fontSize: 16 }}>Weighted Score Contribution</span>
-                      <span style={{ fontSize: 24, fontWeight: 700, color: '#BF4E30' }}>
+                      <span style={{ fontWeight: 700, color: '#c7d5e0', fontSize: 16 }}>Weighted Score Contribution</span>
+                      <span style={{ fontSize: 24, fontWeight: 700, color: '#c7d5e0' }}>
                         {ratingResult.weightedScore?.toFixed(1) ?? ((ratingResult.raw ?? userRating) * (ratingResult.breakdown.weight ?? 0)).toFixed(1)}
                       </span>
                     </div>
-                    <div style={{ fontSize: 12, color: '#BF4E30' }}>
+                    <div style={{ fontSize: 12, color: '#c7d5e0' }}>
                       Your contribution to the game's aggregate IndieLens score
                     </div>
                   </div>
@@ -2576,30 +2576,30 @@ function MyAccount({ apiBase, steamId, username }) {
     }
   };
   
-  if (loading) return <div style={{ textAlign: 'center', color: '#1a1a1a', padding: '40px' }}>Loading account details...</div>;
+  if (loading) return <div style={{ textAlign: 'center', color: '#c7d5e0', padding: '40px' }}>Loading account details...</div>;
   if (error) {
     if (error.includes('User not found')) {
       return (
         <div style={{ maxWidth: '800px', margin: '0 auto', padding: '40px 20px' }}>
-          <h1 style={{ color: '#1a1a1a', fontSize: '28px', fontWeight: 700, marginBottom: 0, paddingBottom: 12 }}>
+          <h1 style={{ color: '#c7d5e0', fontSize: '28px', fontWeight: 700, marginBottom: 0, paddingBottom: 12 }}>
             My Account
           </h1>
-          <div style={{ width: '100%', height: '1px', backgroundColor: '#1a1a1a', marginBottom: 20 }}></div>
+          <div style={{ width: '100%', height: '1px', backgroundColor: '#415a79', marginBottom: 20 }}></div>
           <div style={{ padding: '40px 20px', textAlign: 'center' }}>
-            <p style={{ color: '#1a1a1a', fontSize: '16px', fontWeight: 600, marginBottom: 12 }}>
+            <p style={{ color: '#c7d5e0', fontSize: '16px', fontWeight: 600, marginBottom: 12 }}>
               Account not found
             </p>
-            <p style={{ color: '#666', fontSize: '14px', marginBottom: 24 }}>
+            <p style={{ color: '#8f98a0', fontSize: '14px', marginBottom: 24 }}>
               You need to register an account to access this page. Please register using your email and Steam friend code.
             </p>
             <button
               onClick={() => window.location.reload()}
               style={{
                 padding: '10px 30px',
-                background: '#f5f5f5',
-                border: '1px solid #1a1a1a',
+                background: 'rgba(255, 255, 255, 0.1)',
+                border: '1px solid #415a79',
                 borderRadius: 0,
-                color: '#1a1a1a',
+                color: '#c7d5e0',
                 fontSize: '14px',
                 fontWeight: 600,
                 cursor: 'pointer'
@@ -2613,28 +2613,28 @@ function MyAccount({ apiBase, steamId, username }) {
     }
     return <div style={{ color: '#dc3545', padding: '40px' }}>Error: {error}</div>;
   }
-  if (!account) return <div style={{ color: '#1a1a1a', padding: '40px' }}>No account found</div>;
+  if (!account) return <div style={{ color: '#c7d5e0', padding: '40px' }}>No account found</div>;
   
   return (
     <div style={{ maxWidth: '800px', margin: '0 auto', padding: '40px 20px' }}>
-      <h1 style={{ color: '#1a1a1a', fontSize: '28px', fontWeight: 700, marginBottom: 0, paddingBottom: 12 }}>
+      <h1 style={{ color: '#c7d5e0', fontSize: '28px', fontWeight: 700, marginBottom: 0, paddingBottom: 12 }}>
         My Account
       </h1>
-      <div style={{ width: '100%', height: '1px', backgroundColor: '#1a1a1a', marginBottom: 20 }}></div>
+      <div style={{ width: '100%', height: '1px', backgroundColor: '#415a79', marginBottom: 20 }}></div>
       
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: 0, marginBottom: 30, borderBottom: '1px solid #ddd' }}>
+      <div style={{ display: 'flex', gap: 0, marginBottom: 30, borderBottom: '1px solid #415a79' }}>
         <button
           onClick={() => setActiveTab('username')}
           style={{
             padding: '12px 20px',
             border: 'none',
             background: 'transparent',
-            color: activeTab === 'username' ? '#1a1a1a' : '#999',
+            color: activeTab === 'username' ? '#c7d5e0' : '#8f98a0',
             fontSize: '14px',
             fontWeight: activeTab === 'username' ? 600 : 400,
             cursor: 'pointer',
-            borderBottom: activeTab === 'username' ? '3px solid #1a1a1a' : '3px solid transparent',
+            borderBottom: activeTab === 'username' ? '3px solid #415a79' : '3px solid transparent',
             marginBottom: '-1px'
           }}
         >
@@ -2646,11 +2646,11 @@ function MyAccount({ apiBase, steamId, username }) {
             padding: '12px 20px',
             border: 'none',
             background: 'transparent',
-            color: activeTab === 'password' ? '#1a1a1a' : '#999',
+            color: activeTab === 'password' ? '#c7d5e0' : '#8f98a0',
             fontSize: '14px',
             fontWeight: activeTab === 'password' ? 600 : 400,
             cursor: 'pointer',
-            borderBottom: activeTab === 'password' ? '3px solid #1a1a1a' : '3px solid transparent',
+            borderBottom: activeTab === 'password' ? '3px solid #415a79' : '3px solid transparent',
             marginBottom: '-1px'
           }}
         >
@@ -2662,7 +2662,7 @@ function MyAccount({ apiBase, steamId, username }) {
       {activeTab === 'username' ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
           <div>
-            <label style={{ display: 'block', color: '#1a1a1a', fontSize: '14px', fontWeight: 600, marginBottom: 8 }}>
+            <label style={{ display: 'block', color: '#c7d5e0', fontSize: '14px', fontWeight: 600, marginBottom: 8 }}>
               Username
             </label>
             <input
@@ -2672,17 +2672,17 @@ function MyAccount({ apiBase, steamId, username }) {
               style={{
                 width: '100%',
                 padding: '10px 12px',
-                border: '1px solid #1a1a1a',
+                border: '1px solid #415a79',
                 borderRadius: 0,
                 fontSize: '14px',
-                background: '#fff',
-                color: '#1a1a1a',
+                background: 'rgba(255, 255, 255, 0.05)',
+                color: '#c7d5e0',
                 boxSizing: 'border-box'
               }}
             />
           </div>
           <div>
-            <label style={{ display: 'block', color: '#1a1a1a', fontSize: '14px', fontWeight: 600, marginBottom: 8 }}>
+            <label style={{ display: 'block', color: '#c7d5e0', fontSize: '14px', fontWeight: 600, marginBottom: 8 }}>
               Email
             </label>
             <input
@@ -2692,11 +2692,11 @@ function MyAccount({ apiBase, steamId, username }) {
               style={{
                 width: '100%',
                 padding: '10px 12px',
-                border: '1px solid #1a1a1a',
+                border: '1px solid #415a79',
                 borderRadius: 0,
                 fontSize: '14px',
-                background: '#fff',
-                color: '#1a1a1a',
+                background: 'rgba(255, 255, 255, 0.05)',
+                color: '#c7d5e0',
                 boxSizing: 'border-box'
               }}
             />
@@ -2707,20 +2707,20 @@ function MyAccount({ apiBase, steamId, username }) {
               disabled={saving}
               style={{
                 padding: '10px 30px',
-                background: saving ? '#ccc' : '#f5f5f5',
-                border: '1px solid #1a1a1a',
+                background: saving ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.1)',
+                border: '1px solid #415a79',
                 borderRadius: 0,
-                color: '#1a1a1a',
+                color: '#c7d5e0',
                 fontSize: '14px',
                 fontWeight: 600,
                 cursor: saving ? 'not-allowed' : 'pointer',
                 transition: 'background 0.2s'
               }}
               onMouseEnter={(e) => {
-                if (!saving) e.currentTarget.style.background = '#e5e5e5';
+                if (!saving) e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
               }}
               onMouseLeave={(e) => {
-                if (!saving) e.currentTarget.style.background = '#f5f5f5';
+                if (!saving) e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
               }}
             >
               {saving ? 'Saving...' : 'Save Changes'}
@@ -2770,19 +2770,19 @@ function MyRatings({ apiBase, steamId, onSelectGame }) {
   if (loading) {
     return (
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 20px' }}>
-        <h1 style={{ color: '#1a1a1a', fontSize: '28px', fontWeight: 700, marginBottom: 0, paddingBottom: 12 }}>
+        <h1 style={{ color: '#c7d5e0', fontSize: '28px', fontWeight: 700, marginBottom: 0, paddingBottom: 12 }}>
           My Ratings & Reviews
         </h1>
-        <div style={{ width: '100%', height: '1px', backgroundColor: '#1a1a1a', marginBottom: 20 }}></div>
+        <div style={{ width: '100%', height: '1px', backgroundColor: '#415a79', marginBottom: 20 }}></div>
         
         {/* Tabs */}
-        <div style={{ display: 'flex', gap: 0, marginBottom: 30, borderBottom: '1px solid #ddd' }}>
+        <div style={{ display: 'flex', gap: 0, marginBottom: 30, borderBottom: '1px solid #415a79' }}>
           <button
             style={{
               padding: '12px 20px',
               border: 'none',
               background: 'transparent',
-              color: '#1a1a1a',
+              color: '#c7d5e0',
               fontSize: '14px',
               fontWeight: 600,
               cursor: 'default',
@@ -2796,7 +2796,7 @@ function MyRatings({ apiBase, steamId, onSelectGame }) {
         
         {/* Loading Message */}
         <div style={{ textAlign: 'center', padding: '80px 20px' }}>
-          <p style={{ color: '#1a1a1a', fontSize: '16px', fontWeight: 600, marginBottom: 8 }}>
+          <p style={{ color: '#c7d5e0', fontSize: '16px', fontWeight: 600, marginBottom: 8 }}>
             Loading your ratings...
           </p>
         </div>
@@ -2807,25 +2807,25 @@ function MyRatings({ apiBase, steamId, onSelectGame }) {
     if (error.includes('User not found') || error.includes('not found')) {
       return (
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 20px' }}>
-          <h1 style={{ color: '#1a1a1a', fontSize: '28px', fontWeight: 700, marginBottom: 0, paddingBottom: 12 }}>
+          <h1 style={{ color: '#c7d5e0', fontSize: '28px', fontWeight: 700, marginBottom: 0, paddingBottom: 12 }}>
             My Ratings & Reviews
           </h1>
-          <div style={{ width: '100%', height: '1px', backgroundColor: '#1a1a1a', marginBottom: 20 }}></div>
+          <div style={{ width: '100%', height: '1px', backgroundColor: '#415a79', marginBottom: 20 }}></div>
           <div style={{ padding: '40px 20px', textAlign: 'center' }}>
-            <p style={{ color: '#1a1a1a', fontSize: '16px', fontWeight: 600, marginBottom: 12 }}>
+            <p style={{ color: '#c7d5e0', fontSize: '16px', fontWeight: 600, marginBottom: 12 }}>
               Account not found
             </p>
-            <p style={{ color: '#666', fontSize: '14px', marginBottom: 24 }}>
+            <p style={{ color: '#8f98a0', fontSize: '14px', marginBottom: 24 }}>
               You need to register an account to access this page. Please register using your email and Steam friend code.
             </p>
             <button
               onClick={() => window.location.reload()}
               style={{
                 padding: '10px 30px',
-                background: '#f5f5f5',
-                border: '1px solid #1a1a1a',
+                background: 'rgba(255, 255, 255, 0.1)',
+                border: '1px solid #415a79',
                 borderRadius: 0,
-                color: '#1a1a1a',
+                color: '#c7d5e0',
                 fontSize: '14px',
                 fontWeight: 600,
                 cursor: 'pointer'
@@ -2842,19 +2842,19 @@ function MyRatings({ apiBase, steamId, onSelectGame }) {
   
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 20px' }}>
-      <h1 style={{ color: '#1a1a1a', fontSize: '28px', fontWeight: 700, marginBottom: 0, paddingBottom: 12 }}>
+      <h1 style={{ color: '#c7d5e0', fontSize: '28px', fontWeight: 700, marginBottom: 0, paddingBottom: 12 }}>
         My Ratings & Reviews
       </h1>
-      <div style={{ width: '100%', height: '1px', backgroundColor: '#1a1a1a', marginBottom: 20 }}></div>
+      <div style={{ width: '100%', height: '1px', backgroundColor: '#415a79', marginBottom: 20 }}></div>
       
       {/* Tab Content - Only Games */}
       {activeTab === 'games' ? (
         games.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '80px 20px' }}>
-            <p style={{ color: '#1a1a1a', fontSize: '16px', fontWeight: 600, marginBottom: 8 }}>
+            <p style={{ color: '#c7d5e0', fontSize: '16px', fontWeight: 600, marginBottom: 8 }}>
               You haven't rated anything yet
             </p>
-            <p style={{ color: '#1a1a1a', fontSize: '14px', marginTop: 8 }}>
+            <p style={{ color: '#c7d5e0', fontSize: '14px', marginTop: 8 }}>
               Your ratings and reviews will be saved here.
             </p>
           </div>
@@ -2867,9 +2867,9 @@ function MyRatings({ apiBase, steamId, onSelectGame }) {
                 className="game-card"
                 style={{
                   cursor: 'pointer',
-                  border: '1px solid #ddd',
+                  border: '1px solid #415a79',
                   borderRadius: 0,
-                  background: '#fff',
+                  background: 'rgba(255, 255, 255, 0.05)',
                   overflow: 'hidden',
                   transition: 'transform 0.2s, box-shadow 0.2s'
                 }}
@@ -2891,10 +2891,10 @@ function MyRatings({ apiBase, steamId, onSelectGame }) {
                   />
                 )}
                 <div style={{ padding: 12 }}>
-                  <h3 style={{ color: '#1a1a1a', fontSize: '14px', margin: '0 0 8px 0', fontWeight: 600, lineHeight: 1.4 }}>
+                  <h3 style={{ color: '#c7d5e0', fontSize: '14px', margin: '0 0 8px 0', fontWeight: 600, lineHeight: 1.4 }}>
                     {game.name}
                   </h3>
-                  <div style={{ fontSize: '12px', color: '#666', marginTop: 8 }}>
+                  <div style={{ fontSize: '12px', color: '#8f98a0', marginTop: 8 }}>
                     {game.hours ? `${game.hours.toFixed(1)}h played` : 'Not played'}
                     {game.achievementPct !== undefined && ` • ${(game.achievementPct * 100).toFixed(0)}% achievements`}
                   </div>
