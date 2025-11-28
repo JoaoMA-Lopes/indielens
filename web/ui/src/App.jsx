@@ -1066,9 +1066,9 @@ function ScorePieChart({ currentUserContribution, othersContribution }) {
         {/* User percentage text - much smaller and centered */}
         <text
           x={centerX}
-          y={centerY - 12}
+          y={centerY - 8}
           textAnchor="middle"
-          fontSize="28"
+          fontSize="18"
           fontWeight="700"
           fill={userColor}
         >
@@ -1077,9 +1077,9 @@ function ScorePieChart({ currentUserContribution, othersContribution }) {
         {/* Others percentage text - in gold, much smaller */}
         <text
           x={centerX}
-          y={centerY + 12}
+          y={centerY + 8}
           textAnchor="middle"
-          fontSize="24"
+          fontSize="16"
           fontWeight="600"
           fill={othersColor}
         >
