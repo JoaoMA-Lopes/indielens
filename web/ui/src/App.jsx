@@ -998,7 +998,7 @@ function Header({ onLogin, onRegister, steamId, username, onLogout, genres, sele
 }
 
 function ScorePieChart({ currentUserContribution, othersContribution }) {
-  const size = 120;
+  const size = 200;
   const radius = size / 2 - 5;
   const centerX = size / 2;
   const centerY = size / 2;
@@ -1057,19 +1057,19 @@ function ScorePieChart({ currentUserContribution, othersContribution }) {
         <circle cx={centerX} cy={centerY} r={radius * 0.35} fill="#fff" />
         <text
           x={centerX}
-          y={centerY - 5}
+          y={centerY - 8}
           textAnchor="middle"
-          fontSize="18"
-          fontWeight="600"
+          fontSize="36"
+          fontWeight="700"
           fill="#BF4E30"
         >
           {currentUserContribution.toFixed(0)}%
         </text>
         <text
           x={centerX}
-          y={centerY + 12}
+          y={centerY + 20}
           textAnchor="middle"
-          fontSize="10"
+          fontSize="16"
           fill="#999"
         >
           You
@@ -1302,6 +1302,10 @@ function Browse({ apiBase, data, setData, onSelectGame, selectedGenre, searchQue
   const [tagGames, setTagGames] = useState({}); // { tagName: [games] }
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState('score');
+  // Generate a cache buster that changes when genre changes to force image reload
+  const imageCacheBuster = useMemo(() => {
+    return selectedGenre ? `v=5&cb=${Date.now()}` : 'v=5';
+  }, [selectedGenre]);
 
   // Helper function to get genre image path
   const getGenreImagePath = (genreName) => {
@@ -1334,9 +1338,12 @@ function Browse({ apiBase, data, setData, onSelectGame, selectedGenre, searchQue
       imageBase = 'http://localhost:5179';
     }
     
+    // Use the cache buster that changes when genre changes
+    const cacheBuster = imageCacheBuster;
+    
     // Check if we have a direct mapping
     if (genreMap[genreName]) {
-      return `${imageBase}/genre-images/${genreMap[genreName]}`;
+      return `${imageBase}/genre-images/${genreMap[genreName]}?${cacheBuster}`;
     }
     
     // Otherwise, convert genre name to image filename format
@@ -1345,7 +1352,7 @@ function Browse({ apiBase, data, setData, onSelectGame, selectedGenre, searchQue
       .replace(/\s+/g, '_')
       .replace(/[^A-Z0-9_]/g, '') + '_spacedgrey.png';
     
-    return `${imageBase}/genre-images/${imageName}`;
+    return `${imageBase}/genre-images/${imageName}?${cacheBuster}`;
   };
 
   // Get ALL_GAMES image path
@@ -1364,7 +1371,7 @@ function Browse({ apiBase, data, setData, onSelectGame, selectedGenre, searchQue
     } else {
       imageBase = 'http://localhost:5179';
     }
-    return `${imageBase}/genre-images/ALL_GAMES_orange.png`;
+    return `${imageBase}/genre-images/ALL_GAMES_orange.png?${imageCacheBuster}`;
   };
   
   const load = React.useCallback(async (params = {}) => {
@@ -1532,6 +1539,7 @@ function Browse({ apiBase, data, setData, onSelectGame, selectedGenre, searchQue
             {genreImagePath && (
               <div style={{ maxWidth: '1400px', margin: '0 auto 40px auto', padding: '0 40px', textAlign: 'center' }}>
                 <img 
+                  key={`genre-img-${selectedGenre}-${imageCacheBuster}`}
                   src={genreImagePath} 
                   alt={selectedGenre} 
                   style={{ maxWidth: '100%', height: 'auto', display: 'block', margin: '0 auto' }}
