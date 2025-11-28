@@ -1221,7 +1221,7 @@ function LatestReviews({ apiBase, onSelectGame }) {
   );
 }
 
-function TagSegment({ title, games, onSelectGame }) {
+function TagSegment({ title, games, onSelectGame, imageUrl }) {
   const scrollRef = React.useRef(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
@@ -1256,6 +1256,16 @@ function TagSegment({ title, games, onSelectGame }) {
 
   return (
     <div className="tag-segment">
+      {imageUrl && (
+        <div style={{ maxWidth: '1400px', margin: '0 auto 20px auto', padding: '0 40px', textAlign: 'center' }}>
+          <img 
+            src={imageUrl} 
+            alt={title} 
+            style={{ maxWidth: '100%', height: 'auto', display: 'block', margin: '0 auto' }}
+            onError={(e) => { e.currentTarget.style.display = 'none'; }}
+          />
+        </div>
+      )}
       <div className="tag-segment-header">
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, flex: 1 }}>
           <h3 className="tag-segment-title">{title}</h3>
@@ -1537,9 +1547,18 @@ function Browse({ apiBase, data, setData, onSelectGame, selectedGenre, searchQue
               />
             </div>
           )}
-          {tags.map(tag => (
-            <TagSegment key={tag} title={tag} games={tagGames[tag] || []} onSelectGame={onSelectGame} />
-          ))}
+          {tags.map(tag => {
+            const tagImagePath = getGenreImagePath(tag);
+            return (
+              <TagSegment 
+                key={tag} 
+                title={tag} 
+                games={tagGames[tag] || []} 
+                onSelectGame={onSelectGame}
+                imageUrl={tagImagePath}
+              />
+            );
+          })}
         </div>
       );
     }
