@@ -1040,25 +1040,26 @@ function ScorePieChart({ currentUserContribution, othersContribution }) {
   return (
     <div style={{ position: 'relative', display: 'inline-block' }}>
       <svg width={size} height={size} style={{ display: 'block' }}>
-        {/* Background circle - show others contribution or gold if none */}
-        {othersContribution > 0 && othersPath ? (
-          <path
-            d={othersPath}
-            fill={othersColor}
-            stroke="#fff"
-            strokeWidth="3"
-          />
+        {/* Background circle - gold for others, or light blue if user is 100% */}
+        {currentUserContribution === 100 ? (
+          <circle cx={centerX} cy={centerY} r={radius} fill={userColor} />
         ) : (
-          <circle cx={centerX} cy={centerY} r={radius} fill={othersColor} stroke="#fff" strokeWidth="3" />
-        )}
-        {/* User contribution slice - light blue */}
-        {currentUserContribution > 0 && currentUserPath && (
-          <path
-            d={currentUserPath}
-            fill={userColor}
-            stroke="#fff"
-            strokeWidth="3"
-          />
+          <>
+            {/* Others contribution slice - gold */}
+            {othersContribution > 0 && othersPath && (
+              <path
+                d={othersPath}
+                fill={othersColor}
+              />
+            )}
+            {/* User contribution slice - light blue */}
+            {currentUserContribution > 0 && currentUserPath && (
+              <path
+                d={currentUserPath}
+                fill={userColor}
+              />
+            )}
+          </>
         )}
         {/* Center white circle */}
         <circle cx={centerX} cy={centerY} r={radius * 0.35} fill="#fff" />
