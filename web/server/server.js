@@ -45,7 +45,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 // Serve genre title images
-app.use('/genre-images', express.static(path.resolve(__dirname, '../Genretitles')));
+const genreImagesPath = path.resolve(__dirname, '../Genretitles');
+console.log('[DEBUG] Genre images path:', genreImagesPath);
+console.log('[DEBUG] Genre images exists:', fs.existsSync(genreImagesPath));
+if (fs.existsSync(genreImagesPath)) {
+  const files = fs.readdirSync(genreImagesPath);
+  console.log('[DEBUG] Genre images files:', files.slice(0, 5).join(', '), '...');
+}
+app.use('/genre-images', express.static(genreImagesPath));
 
 const PORT = process.env.PORT || 5179;
 const exePath = process.env.INDIELENS_EXE || path.resolve(__dirname, '../../cpp/ConsoleApplication1/x64/Release/ConsoleApplication1.exe');
