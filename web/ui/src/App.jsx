@@ -1319,10 +1319,24 @@ function Browse({ apiBase, data, setData, onSelectGame, selectedGenre, searchQue
       'Video Production': 'VIDEO_PRODUCTION_spacedgrey.png'
     };
     
+    // Determine the base URL for genre images
+    // Genre images are served directly by the backend at /genre-images
+    // In production (apiBase='/api'), we need to access them at /api/genre-images
+    // In development (apiBase='http://localhost:5179'), we use the full URL
+    let imageBase;
+    if (apiBase && apiBase.startsWith('/')) {
+      // Relative path - use /api/genre-images (Nginx will proxy /api to backend)
+      imageBase = '/api';
+    } else if (apiBase) {
+      // Full URL (development)
+      imageBase = apiBase;
+    } else {
+      imageBase = 'http://localhost:5179';
+    }
+    
     // Check if we have a direct mapping
     if (genreMap[genreName]) {
-      const serverBase = apiBase || 'http://localhost:5179';
-      return `${serverBase}/genre-images/${genreMap[genreName]}`;
+      return `${imageBase}/genre-images/${genreMap[genreName]}`;
     }
     
     // Otherwise, convert genre name to image filename format
@@ -1331,14 +1345,26 @@ function Browse({ apiBase, data, setData, onSelectGame, selectedGenre, searchQue
       .replace(/\s+/g, '_')
       .replace(/[^A-Z0-9_]/g, '') + '_spacedgrey.png';
     
-    const serverBase = apiBase || 'http://localhost:5179';
-    return `${serverBase}/genre-images/${imageName}`;
+    return `${imageBase}/genre-images/${imageName}`;
   };
 
   // Get ALL_GAMES image path
   const getAllGamesImagePath = () => {
-    const serverBase = apiBase || 'http://localhost:5179';
-    return `${serverBase}/genre-images/ALL_GAMES_orange.png`;
+    // Determine the base URL for genre images
+    // Genre images are served directly by the backend at /genre-images
+    // In production (apiBase='/api'), we need to access them at /api/genre-images
+    // In development (apiBase='http://localhost:5179'), we use the full URL
+    let imageBase;
+    if (apiBase && apiBase.startsWith('/')) {
+      // Relative path - use /api/genre-images (Nginx will proxy /api to backend)
+      imageBase = '/api';
+    } else if (apiBase) {
+      // Full URL (development)
+      imageBase = apiBase;
+    } else {
+      imageBase = 'http://localhost:5179';
+    }
+    return `${imageBase}/genre-images/ALL_GAMES_orange.png`;
   };
   
   const load = React.useCallback(async (params = {}) => {
