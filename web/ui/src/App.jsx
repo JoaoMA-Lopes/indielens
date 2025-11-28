@@ -1268,7 +1268,7 @@ function TagSegment({ title, games, onSelectGame, imageUrl }) {
       )}
       <div className="tag-segment-header">
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, flex: 1 }}>
-          <h3 className="tag-segment-title">{title}</h3>
+          {!imageUrl && <h3 className="tag-segment-title">{title}</h3>}
           <a href="#" className="tag-segment-see-all" onClick={(e) => { e.preventDefault(); }}>SEE ALL</a>
         </div>
         <div className="tag-segment-nav-wrapper">
