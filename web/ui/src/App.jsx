@@ -1002,6 +1002,7 @@ function ScorePieChart({ currentUserContribution, othersContribution }) {
   const radius = size / 2 - 5;
   const centerX = size / 2;
   const centerY = size / 2;
+  const violetColor = '#8B5CF6'; // Violet/purple color
   
   // Calculate angles for pie slices
   const currentUserAngle = (currentUserContribution / 100) * 360;
@@ -1038,33 +1039,40 @@ function ScorePieChart({ currentUserContribution, othersContribution }) {
   return (
     <div style={{ position: 'relative', display: 'inline-block' }}>
       <svg width={size} height={size} style={{ display: 'block' }}>
-        {othersContribution > 0 && othersPath && (
+        {/* Background circle - show others contribution or grey if none */}
+        {othersContribution > 0 && othersPath ? (
           <path
             d={othersPath}
             fill="#cccccc"
             stroke="#fff"
             strokeWidth="2"
           />
+        ) : (
+          <circle cx={centerX} cy={centerY} r={radius} fill="#cccccc" stroke="#fff" strokeWidth="2" />
         )}
+        {/* User contribution slice - violet/purple */}
         {currentUserContribution > 0 && currentUserPath && (
           <path
             d={currentUserPath}
-            fill="#d4af37"
+            fill={violetColor}
             stroke="#fff"
             strokeWidth="2"
           />
         )}
+        {/* Center white circle */}
         <circle cx={centerX} cy={centerY} r={radius * 0.35} fill="#fff" />
+        {/* Percentage text */}
         <text
           x={centerX}
           y={centerY - 8}
           textAnchor="middle"
           fontSize="36"
           fontWeight="700"
-          fill="#d4af37"
+          fill={violetColor}
         >
           {currentUserContribution.toFixed(0)}%
         </text>
+        {/* "You" text */}
         <text
           x={centerX}
           y={centerY + 20}
@@ -1949,7 +1957,7 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                 <div style={{ flex: 1, minWidth: 200 }}>
                   <div style={{ marginBottom: 12 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                      <div style={{ width: 12, height: 12, backgroundColor: '#d4af37', borderRadius: 2 }}></div>
+                      <div style={{ width: 12, height: 12, backgroundColor: '#8B5CF6', borderRadius: 2 }}></div>
                       <span style={{ fontSize: '14px', fontWeight: 500, color: '#c7d5e0' }}>
                         Your Rating
                       </span>
