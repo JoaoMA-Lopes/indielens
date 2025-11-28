@@ -1072,7 +1072,7 @@ function ScorePieChart({ currentUserContribution, othersContribution }) {
           fontWeight="700"
           fill={userColor}
         >
-          {currentUserContribution.toFixed(0)}%
+          {currentUserContribution.toFixed(0)}% you
         </text>
         {/* Others percentage text - in gold, much smaller */}
         <text
