@@ -1268,7 +1268,7 @@ function TagSegment({ title, games, onSelectGame, imageUrl }) {
       )}
       <div className="tag-segment-header">
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, flex: 1 }}>
-          {!imageUrl && <h3 className="tag-segment-title">{title}</h3>}
+          <h3 className="tag-segment-title">{title}</h3>
           <a href="#" className="tag-segment-see-all" onClick={(e) => { e.preventDefault(); }}>SEE ALL</a>
         </div>
         <div className="tag-segment-nav-wrapper">
@@ -1560,21 +1560,27 @@ function Browse({ apiBase, data, setData, onSelectGame, selectedGenre, searchQue
       }
       
       // Show tag segments if they have games
-      // Don't show genre image at top level - each TagSegment will show its own image
+      const genreImagePath = getGenreImagePath(selectedGenre);
       return (
         <div className="tag-segments-wrapper" style={{ padding: '20px 0' }}>
-          {tags.map(tag => {
-            const tagImagePath = getGenreImagePath(tag);
-            return (
-              <TagSegment 
-                key={tag} 
-                title={tag} 
-                games={tagGames[tag] || []} 
-                onSelectGame={onSelectGame}
-                imageUrl={tagImagePath}
+          {genreImagePath && (
+            <div style={{ maxWidth: '1400px', margin: '0 auto 40px auto', padding: '0 40px', textAlign: 'center' }}>
+              <img 
+                src={genreImagePath} 
+                alt={selectedGenre} 
+                style={{ maxWidth: '100%', height: 'auto', display: 'block', margin: '0 auto' }}
+                onError={(e) => { e.currentTarget.style.display = 'none'; }}
               />
-            );
-          })}
+            </div>
+          )}
+          {tags.map(tag => (
+            <TagSegment 
+              key={tag} 
+              title={tag} 
+              games={tagGames[tag] || []} 
+              onSelectGame={onSelectGame}
+            />
+          ))}
         </div>
       );
     }
