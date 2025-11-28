@@ -1063,26 +1063,27 @@ function ScorePieChart({ currentUserContribution, othersContribution }) {
         )}
         {/* Center white circle */}
         <circle cx={centerX} cy={centerY} r={radius * 0.35} fill="#fff" />
-        {/* Percentage text */}
+        {/* User percentage text - smaller and centered */}
         <text
           x={centerX}
-          y={centerY - 16}
+          y={centerY - 20}
           textAnchor="middle"
-          fontSize="72"
+          fontSize="48"
           fontWeight="700"
           fill={userColor}
         >
           {currentUserContribution.toFixed(0)}%
         </text>
-        {/* "You" text */}
+        {/* Others percentage text - in gold */}
         <text
           x={centerX}
-          y={centerY + 40}
+          y={centerY + 20}
           textAnchor="middle"
-          fontSize="32"
-          fill="#999"
+          fontSize="36"
+          fontWeight="600"
+          fill={othersColor}
         >
-          You
+          {othersContribution.toFixed(0)}% others
         </text>
       </svg>
     </div>
