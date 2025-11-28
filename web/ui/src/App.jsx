@@ -1049,7 +1049,7 @@ function ScorePieChart({ currentUserContribution, othersContribution }) {
         {currentUserContribution > 0 && currentUserPath && (
           <path
             d={currentUserPath}
-            fill="#BF4E30"
+            fill="#d4af37"
             stroke="#fff"
             strokeWidth="2"
           />
@@ -1061,7 +1061,7 @@ function ScorePieChart({ currentUserContribution, othersContribution }) {
           textAnchor="middle"
           fontSize="36"
           fontWeight="700"
-          fill="#BF4E30"
+          fill="#d4af37"
         >
           {currentUserContribution.toFixed(0)}%
         </text>
@@ -1949,7 +1949,7 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                 <div style={{ flex: 1, minWidth: 200 }}>
                   <div style={{ marginBottom: 12 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                      <div style={{ width: 12, height: 12, backgroundColor: '#BF4E30', borderRadius: 2 }}></div>
+                      <div style={{ width: 12, height: 12, backgroundColor: '#d4af37', borderRadius: 2 }}></div>
                       <span style={{ fontSize: '14px', fontWeight: 500, color: '#c7d5e0' }}>
                         Your Rating
                       </span>
