@@ -1351,15 +1351,16 @@ function Browse({ apiBase, data, setData, onSelectGame, selectedGenre, searchQue
   // Get ALL_GAMES image path
   const getAllGamesImagePath = () => {
     // Determine the base URL for genre images
-    // Genre images are served directly by the backend at /genre-images
-    // In production (apiBase='/api'), we need to access them at /api/genre-images
-    // In development (apiBase='http://localhost:5179'), we use the full URL
+    // Genre images should be served directly, not through /api proxy
+    // In production, serve from /genre-images (Nginx should serve these directly)
+    // In development, use the backend URL
     let imageBase;
     if (apiBase && apiBase.startsWith('/')) {
-      // Relative path - use /api/genre-images (Nginx will proxy /api to backend)
-      imageBase = '/api';
+      // Production: serve images directly from /genre-images (not /api/genre-images)
+      // Nginx should be configured to serve these directly from the file system
+      imageBase = '';
     } else if (apiBase) {
-      // Full URL (development)
+      // Development: use full backend URL
       imageBase = apiBase;
     } else {
       imageBase = 'http://localhost:5179';
