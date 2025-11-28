@@ -998,11 +998,12 @@ function Header({ onLogin, onRegister, steamId, username, onLogout, genres, sele
 }
 
 function ScorePieChart({ currentUserContribution, othersContribution }) {
-  const size = 200;
+  const size = 400; // Doubled from 200
   const radius = size / 2 - 5;
   const centerX = size / 2;
   const centerY = size / 2;
-  const violetColor = '#8B5CF6'; // Violet/purple color
+  const userColor = '#4A90E2'; // Light blue - same as Profile Match Score
+  const othersColor = '#d4af37'; // Gold for other users
   
   // Calculate angles for pie slices
   const currentUserAngle = (currentUserContribution / 100) * 360;
@@ -1039,24 +1040,24 @@ function ScorePieChart({ currentUserContribution, othersContribution }) {
   return (
     <div style={{ position: 'relative', display: 'inline-block' }}>
       <svg width={size} height={size} style={{ display: 'block' }}>
-        {/* Background circle - show others contribution or grey if none */}
+        {/* Background circle - show others contribution or gold if none */}
         {othersContribution > 0 && othersPath ? (
           <path
             d={othersPath}
-            fill="#cccccc"
+            fill={othersColor}
             stroke="#fff"
-            strokeWidth="2"
+            strokeWidth="3"
           />
         ) : (
-          <circle cx={centerX} cy={centerY} r={radius} fill="#cccccc" stroke="#fff" strokeWidth="2" />
+          <circle cx={centerX} cy={centerY} r={radius} fill={othersColor} stroke="#fff" strokeWidth="3" />
         )}
-        {/* User contribution slice - violet/purple */}
+        {/* User contribution slice - light blue */}
         {currentUserContribution > 0 && currentUserPath && (
           <path
             d={currentUserPath}
-            fill={violetColor}
+            fill={userColor}
             stroke="#fff"
-            strokeWidth="2"
+            strokeWidth="3"
           />
         )}
         {/* Center white circle */}
@@ -1064,20 +1065,20 @@ function ScorePieChart({ currentUserContribution, othersContribution }) {
         {/* Percentage text */}
         <text
           x={centerX}
-          y={centerY - 8}
+          y={centerY - 16}
           textAnchor="middle"
-          fontSize="36"
+          fontSize="72"
           fontWeight="700"
-          fill={violetColor}
+          fill={userColor}
         >
           {currentUserContribution.toFixed(0)}%
         </text>
         {/* "You" text */}
         <text
           x={centerX}
-          y={centerY + 20}
+          y={centerY + 40}
           textAnchor="middle"
-          fontSize="16"
+          fontSize="32"
           fill="#999"
         >
           You
@@ -1945,42 +1946,42 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
             </div>
           )}
           {score && scoreBreakdown && scoreBreakdown.ratingCount > 0 && scoreBreakdown.currentUser && (
-            <div style={{ marginTop: 24, padding: '20px', backgroundColor: 'rgba(255, 255, 255, 0.05)', borderRadius: '8px', border: '1px solid #415a79' }}>
-              <h3 style={{ marginTop: 0, marginBottom: 16, fontSize: '18px', fontWeight: 600, color: '#c7d5e0' }}>
+            <div style={{ marginTop: 48, padding: '40px', backgroundColor: 'rgba(255, 255, 255, 0.05)', borderRadius: '8px', border: '1px solid #415a79' }}>
+              <h3 style={{ marginTop: 0, marginBottom: 32, fontSize: '36px', fontWeight: 600, color: '#c7d5e0' }}>
                 Your Contribution to Score
               </h3>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 24, flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 48, flexWrap: 'wrap' }}>
                 <ScorePieChart 
                   currentUserContribution={scoreBreakdown.currentUser.contribution} 
                   othersContribution={100 - scoreBreakdown.currentUser.contribution}
                 />
-                <div style={{ flex: 1, minWidth: 200 }}>
-                  <div style={{ marginBottom: 12 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                      <div style={{ width: 12, height: 12, backgroundColor: '#8B5CF6', borderRadius: 2 }}></div>
-                      <span style={{ fontSize: '14px', fontWeight: 500, color: '#c7d5e0' }}>
+                <div style={{ flex: 1, minWidth: 400 }}>
+                  <div style={{ marginBottom: 24 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 8 }}>
+                      <div style={{ width: 24, height: 24, backgroundColor: '#4A90E2', borderRadius: 2 }}></div>
+                      <span style={{ fontSize: '28px', fontWeight: 500, color: '#c7d5e0' }}>
                         Your Rating
                       </span>
                     </div>
-                    <div style={{ fontSize: '13px', color: '#8f98a0', marginLeft: 20 }}>
+                    <div style={{ fontSize: '26px', color: '#8f98a0', marginLeft: 40 }}>
                       {scoreBreakdown.currentUser.contribution.toFixed(1)}% of total score
                       <br />
-                      <span style={{ fontSize: '12px', color: '#999' }}>
+                      <span style={{ fontSize: '24px', color: '#999' }}>
                         Weight: {(scoreBreakdown.currentUser.weight * 100).toFixed(1)}% • Rating: {scoreBreakdown.currentUser.rating}
                       </span>
                     </div>
                   </div>
                   <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                      <div style={{ width: 12, height: 12, backgroundColor: '#cccccc', borderRadius: 2 }}></div>
-                      <span style={{ fontSize: '14px', fontWeight: 500, color: '#c7d5e0' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 8 }}>
+                      <div style={{ width: 24, height: 24, backgroundColor: '#d4af37', borderRadius: 2 }}></div>
+                      <span style={{ fontSize: '28px', fontWeight: 500, color: '#c7d5e0' }}>
                         Other Users
                       </span>
                     </div>
-                    <div style={{ fontSize: '13px', color: '#8f98a0', marginLeft: 20 }}>
+                    <div style={{ fontSize: '26px', color: '#8f98a0', marginLeft: 40 }}>
                       {(100 - scoreBreakdown.currentUser.contribution).toFixed(1)}% of total score
                       <br />
-                      <span style={{ fontSize: '12px', color: '#999' }}>
+                      <span style={{ fontSize: '24px', color: '#999' }}>
                         {scoreBreakdown.ratingCount - 1} other rating{scoreBreakdown.ratingCount - 1 !== 1 ? 's' : ''}
                       </span>
                     </div>
