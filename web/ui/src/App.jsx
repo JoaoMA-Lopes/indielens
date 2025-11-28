@@ -1560,19 +1560,9 @@ function Browse({ apiBase, data, setData, onSelectGame, selectedGenre, searchQue
       }
       
       // Show tag segments if they have games
-      const genreImagePath = getGenreImagePath(selectedGenre);
+      // Don't show genre image at top level - each TagSegment will show its own image
       return (
         <div className="tag-segments-wrapper" style={{ padding: '20px 0' }}>
-          {genreImagePath && (
-            <div style={{ maxWidth: '1400px', margin: '0 auto 40px auto', padding: '0 40px', textAlign: 'center' }}>
-              <img 
-                src={genreImagePath} 
-                alt={selectedGenre} 
-                style={{ maxWidth: '100%', height: 'auto', display: 'block', margin: '0 auto' }}
-                onError={(e) => { e.currentTarget.style.display = 'none'; }}
-              />
-            </div>
-          )}
           {tags.map(tag => {
             const tagImagePath = getGenreImagePath(tag);
             return (
