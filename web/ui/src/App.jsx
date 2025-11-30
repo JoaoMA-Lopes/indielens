@@ -244,6 +244,7 @@ export default function App() {
           onGenreChange={(g) => { setSelectedHeaderGenre(g === selectedHeaderGenre ? '' : g); setTab('browse'); }}
           onSearch={handleHeaderSearch}
           onHowItWorks={() => setTab('howitworks')}
+          onWhyWereHere={() => setTab('whywerehere')}
           onMyRatings={() => setTab('myratings')}
           onMyAccount={() => setTab('myaccount')}
         />
@@ -265,13 +266,16 @@ export default function App() {
         selectedGenre={selectedHeaderGenre}
         onGenreChange={(g) => { setSelectedHeaderGenre(g === selectedHeaderGenre ? '' : g); setTab('browse'); }}
         onSearch={handleHeaderSearch}
-        onHowItWorks={() => setTab('howitworks')}
-        onMyRatings={() => setTab('myratings')}
-        onMyAccount={() => setTab('myaccount')}
-        onDeveloperMode={() => setTab('developer')}
+          onHowItWorks={() => setTab('howitworks')}
+          onWhyWereHere={() => setTab('whywerehere')}
+          onMyRatings={() => setTab('myratings')}
+          onMyAccount={() => setTab('myaccount')}
+          onDeveloperMode={() => setTab('developer')}
       />
       <hr className="separator" />
-      {tab === 'howitworks' ? (
+      {tab === 'whywerehere' ? (
+        <WhyWereHere />
+      ) : tab === 'howitworks' ? (
         <div className="container" style={{ maxWidth: '900px', margin: '40px auto', padding: '40px' }}>
           <h1 style={{ color: '#c7d5e0', fontSize: '3em', marginBottom: 30 }}>How IndieLens Weighting Works</h1>
           <div style={{ lineHeight: 1.8, color: '#c7d5e0' }}>
@@ -749,7 +753,7 @@ export default function App() {
   );
 }
 
-function Header({ onLogin, onRegister, steamId, username, onLogout, genres, selectedGenre, onGenreChange, onSearch, onHowItWorks, onMyRatings, onMyAccount, onDeveloperMode }) {
+function Header({ onLogin, onRegister, steamId, username, onLogout, genres, selectedGenre, onGenreChange, onSearch, onHowItWorks, onWhyWereHere, onMyRatings, onMyAccount, onDeveloperMode }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [showMoreDropdown, setShowMoreDropdown] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -823,6 +827,9 @@ function Header({ onLogin, onRegister, steamId, username, onLogout, genres, sele
         </div>
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+        <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); if (onWhyWereHere) onWhyWereHere(); }} style={{ fontWeight: 500 }}>
+          Why we're here
+        </a>
         <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); if (onHowItWorks) onHowItWorks(); }} style={{ fontWeight: 500 }}>
           How it works
         </a>
@@ -1301,6 +1308,320 @@ function TagSegment({ title, games, onSelectGame, imageUrl }) {
               </div>
             </div>
           ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function WhyWereHere() {
+  // Data for the critic-user score gap over time
+  const scoreGapData = [
+    { year: '1996-2001', gap: 0.5, criticsHarsher: true },
+    { year: '2002-2008', gap: 0.3, criticsHarsher: true },
+    { year: '2009-2012', gap: 0.8, criticsHarsher: false },
+    { year: '2013-2018', gap: 1.8, criticsHarsher: false },
+  ];
+
+  const maxGap = 2.0;
+  const chartWidth = 800;
+  const chartHeight = 400;
+  const padding = 60;
+  const barWidth = (chartWidth - padding * 2) / scoreGapData.length - 20;
+
+  return (
+    <div className="container" style={{ maxWidth: '1200px', margin: '40px auto', padding: '40px' }}>
+      <h1 style={{ color: '#c7d5e0', fontSize: '3em', marginBottom: 10, textAlign: 'center' }}>Why We're Here</h1>
+      <p style={{ color: '#8f98a0', fontSize: '1.2em', textAlign: 'center', marginBottom: 50 }}>
+        The gaming industry has a review problem. Here's why IndieLens exists.
+      </p>
+
+      {/* The Growing Divide */}
+      <div style={{ marginBottom: 60, padding: 40, border: '2px solid #415a79', borderRadius: 8, background: 'rgba(255, 255, 255, 0.02)' }}>
+        <h2 style={{ color: '#c7d5e0', fontSize: '2.2em', marginTop: 0, marginBottom: 30 }}>The Growing Divide</h2>
+        <p style={{ fontSize: 18, color: '#c7d5e0', marginBottom: 30, lineHeight: 1.8 }}>
+          From 1996 to 2008, game critics were typically <strong style={{ color: '#66c0f4' }}>harsher</strong> than players. 
+          But starting in 2009, something changed. Critics began reviewing games more <strong style={{ color: '#d4af37' }}>positively</strong> than user reviews, 
+          and there hasn't been a single year since where critics were harsher than fans.
+        </p>
+        
+        <div style={{ marginTop: 40, marginBottom: 30 }}>
+          <h3 style={{ color: '#c7d5e0', fontSize: '1.5em', marginBottom: 20 }}>Critic vs User Score Gap Over Time</h3>
+          <svg width={chartWidth} height={chartHeight} style={{ display: 'block', margin: '0 auto', background: 'rgba(255, 255, 255, 0.02)', borderRadius: 8, padding: 20 }}>
+            {/* Grid lines */}
+            {[0, 0.5, 1.0, 1.5, 2.0].map((val, i) => (
+              <g key={i}>
+                <line
+                  x1={padding}
+                  y1={padding + (chartHeight - padding * 2) * (1 - val / maxGap)}
+                  x2={chartWidth - padding}
+                  y2={padding + (chartHeight - padding * 2) * (1 - val / maxGap)}
+                  stroke="#415a79"
+                  strokeWidth="1"
+                  strokeDasharray="4,4"
+                  opacity="0.5"
+                />
+                <text
+                  x={padding - 10}
+                  y={padding + (chartHeight - padding * 2) * (1 - val / maxGap) + 5}
+                  fill="#8f98a0"
+                  fontSize="12"
+                  textAnchor="end"
+                >
+                  {val.toFixed(1)}
+                </text>
+              </g>
+            ))}
+            
+            {/* Bars */}
+            {scoreGapData.map((item, index) => {
+              const barHeight = (Math.abs(item.gap) / maxGap) * (chartHeight - padding * 2);
+              const x = padding + index * (barWidth + 20) + 10;
+              const y = padding + (chartHeight - padding * 2) - barHeight;
+              const color = item.criticsHarsher ? '#66c0f4' : '#d4af37';
+              
+              return (
+                <g key={index}>
+                  <rect
+                    x={x}
+                    y={y}
+                    width={barWidth}
+                    height={barHeight}
+                    fill={color}
+                    opacity="0.8"
+                    rx="4"
+                  />
+                  <text
+                    x={x + barWidth / 2}
+                    y={y - 10}
+                    fill="#c7d5e0"
+                    fontSize="14"
+                    fontWeight="600"
+                    textAnchor="middle"
+                  >
+                    {item.gap.toFixed(1)}
+                  </text>
+                  <text
+                    x={x + barWidth / 2}
+                    y={chartHeight - padding + 20}
+                    fill="#8f98a0"
+                    fontSize="14"
+                    textAnchor="middle"
+                  >
+                    {item.year}
+                  </text>
+                </g>
+              );
+            })}
+            
+            {/* Zero line */}
+            <line
+              x1={padding}
+              y1={padding + (chartHeight - padding * 2) / 2}
+              x2={chartWidth - padding}
+              y2={padding + (chartHeight - padding * 2) / 2}
+              stroke="#c7d5e0"
+              strokeWidth="2"
+            />
+            <text
+              x={padding - 10}
+              y={padding + (chartHeight - padding * 2) / 2 + 5}
+              fill="#c7d5e0"
+              fontSize="12"
+              textAnchor="end"
+              fontWeight="600"
+            >
+              0
+            </text>
+            
+            {/* Labels */}
+            <text
+              x={padding - 10}
+              y={padding - 10}
+              fill="#8f98a0"
+              fontSize="12"
+              textAnchor="end"
+            >
+              Critics Harsher
+            </text>
+            <text
+              x={padding - 10}
+              y={chartHeight - padding + 10}
+              fill="#8f98a0"
+              fontSize="12"
+              textAnchor="end"
+            >
+              Critics More Positive
+            </text>
+          </svg>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 40, marginTop: 20 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{ width: 20, height: 20, background: '#66c0f4', borderRadius: 4 }}></div>
+              <span style={{ color: '#c7d5e0', fontSize: 14 }}>Critics were harsher</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{ width: 20, height: 20, background: '#d4af37', borderRadius: 4 }}></div>
+              <span style={{ color: '#c7d5e0', fontSize: 14 }}>Critics were more positive</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* The Problems */}
+      <div style={{ marginBottom: 60, padding: 40, border: '2px solid #415a79', borderRadius: 8, background: 'rgba(255, 255, 255, 0.02)' }}>
+        <h2 style={{ color: '#c7d5e0', fontSize: '2.2em', marginTop: 0, marginBottom: 30 }}>What's Causing This?</h2>
+        
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 30, marginTop: 30 }}>
+          <div style={{ padding: 25, background: 'rgba(255, 255, 255, 0.03)', borderRadius: 8, border: '1px solid #415a79' }}>
+            <h3 style={{ color: '#66c0f4', fontSize: '1.4em', marginTop: 0 }}>Early Review Copies</h3>
+            <p style={{ color: '#c7d5e0', lineHeight: 1.7 }}>
+              Publishers control who gets early review copies. This creates pressure for critics to be "nicer" 
+              to major releases to stay on the list. Early review scores are almost always higher than final scores.
+            </p>
+          </div>
+          
+          <div style={{ padding: 25, background: 'rgba(255, 255, 255, 0.03)', borderRadius: 8, border: '1px solid #415a79' }}>
+            <h3 style={{ color: '#66c0f4', fontSize: '1.4em', marginTop: 0 }}>Lack of Diversity</h3>
+            <p style={{ color: '#c7d5e0', lineHeight: 1.7 }}>
+              The average critic is a male in their mid-20s to early 30s in a major city. This narrow perspective 
+              doesn't reflect the diverse tastes of players across cultures, ages, and genres.
+            </p>
+          </div>
+          
+          <div style={{ padding: 25, background: 'rgba(255, 255, 255, 0.03)', borderRadius: 8, border: '1px solid #415a79' }}>
+            <h3 style={{ color: '#66c0f4', fontSize: '1.4em', marginTop: 0 }}>Rushed Reviews</h3>
+            <p style={{ color: '#c7d5e0', lineHeight: 1.7 }}>
+              Strict deadlines force reviewers to rush. Many admit to playing on easiest difficulty, using cheats, 
+              or skipping content entirely. They may experience less than half of the game's actual content.
+            </p>
+          </div>
+          
+          <div style={{ padding: 25, background: 'rgba(255, 255, 255, 0.03)', borderRadius: 8, border: '1px solid #415a79' }}>
+            <h3 style={{ color: '#66c0f4', fontSize: '1.4em', marginTop: 0 }}>Genre Bias</h3>
+            <p style={{ color: '#c7d5e0', lineHeight: 1.7 }}>
+              Critics favor cinematic games (+0.8 score bump) and walking simulators (+0.95), but penalize 
+              3D platformers (-0.6) and complex gameplay. This limits what publishers are willing to fund.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Genre Bias Chart */}
+      <div style={{ marginBottom: 60, padding: 40, border: '2px solid #415a79', borderRadius: 8, background: 'rgba(255, 255, 255, 0.02)' }}>
+        <h2 style={{ color: '#c7d5e0', fontSize: '2.2em', marginTop: 0, marginBottom: 30 }}>Genre Bias in Action</h2>
+        <p style={{ fontSize: 18, color: '#c7d5e0', marginBottom: 30, lineHeight: 1.8 }}>
+          When reviewers rush, they can't fairly assess complex gameplay. They favor games with easily reviewable aspects: 
+          graphics, story, voice acting. This creates systematic bias against certain genres.
+        </p>
+        
+        <div style={{ marginTop: 40 }}>
+          <svg width={chartWidth} height={300} style={{ display: 'block', margin: '0 auto', background: 'rgba(255, 255, 255, 0.02)', borderRadius: 8, padding: 20 }}>
+            {[
+              { genre: 'Walking Sims', bias: 0.95, color: '#d4af37' },
+              { genre: 'Cinematic', bias: 0.8, color: '#d4af37' },
+              { genre: '3D Platformers', bias: -0.6, color: '#66c0f4' },
+              { genre: 'Old FPS', bias: -0.4, color: '#66c0f4' },
+            ].map((item, index) => {
+              const barWidth2 = (Math.abs(item.bias) / 1.0) * (chartWidth - padding * 2 - 200);
+              const x = padding + 150;
+              const y = padding + index * 60 + 10;
+              const barX = item.bias > 0 ? x : x - barWidth2;
+              
+              return (
+                <g key={index}>
+                  <text
+                    x={x - 10}
+                    y={y + 20}
+                    fill="#c7d5e0"
+                    fontSize="14"
+                    textAnchor="end"
+                  >
+                    {item.genre}
+                  </text>
+                  <rect
+                    x={barX}
+                    y={y}
+                    width={barWidth2}
+                    height={30}
+                    fill={item.color}
+                    opacity="0.8"
+                    rx="4"
+                  />
+                  <text
+                    x={item.bias > 0 ? barX + barWidth2 + 10 : barX - 10}
+                    y={y + 20}
+                    fill="#c7d5e0"
+                    fontSize="14"
+                    fontWeight="600"
+                    textAnchor={item.bias > 0 ? 'start' : 'end'}
+                  >
+                    {item.bias > 0 ? '+' : ''}{item.bias.toFixed(1)}
+                  </text>
+                </g>
+              );
+            })}
+            
+            {/* Zero line */}
+            <line
+              x1={padding + 150}
+              y1={padding}
+              x2={padding + 150}
+              y2={padding + 240}
+              stroke="#c7d5e0"
+              strokeWidth="2"
+            />
+            <text
+              x={padding + 145}
+              y={padding + 250}
+              fill="#8f98a0"
+              fontSize="12"
+              textAnchor="end"
+            >
+              Critic Score Bias
+            </text>
+          </svg>
+        </div>
+      </div>
+
+      {/* The Solution */}
+      <div style={{ marginBottom: 60, padding: 40, border: '2px solid #66c0f4', borderRadius: 8, background: 'rgba(102, 192, 244, 0.1)' }}>
+        <h2 style={{ color: '#66c0f4', fontSize: '2.2em', marginTop: 0, marginBottom: 30 }}>How IndieLens Solves This</h2>
+        
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 25, marginTop: 30 }}>
+          <div style={{ padding: 25, background: 'rgba(255, 255, 255, 0.05)', borderRadius: 8 }}>
+            <h3 style={{ color: '#66c0f4', fontSize: '1.3em', marginTop: 0 }}>✓ User-Driven Ratings</h3>
+            <p style={{ color: '#c7d5e0', lineHeight: 1.7, fontSize: 15 }}>
+              Ratings come from players who <strong>own and played</strong> the game, not early review copies.
+            </p>
+          </div>
+          
+          <div style={{ padding: 25, background: 'rgba(255, 255, 255, 0.05)', borderRadius: 8 }}>
+            <h3 style={{ color: '#66c0f4', fontSize: '1.3em', marginTop: 0 }}>✓ Profile Matching</h3>
+            <p style={{ color: '#c7d5e0', lineHeight: 1.7, fontSize: 15 }}>
+              Find games loved by players with <strong>similar tastes</strong> to you, not aggregate scores.
+            </p>
+          </div>
+          
+          <div style={{ padding: 25, background: 'rgba(255, 255, 255, 0.05)', borderRadius: 8 }}>
+            <h3 style={{ color: '#66c0f4', fontSize: '1.3em', marginTop: 0 }}>✓ Engagement Weighting</h3>
+            <p style={{ color: '#c7d5e0', lineHeight: 1.7, fontSize: 15 }}>
+              Ratings from players with more <strong>hours and achievements</strong> have more weight.
+            </p>
+          </div>
+          
+          <div style={{ padding: 25, background: 'rgba(255, 255, 255, 0.05)', borderRadius: 8 }}>
+            <h3 style={{ color: '#66c0f4', fontSize: '1.3em', marginTop: 0 }}>✓ Continuous Updates</h3>
+            <p style={{ color: '#c7d5e0', lineHeight: 1.7, fontSize: 15 }}>
+              Scores update as more players rate, reflecting the game's <strong>current state</strong>.
+            </p>
+          </div>
+        </div>
+        
+        <div style={{ marginTop: 40, padding: 30, background: 'rgba(255, 255, 255, 0.05)', borderRadius: 8, textAlign: 'center' }}>
+          <p style={{ color: '#c7d5e0', fontSize: '1.3em', lineHeight: 1.8, margin: 0 }}>
+            <strong style={{ color: '#66c0f4' }}>The best games aren't the ones liked by everyone.</strong><br />
+            They're the ones <strong style={{ color: '#d4af37' }}>loved by the specific group of people they're made for</strong>.
+          </p>
         </div>
       </div>
     </div>
