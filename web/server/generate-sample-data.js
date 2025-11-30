@@ -65,11 +65,11 @@ function generateSampleGames() {
     });
   }
   
-  // 2013-2018 era (gap widens significantly)
+  // 2013-2018 era (gap widens significantly - target +1.8 average)
   for (let i = 0; i < 50; i++) {
     const year = 2013 + Math.floor(Math.random() * 6);
     const userScore = 60 + Math.floor(Math.random() * 30);
-    const criticScore = userScore + 1.2 + Math.random() * 1.2; // Bigger gap
+    const criticScore = userScore + 1.6 + Math.random() * 0.4; // Target ~1.8 average gap
     games.push({
       title: `Game ${year}-${i}`,
       criticScore: Math.min(100, Math.round(criticScore)),
@@ -80,20 +80,30 @@ function generateSampleGames() {
     });
   }
   
-  // Add genre-specific bias
+  // Add genre-specific bias (only adjust, don't override completely)
   games.forEach(game => {
-    if (game.genre === 'Walking Simulator') {
-      game.criticScore = Math.min(100, Math.round(game.userScore * 10 + 9.5) / 10);
-      game.scoreDifference = game.criticScore - game.userScore;
-    } else if (game.genre === 'Cinematic' || game.genre === 'Action-Adventure') {
-      game.criticScore = Math.min(100, Math.round(game.userScore * 10 + 8) / 10);
-      game.scoreDifference = game.criticScore - game.userScore;
-    } else if (game.genre === '3D Platformer') {
-      game.criticScore = Math.max(0, Math.round(game.userScore * 10 - 6) / 10);
-      game.scoreDifference = game.criticScore - game.userScore;
-    } else if (game.genre === 'FPS') {
-      game.criticScore = Math.max(0, Math.round(game.userScore * 10 - 4) / 10);
-      game.scoreDifference = game.criticScore - game.userScore;
+    const yearMatch = game.releaseDate?.match(/(\d{4})/);
+    const year = yearMatch ? parseInt(yearMatch[1]) : 0;
+    
+    // Only apply genre bias to games from 2009 onwards (when bias became more pronounced)
+    if (year >= 2009) {
+      if (game.genre === 'Walking Simulator') {
+        // Add +0.95 bias on top of existing difference
+        game.criticScore = Math.min(100, Math.round((game.criticScore + 0.95) * 10) / 10);
+        game.scoreDifference = game.criticScore - game.userScore;
+      } else if (game.genre === 'Cinematic' || game.genre === 'Action-Adventure') {
+        // Add +0.8 bias
+        game.criticScore = Math.min(100, Math.round((game.criticScore + 0.8) * 10) / 10);
+        game.scoreDifference = game.criticScore - game.userScore;
+      } else if (game.genre === '3D Platformer') {
+        // Subtract 0.6 (critics penalize)
+        game.criticScore = Math.max(0, Math.round((game.criticScore - 0.6) * 10) / 10);
+        game.scoreDifference = game.criticScore - game.userScore;
+      } else if (game.genre === 'FPS') {
+        // Subtract 0.4
+        game.criticScore = Math.max(0, Math.round((game.criticScore - 0.4) * 10) / 10);
+        game.scoreDifference = game.criticScore - game.userScore;
+      }
     }
   });
   
