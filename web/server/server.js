@@ -1388,12 +1388,26 @@ app.get('/myratings', async (req, res) => {
 app.get('/api/metacritic-data', async (req, res) => {
   try {
     const cacheFile = path.resolve(__dirname, 'metacritic-cache.json');
+    console.log('[CACHE] Looking for cache file at:', cacheFile);
+    console.log('[CACHE] File exists:', fs.existsSync(cacheFile));
+    
+    // Add no-cache headers to prevent browser caching
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
     
     // Check if cached data exists
     if (fs.existsSync(cacheFile)) {
       const cacheData = JSON.parse(fs.readFileSync(cacheFile, 'utf-8'));
       const cacheAge = Date.now() - new Date(cacheData.timestamp).getTime();
       const maxAge = 1000 * 60 * 60 * 24 * 7; // 7 days
+      
+      console.log('[CACHE] Cache age:', Math.round(cacheAge / 1000 / 60), 'minutes');
+      console.log('[CACHE] Cache stats:', {
+        totalGames: cacheData.stats?.totalGames || 0,
+        byYear: Object.keys(cacheData.stats?.byYear || {}).length,
+        byGenre: Object.keys(cacheData.stats?.byGenre || {}).length,
+      });
       
       if (cacheAge < maxAge) {
         console.log('[CACHE] Serving cached Metacritic data');
@@ -1405,6 +1419,8 @@ app.get('/api/metacritic-data', async (req, res) => {
       } else {
         console.log('[CACHE] Cache expired, using fallback data...');
       }
+    } else {
+      console.log('[CACHE] Cache file not found, using fallback data');
     }
     
     // If no cache or cache expired, return fallback data based on research
