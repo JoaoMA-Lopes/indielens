@@ -145,18 +145,56 @@ export async function scrapeMetacriticList(listUrl, maxGames = 50) {
     await delay(2000);
     const html = await fetchHTML(listUrl);
     
-    // Extract game URLs from list page
+    // Parse HTML with cheerio
+    const $ = cheerio.load(html);
+    
+    // Extract game URLs from list page - try multiple selectors
     const gameUrls = [];
-    const urlRegex = /href="(\/game\/[^"]+)"[^>]*>/gi;
-    let match;
-    while ((match = urlRegex.exec(html)) !== null && gameUrls.length < maxGames) {
-      const gamePath = match[1];
-      if (gamePath && !gameUrls.includes(gamePath)) {
-        gameUrls.push(`https://www.metacritic.com${gamePath}`);
+    const seenUrls = new Set();
+    
+    // Try finding links with class 'title'
+    $('a.title').each((i, el) => {
+      if (gameUrls.length >= maxGames) return false;
+      const href = $(el).attr('href');
+      if (href && href.startsWith('/game/') && !seenUrls.has(href)) {
+        seenUrls.add(href);
+        gameUrls.push(`https://www.metacritic.com${href}`);
+      }
+    });
+    
+    // Try finding links in product_title
+    if (gameUrls.length === 0) {
+      $('.product_title a, a[href*="/game/"]').each((i, el) => {
+        if (gameUrls.length >= maxGames) return false;
+        const href = $(el).attr('href');
+        if (href && href.includes('/game/') && !seenUrls.has(href)) {
+          const cleanHref = href.startsWith('/') ? href : href.match(/\/game\/[^?]+/)?.[0];
+          if (cleanHref) {
+            seenUrls.add(cleanHref);
+            gameUrls.push(`https://www.metacritic.com${cleanHref}`);
+          }
+        }
+      });
+    }
+    
+    // Fallback: regex search for any /game/ links
+    if (gameUrls.length === 0) {
+      const urlRegex = /href=["'](\/game\/[^"']+)/gi;
+      let match;
+      while ((match = urlRegex.exec(html)) !== null && gameUrls.length < maxGames) {
+        const gamePath = match[1];
+        if (gamePath && !seenUrls.has(gamePath)) {
+          seenUrls.add(gamePath);
+          gameUrls.push(`https://www.metacritic.com${gamePath}`);
+        }
       }
     }
 
     console.log(`Found ${gameUrls.length} games to scrape`);
+    if (gameUrls.length === 0) {
+      console.log('DEBUG: HTML length:', html.length);
+      console.log('DEBUG: Sample HTML (first 2000 chars):', html.substring(0, 2000));
+    }
 
     const results = [];
     for (let i = 0; i < Math.min(gameUrls.length, maxGames); i++) {
