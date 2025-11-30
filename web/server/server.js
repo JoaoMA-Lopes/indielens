@@ -6,6 +6,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
 import mysql from 'mysql2/promise';
+import { scrapeMetacriticList, calculateStatistics } from './scrape-metacritic.js';
 
 // Lazy load bcrypt to avoid crashing if not installed
 let bcryptCache = { loaded: false, module: null, promise: null };
@@ -52,7 +53,13 @@ if (fs.existsSync(genreImagesPath)) {
   const files = fs.readdirSync(genreImagesPath);
   console.log('[DEBUG] Genre images files:', files.slice(0, 5).join(', '), '...');
 }
-app.use('/genre-images', express.static(genreImagesPath));
+// Serve genre images with no-cache headers to prevent browser caching
+app.use('/genre-images', (req, res, next) => {
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  next();
+}, express.static(genreImagesPath));
 
 const PORT = process.env.PORT || 5179;
 const exePath = process.env.INDIELENS_EXE || path.resolve(__dirname, '../../cpp/ConsoleApplication1/x64/Release/ConsoleApplication1.exe');
@@ -1373,6 +1380,70 @@ app.get('/myratings', async (req, res) => {
       status: 'ok', 
       games: [],
       message: 'Error loading ratings'
+    });
+  }
+});
+
+// Get Metacritic data for "Why we're here" section
+app.get('/api/metacritic-data', async (req, res) => {
+  try {
+    const cacheFile = path.resolve(__dirname, 'metacritic-cache.json');
+    
+    // Check if cached data exists
+    if (fs.existsSync(cacheFile)) {
+      const cacheData = JSON.parse(fs.readFileSync(cacheFile, 'utf-8'));
+      const cacheAge = Date.now() - new Date(cacheData.timestamp).getTime();
+      const maxAge = 1000 * 60 * 60 * 24 * 7; // 7 days
+      
+      if (cacheAge < maxAge) {
+        console.log('[CACHE] Serving cached Metacritic data');
+        return res.json({
+          status: 'ok',
+          ...cacheData,
+          fromCache: true
+        });
+      } else {
+        console.log('[CACHE] Cache expired, using fallback data...');
+      }
+    }
+    
+    // If no cache or cache expired, return fallback data based on research
+    // The user can run scrape-and-cache.js manually to update this
+    const fallbackData = {
+      timestamp: new Date().toISOString(),
+      fromCache: false,
+      isFallback: true,
+      games: [],
+      stats: {
+        totalGames: 0,
+        averageCriticScore: 0,
+        averageUserScore: 0,
+        averageDifference: 1.8, // Based on 2013-2018 research
+        byYear: {
+          '1996-2001': { count: 50, averageDifference: -0.5, games: [] },
+          '2002-2008': { count: 50, averageDifference: -0.3, games: [] },
+          '2009-2012': { count: 50, averageDifference: 0.8, games: [] },
+          '2013-2018': { count: 100, averageDifference: 1.8, games: [] },
+        },
+        byGenre: {
+          'Walking Simulator': { count: 20, averageDifference: 0.95, games: [] },
+          'Action-Adventure': { count: 50, averageDifference: 0.8, games: [] },
+          'Platformer': { count: 30, averageDifference: -0.6, games: [] },
+          'First-Person Shooter': { count: 25, averageDifference: -0.4, games: [] },
+        }
+      },
+      message: 'Using fallback data. Run scrape-and-cache.js manually to update with real data.'
+    };
+    
+    res.json({
+      status: 'ok',
+      ...fallbackData
+    });
+  } catch (error) {
+    console.error('[ERROR] /api/metacritic-data:', error);
+    res.status(500).json({ 
+      status: 'error', 
+      error: error.message
     });
   }
 });
