@@ -1385,7 +1385,7 @@ app.get('/myratings', async (req, res) => {
 });
 
 // Get Metacritic data for "Why we're here" section
-app.get('/api/metacritic-data', async (req, res) => {
+app.get('/metacritic-data', async (req, res) => {
   try {
     const cacheFile = path.resolve(__dirname, 'metacritic-cache.json');
     console.log('[CACHE] Looking for cache file at:', cacheFile);
