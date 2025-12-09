@@ -61,6 +61,12 @@ app.use('/genre-images', (req, res, next) => {
   next();
 }, express.static(genreImagesPath));
 
+// Serve Metacritic graphs
+const metacriticGraphsPath = path.resolve(__dirname, '../Metacritic graphs');
+if (fs.existsSync(metacriticGraphsPath)) {
+  app.use('/Metacritic graphs', express.static(metacriticGraphsPath));
+}
+
 const PORT = process.env.PORT || 5179;
 const exePath = process.env.INDIELENS_EXE || path.resolve(__dirname, '../../cpp/ConsoleApplication1/x64/Release/ConsoleApplication1.exe');
 const cfgPath = process.env.INDIELENS_CONFIG || path.resolve(__dirname, '../../cpp/config.json');
