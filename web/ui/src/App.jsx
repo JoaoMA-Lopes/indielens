@@ -1420,7 +1420,7 @@ function WhyWereHere({ apiBase }) {
         <h1 style={{ color: '#c7d5e0', fontSize: '3em', marginBottom: 10, textAlign: 'center' }}>Why We're Here</h1>
         <p style={{ color: '#8f98a0', fontSize: '1.2em', textAlign: 'center', marginBottom: 20 }}>
           Metacritic is the most used and respected game scoring system in the industry. Their scores were <strong style={{ color: '#66c0f4' }}>mandatorily displayed on Steam</strong> for years, 
-          and publishers use them to determine bonuses, funding, and marketing budgets.
+          and publishers consider them to determine bonuses, funding, and marketing budgets.
         </p>
         <p style={{ color: '#8f98a0', fontSize: '1.2em', textAlign: 'center', marginBottom: 50 }}>
           The discrepancies shown below reveal a systematic bias that affects which games get made, funded, and discovered. Here's why IndieLens exists.
@@ -1437,7 +1437,7 @@ function WhyWereHere({ apiBase }) {
       <h1 style={{ color: '#c7d5e0', fontSize: '3em', marginBottom: 10, textAlign: 'center' }}>Why We're Here</h1>
       <p style={{ color: '#8f98a0', fontSize: '1.2em', textAlign: 'center', marginBottom: 20 }}>
         Metacritic is the most used and respected game scoring system in the industry. Their scores were <strong style={{ color: '#66c0f4' }}>mandatorily displayed on Steam</strong> for years, 
-        and publishers use them to determine bonuses, funding, and marketing budgets.
+        and publishers consider them to determine bonuses, funding, and marketing budgets.
       </p>
       <p style={{ color: '#8f98a0', fontSize: '1.2em', textAlign: 'center', marginBottom: 50 }}>
         The discrepancies shown below reveal a systematic bias that affects which games get made, funded, and discovered. Here's why IndieLens exists.
