@@ -1407,8 +1407,12 @@ function WhyWereHere({ apiBase }) {
     return (
       <div className="container" style={{ maxWidth: '1200px', margin: '40px auto', padding: '40px' }}>
         <h1 style={{ color: '#c7d5e0', fontSize: '3em', marginBottom: 10, textAlign: 'center' }}>Why We're Here</h1>
+        <p style={{ color: '#8f98a0', fontSize: '1.2em', textAlign: 'center', marginBottom: 20 }}>
+          Metacritic is the most used and respected game scoring system in the industry. Their scores were <strong style={{ color: '#66c0f4' }}>mandatorily displayed on Steam</strong> for years, 
+          and publishers use them to determine bonuses, funding, and marketing budgets.
+        </p>
         <p style={{ color: '#8f98a0', fontSize: '1.2em', textAlign: 'center', marginBottom: 50 }}>
-          The gaming industry has a review problem. Here's why IndieLens exists.
+          The discrepancies shown below reveal a systematic bias that affects which games get made, funded, and discovered. Here's why IndieLens exists.
         </p>
         <div style={{ textAlign: 'center', padding: '60px 0', color: '#8f98a0' }}>
           Loading data...
@@ -1420,8 +1424,12 @@ function WhyWereHere({ apiBase }) {
   return (
     <div className="container" style={{ maxWidth: '1200px', margin: '40px auto', padding: '40px' }}>
       <h1 style={{ color: '#c7d5e0', fontSize: '3em', marginBottom: 10, textAlign: 'center' }}>Why We're Here</h1>
+      <p style={{ color: '#8f98a0', fontSize: '1.2em', textAlign: 'center', marginBottom: 20 }}>
+        Metacritic is the most used and respected game scoring system in the industry. Their scores were <strong style={{ color: '#66c0f4' }}>mandatorily displayed on Steam</strong> for years, 
+        and publishers use them to determine bonuses, funding, and marketing budgets.
+      </p>
       <p style={{ color: '#8f98a0', fontSize: '1.2em', textAlign: 'center', marginBottom: 50 }}>
-        The gaming industry has a review problem. Here's why IndieLens exists.
+        The discrepancies shown below reveal a systematic bias that affects which games get made, funded, and discovered. Here's why IndieLens exists.
       </p>
       {data?.isFallback && (
         <p style={{ color: '#d4af37', fontSize: '0.9em', textAlign: 'center', marginBottom: 30, padding: '10px', background: 'rgba(212, 175, 55, 0.1)', borderRadius: 4 }}>
