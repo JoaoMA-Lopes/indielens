@@ -1362,6 +1362,16 @@ function WhyWereHere({ apiBase }) {
   }, [apiBase]);
 
   // Process data for charts
+  // Determine image base URL (same logic as genre images)
+  const imageBase = React.useMemo(() => {
+    if (apiBase && apiBase.startsWith('/')) {
+      return '/api';
+    } else if (apiBase) {
+      return apiBase;
+    }
+    return '';
+  }, [apiBase]);
+
   const scoreGapData = React.useMemo(() => {
     if (!data || !data.stats || !data.stats.byYear) {
       return defaultScoreGapData;
@@ -1680,65 +1690,24 @@ function WhyWereHere({ apiBase }) {
         </div>
       </div>
 
-      {/* Critics vs Users: The Uniformity Problem */}
+      {/* Critics vs Users: The Problems */}
       <div style={{ marginBottom: 60, padding: 40, border: '2px solid #d4af37', borderRadius: 8, background: 'rgba(212, 175, 55, 0.1)' }}>
-        <h2 style={{ color: '#d4af37', fontSize: '2.2em', marginTop: 0, marginBottom: 20, textAlign: 'center' }}>The Uniformity Problem</h2>
-        <p style={{ fontSize: '1.3em', color: '#c7d5e0', textAlign: 'center', marginBottom: 30, lineHeight: 1.8, fontWeight: 600 }}>
-          Critics all have essentially the same taste. Users have varied tastes. <strong style={{ color: '#66c0f4' }}>We represent all users' varied tastes.</strong>
-        </p>
+        <h2 style={{ color: '#d4af37', fontSize: '2.2em', marginTop: 0, marginBottom: 20, textAlign: 'center' }}>The Problems with Metacritic</h2>
         <p style={{ fontSize: '1.5em', color: '#66c0f4', textAlign: 'center', marginBottom: 40, fontWeight: 700 }}>
           We are the better Metacritic.
         </p>
 
-        {/* Genre Comparison */}
+        {/* Title Comparison - Uniformity Problem */}
         <div style={{ marginBottom: 50 }}>
-          <h3 style={{ color: '#c7d5e0', fontSize: '1.6em', marginBottom: 20, textAlign: 'center' }}>Genre Preferences</h3>
+          <h3 style={{ color: '#c7d5e0', fontSize: '1.6em', marginBottom: 10, textAlign: 'center' }}>The Uniformity Problem: Game Titles</h3>
+          <p style={{ fontSize: '1em', color: '#8f98a0', textAlign: 'center', marginBottom: 20, fontStyle: 'italic' }}>
+            Critics all have essentially the same taste. Users have varied tastes.
+          </p>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 30, marginBottom: 30 }}>
             <div style={{ textAlign: 'center' }}>
               <h4 style={{ color: '#d4af37', fontSize: '1.2em', marginBottom: 15 }}>Critics (Metascore)</h4>
               <img 
-                src={`/Metacritic graphs/metascore-genre.webp`} 
-                alt="Critic genre preferences"
-                style={{ 
-                  width: '100%', 
-                  maxWidth: '500px', 
-                  borderRadius: 8, 
-                  border: '2px solid #d4af37',
-                  boxShadow: '0 4px 12px rgba(212, 175, 55, 0.3)'
-                }}
-              />
-              <p style={{ color: '#8f98a0', fontSize: '0.9em', marginTop: 10, fontStyle: 'italic' }}>
-                Uniform, predictable patterns
-              </p>
-            </div>
-            <div style={{ textAlign: 'center' }}>
-              <h4 style={{ color: '#66c0f4', fontSize: '1.2em', marginBottom: 15 }}>Users (User Score)</h4>
-              <img 
-                src={`/Metacritic graphs/userscore-genre.webp`} 
-                alt="User genre preferences"
-                style={{ 
-                  width: '100%', 
-                  maxWidth: '500px', 
-                  borderRadius: 8, 
-                  border: '2px solid #66c0f4',
-                  boxShadow: '0 4px 12px rgba(102, 192, 244, 0.3)'
-                }}
-              />
-              <p style={{ color: '#8f98a0', fontSize: '0.9em', marginTop: 10, fontStyle: 'italic' }}>
-                Diverse, varied preferences
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Title Comparison */}
-        <div style={{ marginBottom: 50 }}>
-          <h3 style={{ color: '#c7d5e0', fontSize: '1.6em', marginBottom: 20, textAlign: 'center' }}>Game Title Preferences</h3>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 30, marginBottom: 30 }}>
-            <div style={{ textAlign: 'center' }}>
-              <h4 style={{ color: '#d4af37', fontSize: '1.2em', marginBottom: 15 }}>Critics (Metascore)</h4>
-              <img 
-                src={`/Metacritic graphs/metascore-title.webp`} 
+                src={`${imageBase}/Metacritic graphs/metascore-title.webp`} 
                 alt="Critic title preferences"
                 style={{ 
                   width: '100%', 
@@ -1752,7 +1721,7 @@ function WhyWereHere({ apiBase }) {
             <div style={{ textAlign: 'center' }}>
               <h4 style={{ color: '#66c0f4', fontSize: '1.2em', marginBottom: 15 }}>Users (User Score)</h4>
               <img 
-                src={`/Metacritic graphs/userscore-title.webp`} 
+                src={`${imageBase}/Metacritic graphs/userscore-title.webp`} 
                 alt="User title preferences"
                 style={{ 
                   width: '100%', 
@@ -1766,14 +1735,62 @@ function WhyWereHere({ apiBase }) {
           </div>
         </div>
 
-        {/* Publisher Comparison */}
-        <div style={{ marginBottom: 50 }}>
-          <h3 style={{ color: '#c7d5e0', fontSize: '1.6em', marginBottom: 20, textAlign: 'center' }}>Publisher Preferences</h3>
+        {/* Genre Comparison - Unjust Bias */}
+        <div style={{ marginBottom: 50, padding: 30, background: 'rgba(255, 100, 100, 0.1)', borderRadius: 8, border: '2px solid #ff6464' }}>
+          <h3 style={{ color: '#ff6464', fontSize: '1.6em', marginBottom: 10, textAlign: 'center' }}>Unjust Bias: Genre Preferences</h3>
+          <p style={{ fontSize: '1em', color: '#c7d5e0', textAlign: 'center', marginBottom: 20 }}>
+            <strong style={{ color: '#ff6464' }}>Genres are not superior to each other.</strong> Yet critics systematically favor certain genres while penalizing others. 
+            This bias limits what games get made and funded.
+          </p>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 30, marginBottom: 30 }}>
             <div style={{ textAlign: 'center' }}>
               <h4 style={{ color: '#d4af37', fontSize: '1.2em', marginBottom: 15 }}>Critics (Metascore)</h4>
               <img 
-                src={`/Metacritic graphs/metascore-publisher.webp`} 
+                src={`${imageBase}/Metacritic graphs/metascore-genre.webp`} 
+                alt="Critic genre preferences"
+                style={{ 
+                  width: '100%', 
+                  maxWidth: '500px', 
+                  borderRadius: 8, 
+                  border: '2px solid #d4af37',
+                  boxShadow: '0 4px 12px rgba(212, 175, 55, 0.3)'
+                }}
+              />
+              <p style={{ color: '#ff6464', fontSize: '0.9em', marginTop: 10, fontWeight: 600 }}>
+                Systematic genre bias
+              </p>
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <h4 style={{ color: '#66c0f4', fontSize: '1.2em', marginBottom: 15 }}>Users (User Score)</h4>
+              <img 
+                src={`${imageBase}/Metacritic graphs/userscore-genre.webp`} 
+                alt="User genre preferences"
+                style={{ 
+                  width: '100%', 
+                  maxWidth: '500px', 
+                  borderRadius: 8, 
+                  border: '2px solid #66c0f4',
+                  boxShadow: '0 4px 12px rgba(102, 192, 244, 0.3)'
+                }}
+              />
+              <p style={{ color: '#66c0f4', fontSize: '0.9em', marginTop: 10, fontWeight: 600 }}>
+                Fair, diverse preferences
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Publisher Comparison - Potentially Justified */}
+        <div style={{ marginBottom: 50 }}>
+          <h3 style={{ color: '#c7d5e0', fontSize: '1.6em', marginBottom: 10, textAlign: 'center' }}>Publisher Preferences</h3>
+          <p style={{ fontSize: '1em', color: '#8f98a0', textAlign: 'center', marginBottom: 20, fontStyle: 'italic' }}>
+            Some publishers may genuinely produce higher quality games, but critics show clear bias patterns.
+          </p>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 30, marginBottom: 30 }}>
+            <div style={{ textAlign: 'center' }}>
+              <h4 style={{ color: '#d4af37', fontSize: '1.2em', marginBottom: 15 }}>Critics (Metascore)</h4>
+              <img 
+                src={`${imageBase}/Metacritic graphs/metascore-publisher.webp`} 
                 alt="Critic publisher preferences"
                 style={{ 
                   width: '100%', 
@@ -1787,7 +1804,7 @@ function WhyWereHere({ apiBase }) {
             <div style={{ textAlign: 'center' }}>
               <h4 style={{ color: '#66c0f4', fontSize: '1.2em', marginBottom: 15 }}>Users (User Score)</h4>
               <img 
-                src={`/Metacritic graphs/userscore-publisher.webp`} 
+                src={`${imageBase}/Metacritic graphs/userscore-publisher.webp`} 
                 alt="User publisher preferences"
                 style={{ 
                   width: '100%', 
@@ -1801,14 +1818,17 @@ function WhyWereHere({ apiBase }) {
           </div>
         </div>
 
-        {/* Developer Comparison */}
+        {/* Developer Comparison - Potentially Justified */}
         <div style={{ marginBottom: 30 }}>
-          <h3 style={{ color: '#c7d5e0', fontSize: '1.6em', marginBottom: 20, textAlign: 'center' }}>Developer Preferences</h3>
+          <h3 style={{ color: '#c7d5e0', fontSize: '1.6em', marginBottom: 10, textAlign: 'center' }}>Developer Preferences</h3>
+          <p style={{ fontSize: '1em', color: '#8f98a0', textAlign: 'center', marginBottom: 20, fontStyle: 'italic' }}>
+            Some developers may genuinely produce higher quality games, but critics show clear bias patterns.
+          </p>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 30 }}>
             <div style={{ textAlign: 'center' }}>
               <h4 style={{ color: '#d4af37', fontSize: '1.2em', marginBottom: 15 }}>Critics (Metascore)</h4>
               <img 
-                src={`/Metacritic graphs/metascore-developer.webp`} 
+                src={`${imageBase}/Metacritic graphs/metascore-developer.webp`} 
                 alt="Critic developer preferences"
                 style={{ 
                   width: '100%', 
@@ -1822,7 +1842,7 @@ function WhyWereHere({ apiBase }) {
             <div style={{ textAlign: 'center' }}>
               <h4 style={{ color: '#66c0f4', fontSize: '1.2em', marginBottom: 15 }}>Users (User Score)</h4>
               <img 
-                src={`/Metacritic graphs/userscore-developer.webp`} 
+                src={`${imageBase}/Metacritic graphs/userscore-developer.webp`} 
                 alt="User developer preferences"
                 style={{ 
                   width: '100%', 
@@ -1838,8 +1858,7 @@ function WhyWereHere({ apiBase }) {
 
         <div style={{ marginTop: 40, padding: 30, background: 'rgba(102, 192, 244, 0.1)', borderRadius: 8, border: '2px solid #66c0f4' }}>
           <p style={{ fontSize: '1.1em', color: '#c7d5e0', textAlign: 'center', lineHeight: 1.8 }}>
-            These visualizations reveal a fundamental truth: <strong style={{ color: '#66c0f4' }}>critics cluster around similar preferences</strong>, 
-            while <strong style={{ color: '#66c0f4' }}>users spread across diverse tastes</strong>. IndieLens amplifies the voices of all players, 
+            <strong style={{ color: '#66c0f4' }}>We represent all users' varied tastes.</strong> IndieLens amplifies the voices of all players, 
             not just a homogeneous group of reviewers. Every varied taste matters. Every player's perspective counts.
           </p>
         </div>
