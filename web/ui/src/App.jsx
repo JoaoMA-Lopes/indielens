@@ -1628,9 +1628,89 @@ function WhyWereHere({ apiBase }) {
         </div>
       </div>
 
+      {/* Steam Reviews: Better but Not Perfect */}
+      <div style={{ marginBottom: 60, padding: 40, border: '2px solid #8f98a0', borderRadius: 8, background: 'rgba(143, 152, 160, 0.1)' }}>
+        <h2 style={{ color: '#c7d5e0', fontSize: '2.2em', marginTop: 0, marginBottom: 20 }}>Steam Reviews: A Step Forward, But Not Enough</h2>
+        <p style={{ fontSize: '1.1em', color: '#c7d5e0', textAlign: 'center', marginBottom: 30, lineHeight: 1.8 }}>
+          Steam user reviews represent a significant improvement over Metacritic—they're <strong style={{ color: '#66c0f4' }}>user-driven</strong> and 
+          gaining greater use today. Players who actually bought and played the game share their honest opinions.
+        </p>
+        
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 25, marginTop: 30 }}>
+          <div style={{ padding: 25, background: 'rgba(255, 100, 100, 0.1)', borderRadius: 8, border: '1px solid #ff6464' }}>
+            <h3 style={{ color: '#ff6464', fontSize: '1.4em', marginTop: 0 }}>Review Bombing</h3>
+            <p style={{ color: '#c7d5e0', lineHeight: 1.7 }}>
+              Anyone can review-bomb games. Haters simply <strong>buy the game, leave a negative review, then refund it</strong>. 
+              Steam's refund policy makes this trivial, and there's no way to distinguish genuine reviews from malicious ones.
+            </p>
+          </div>
+          
+          <div style={{ padding: 25, background: 'rgba(255, 100, 100, 0.1)', borderRadius: 8, border: '1px solid #ff6464' }}>
+            <h3 style={{ color: '#ff6464', fontSize: '1.4em', marginTop: 0 }}>No Engagement Weighting</h3>
+            <p style={{ color: '#c7d5e0', lineHeight: 1.7 }}>
+              A review from someone with <strong>200 hours and 95% achievements</strong> counts the same as someone who played 
+              for <strong>30 minutes</strong>. Achievements and playtime don't factor into the rating system itself, 
+              making it impossible to identify truly engaged players.
+            </p>
+          </div>
+          
+          <div style={{ padding: 25, background: 'rgba(255, 100, 100, 0.1)', borderRadius: 8, border: '1px solid #ff6464' }}>
+            <h3 style={{ color: '#ff6464', fontSize: '1.4em', marginTop: 0 }}>No Profile Matching</h3>
+            <p style={{ color: '#c7d5e0', lineHeight: 1.7 }}>
+              Steam shows aggregate scores. A roguelike enthusiast's review of a new roguelike counts the same as someone who's 
+              never played the genre. There's no way to find games loved by players with <strong>similar tastes</strong> to you.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Why This Matters: Social Good */}
+      <div style={{ marginBottom: 60, padding: 40, border: '2px solid #d4af37', borderRadius: 8, background: 'rgba(212, 175, 55, 0.1)' }}>
+        <h2 style={{ color: '#d4af37', fontSize: '2.2em', marginTop: 0, marginBottom: 20 }}>Why This Is a Social Good</h2>
+        <p style={{ fontSize: '1.2em', color: '#c7d5e0', textAlign: 'center', marginBottom: 30, lineHeight: 1.8 }}>
+          Indie developers already wear too many hats. They're <strong style={{ color: '#d4af37' }}>programmers, artists, musicians, VFX artists, and sound designers</strong>—all at once. 
+          They can't also be marketing experts.
+        </p>
+        
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: 30, marginTop: 30 }}>
+          <div style={{ padding: 30, background: 'rgba(255, 255, 255, 0.05)', borderRadius: 8, border: '1px solid #d4af37' }}>
+            <h3 style={{ color: '#d4af37', fontSize: '1.5em', marginTop: 0, marginBottom: 15 }}>The Developer's Dilemma</h3>
+            <p style={{ color: '#c7d5e0', lineHeight: 1.8, fontSize: 16 }}>
+              Poor developers—ones who already need to worry about <strong>programming, art, music, VFX, and SFX</strong>—can't stand 
+              to also worry about marketing their games themselves. This often leads them to face an impossible choice:
+            </p>
+          </div>
+          
+          <div style={{ padding: 30, background: 'rgba(255, 100, 100, 0.1)', borderRadius: 8, border: '1px solid #ff6464' }}>
+            <h3 style={{ color: '#ff6464', fontSize: '1.5em', marginTop: 0, marginBottom: 15 }}>Sell Ownership to Publishers</h3>
+            <p style={{ color: '#c7d5e0', lineHeight: 1.8, fontSize: 16 }}>
+              Risk <strong>selling some of their ownership</strong> to publishers who promise marketing support. This means losing 
+              creative control and a significant portion of their revenue—often their only source of income.
+            </p>
+          </div>
+          
+          <div style={{ padding: 30, background: 'rgba(255, 100, 100, 0.1)', borderRadius: 8, border: '1px solid #ff6464' }}>
+            <h3 style={{ color: '#ff6464', fontSize: '1.5em', marginTop: 0, marginBottom: 15 }}>Build Social Media Presence</h3>
+            <p style={{ color: '#c7d5e0', lineHeight: 1.8, fontSize: 16 }}>
+              Risk trying to <strong>build a social media presence themselves</strong>, spending countless hours on Twitter, TikTok, 
+              and Discord instead of making games. This diverts time from development and rarely yields results without 
+              significant investment.
+            </p>
+          </div>
+        </div>
+        
+        <div style={{ marginTop: 40, padding: 30, background: 'rgba(102, 192, 244, 0.1)', borderRadius: 8, border: '2px solid #66c0f4' }}>
+          <p style={{ fontSize: '1.2em', color: '#c7d5e0', textAlign: 'center', lineHeight: 1.8 }}>
+            <strong style={{ color: '#66c0f4' }}>IndieLens changes this.</strong> By creating a fair, engagement-weighted rating system, 
+            great games can be discovered organically. Developers can focus on what they do best—making games—while players 
+            discover quality titles through a system that actually works.
+          </p>
+        </div>
+      </div>
+
       {/* The Solution */}
       <div style={{ marginBottom: 60, padding: 40, border: '2px solid #66c0f4', borderRadius: 8, background: 'rgba(102, 192, 244, 0.1)' }}>
-        <h2 style={{ color: '#66c0f4', fontSize: '2.2em', marginTop: 0, marginBottom: 30 }}>How IndieLens Solves This</h2>
+        <h2 style={{ color: '#66c0f4', fontSize: '2.2em', marginTop: 0, marginBottom: 30 }}>How IndieLens Solves All of This</h2>
         
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 25, marginTop: 30 }}>
           <div style={{ padding: 25, background: 'rgba(255, 255, 255, 0.05)', borderRadius: 8 }}>
