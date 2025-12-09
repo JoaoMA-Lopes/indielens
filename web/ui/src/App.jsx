@@ -1679,7 +1679,7 @@ function WhyWereHere({ apiBase }) {
           <div style={{ padding: 25, background: 'rgba(255, 255, 255, 0.05)', borderRadius: 8 }}>
             <h3 style={{ color: '#66c0f4', fontSize: '1.3em', marginTop: 0 }}>✓ User-Driven Ratings</h3>
             <p style={{ color: '#c7d5e0', lineHeight: 1.7, fontSize: 15 }}>
-              Ratings comes from players who spent their own money to buy the game, not game reviewers under a deadline and paycheck
+              Ratings comes from players who <strong>spent their own money</strong> to buy the game, not <strong>game reviewers</strong> under a <strong>deadline and paycheck</strong>
             </p>
           </div>
           
