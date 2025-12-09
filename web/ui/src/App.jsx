@@ -1707,7 +1707,7 @@ function WhyWereHere({ apiBase }) {
             <div style={{ textAlign: 'center' }}>
               <h4 style={{ color: '#d4af37', fontSize: '1.2em', marginBottom: 15 }}>Critics (Metascore)</h4>
               <img 
-                src={`${imageBase}/Metacritic graphs/metascore-title.webp`} 
+                src={`${imageBase}/Metacritic%20graphs/metascore-title.webp`} 
                 alt="Critic title preferences"
                 style={{ 
                   width: '100%', 
@@ -1721,7 +1721,7 @@ function WhyWereHere({ apiBase }) {
             <div style={{ textAlign: 'center' }}>
               <h4 style={{ color: '#66c0f4', fontSize: '1.2em', marginBottom: 15 }}>Users (User Score)</h4>
               <img 
-                src={`${imageBase}/Metacritic graphs/userscore-title.webp`} 
+                src={`${imageBase}/Metacritic%20graphs/userscore-title.webp`} 
                 alt="User title preferences"
                 style={{ 
                   width: '100%', 
@@ -1746,7 +1746,7 @@ function WhyWereHere({ apiBase }) {
             <div style={{ textAlign: 'center' }}>
               <h4 style={{ color: '#d4af37', fontSize: '1.2em', marginBottom: 15 }}>Critics (Metascore)</h4>
               <img 
-                src={`${imageBase}/Metacritic graphs/metascore-genre.webp`} 
+                src={`${imageBase}/Metacritic%20graphs/metascore-genre.webp`} 
                 alt="Critic genre preferences"
                 style={{ 
                   width: '100%', 
@@ -1763,7 +1763,7 @@ function WhyWereHere({ apiBase }) {
             <div style={{ textAlign: 'center' }}>
               <h4 style={{ color: '#66c0f4', fontSize: '1.2em', marginBottom: 15 }}>Users (User Score)</h4>
               <img 
-                src={`${imageBase}/Metacritic graphs/userscore-genre.webp`} 
+                src={`${imageBase}/Metacritic%20graphs/userscore-genre.webp`} 
                 alt="User genre preferences"
                 style={{ 
                   width: '100%', 
@@ -1790,7 +1790,7 @@ function WhyWereHere({ apiBase }) {
             <div style={{ textAlign: 'center' }}>
               <h4 style={{ color: '#d4af37', fontSize: '1.2em', marginBottom: 15 }}>Critics (Metascore)</h4>
               <img 
-                src={`${imageBase}/Metacritic graphs/metascore-publisher.webp`} 
+                src={`${imageBase}/Metacritic%20graphs/metascore-publisher.webp`} 
                 alt="Critic publisher preferences"
                 style={{ 
                   width: '100%', 
@@ -1804,7 +1804,7 @@ function WhyWereHere({ apiBase }) {
             <div style={{ textAlign: 'center' }}>
               <h4 style={{ color: '#66c0f4', fontSize: '1.2em', marginBottom: 15 }}>Users (User Score)</h4>
               <img 
-                src={`${imageBase}/Metacritic graphs/userscore-publisher.webp`} 
+                src={`${imageBase}/Metacritic%20graphs/userscore-publisher.webp`} 
                 alt="User publisher preferences"
                 style={{ 
                   width: '100%', 
@@ -1828,7 +1828,7 @@ function WhyWereHere({ apiBase }) {
             <div style={{ textAlign: 'center' }}>
               <h4 style={{ color: '#d4af37', fontSize: '1.2em', marginBottom: 15 }}>Critics (Metascore)</h4>
               <img 
-                src={`${imageBase}/Metacritic graphs/metascore-developer.webp`} 
+                src={`${imageBase}/Metacritic%20graphs/metascore-developer.webp`} 
                 alt="Critic developer preferences"
                 style={{ 
                   width: '100%', 
@@ -1842,7 +1842,7 @@ function WhyWereHere({ apiBase }) {
             <div style={{ textAlign: 'center' }}>
               <h4 style={{ color: '#66c0f4', fontSize: '1.2em', marginBottom: 15 }}>Users (User Score)</h4>
               <img 
-                src={`${imageBase}/Metacritic graphs/userscore-developer.webp`} 
+                src={`${imageBase}/Metacritic%20graphs/userscore-developer.webp`} 
                 alt="User developer preferences"
                 style={{ 
                   width: '100%', 
