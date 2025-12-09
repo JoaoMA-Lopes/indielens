@@ -63,7 +63,11 @@ app.use('/genre-images', (req, res, next) => {
 
 // Serve Metacritic graphs
 const metacriticGraphsPath = path.resolve(__dirname, '../Metacritic graphs');
+console.log('[DEBUG] Metacritic graphs path:', metacriticGraphsPath);
+console.log('[DEBUG] Metacritic graphs exists:', fs.existsSync(metacriticGraphsPath));
 if (fs.existsSync(metacriticGraphsPath)) {
+  const files = fs.readdirSync(metacriticGraphsPath);
+  console.log('[DEBUG] Metacritic graphs files:', files.slice(0, 5).join(', '), '...');
   app.use('/Metacritic graphs', express.static(metacriticGraphsPath));
   // Also serve via /api for consistency with frontend
   app.use('/api/Metacritic graphs', express.static(metacriticGraphsPath));
