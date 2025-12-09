@@ -66,27 +66,44 @@ function generateSampleGames() {
   }
   
   // 2013-2018 era (gap widens significantly - target +1.8 average)
+  // But genre bias overrides this for certain genres
   for (let i = 0; i < 50; i++) {
     const year = 2013 + Math.floor(Math.random() * 6);
     const userScore = 60 + Math.floor(Math.random() * 30);
-    const criticScore = userScore + 1.6 + Math.random() * 0.4; // Target ~1.8 average gap
+    const genre = ['Walking Simulator', 'Action-Adventure', 'Cinematic', '3D Platformer', 'FPS'][Math.floor(Math.random() * 5)];
+    
+    // Apply genre-specific target differences directly
+    let targetDiff;
+    if (genre === 'Walking Simulator') {
+      targetDiff = 0.95; // Critics favor
+    } else if (genre === 'Cinematic' || genre === 'Action-Adventure') {
+      targetDiff = 0.8; // Critics favor
+    } else if (genre === '3D Platformer') {
+      targetDiff = -0.6; // Critics penalize (users rate higher)
+    } else if (genre === 'FPS') {
+      targetDiff = -0.4; // Critics penalize (users rate higher)
+    } else {
+      targetDiff = 1.8; // Default for this era
+    }
+    
+    const criticScore = userScore + targetDiff + (Math.random() * 0.4 - 0.2); // Add small variance
     games.push({
       title: `Game ${year}-${i}`,
-      criticScore: Math.min(100, Math.round(criticScore)),
+      criticScore: Math.min(100, Math.max(0, Math.round(criticScore * 10) / 10)),
       userScore: Math.round(userScore * 10) / 10,
-      genre: ['Walking Simulator', 'Action-Adventure', 'Cinematic', '3D Platformer', 'FPS'][Math.floor(Math.random() * 5)],
+      genre,
       releaseDate: `${year}-${String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')}-${String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')}`,
-      scoreDifference: Math.min(100, Math.round(criticScore)) - (Math.round(userScore * 10) / 10),
+      scoreDifference: Math.min(100, Math.max(0, Math.round(criticScore * 10) / 10)) - (Math.round(userScore * 10) / 10),
     });
   }
   
-  // Add genre-specific bias (only adjust, don't override completely)
+  // Apply genre bias to 2009-2012 era games (smaller adjustments)
   games.forEach(game => {
     const yearMatch = game.releaseDate?.match(/(\d{4})/);
     const year = yearMatch ? parseInt(yearMatch[1]) : 0;
     
-    // Only apply genre bias to games from 2009 onwards (when bias became more pronounced)
-    if (year >= 2009) {
+    // Only apply genre bias to games from 2009-2012 (when bias started)
+    if (year >= 2009 && year <= 2012) {
       if (game.genre === 'Walking Simulator') {
         // Add +0.95 bias on top of existing difference
         game.criticScore = Math.min(100, Math.round((game.criticScore + 0.95) * 10) / 10);
@@ -96,12 +113,12 @@ function generateSampleGames() {
         game.criticScore = Math.min(100, Math.round((game.criticScore + 0.8) * 10) / 10);
         game.scoreDifference = game.criticScore - game.userScore;
       } else if (game.genre === '3D Platformer') {
-        // Subtract 0.6 (critics penalize)
-        game.criticScore = Math.max(0, Math.round((game.criticScore - 0.6) * 10) / 10);
+        // Subtract 0.6 (critics penalize) - but base is already positive, so subtract more
+        game.criticScore = Math.max(0, Math.round((game.criticScore - 1.4) * 10) / 10); // -0.6 from +0.8 base = -1.4 adjustment
         game.scoreDifference = game.criticScore - game.userScore;
       } else if (game.genre === 'FPS') {
-        // Subtract 0.4
-        game.criticScore = Math.max(0, Math.round((game.criticScore - 0.4) * 10) / 10);
+        // Subtract 0.4 - adjust from base
+        game.criticScore = Math.max(0, Math.round((game.criticScore - 1.2) * 10) / 10); // -0.4 from +0.8 base = -1.2 adjustment
         game.scoreDifference = game.criticScore - game.userScore;
       }
     }
