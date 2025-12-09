@@ -9,18 +9,33 @@ import XLSX from 'xlsx';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Path to the Excel file (adjust if needed)
-const EXCEL_FILE = path.resolve(__dirname, '../Metacritic scraped data/METACRITIC STUFF.xlsx');
+// Path to the Excel file - check multiple locations
+const possiblePaths = [
+  path.resolve(__dirname, '../Metacritic scraped data/METACRITIC STUFF.xlsx'),
+  path.resolve(__dirname, 'METACRITIC STUFF.xlsx'),
+  path.resolve(__dirname, '../Metacritic scraped data/METACRITIC STUFF.xlsx'),
+];
+
 const OUTPUT_FILE = path.resolve(__dirname, 'metacritic-cache.json');
 
 function processExcelData() {
-  console.log('Reading Excel file:', EXCEL_FILE);
+  // Find the Excel file
+  let EXCEL_FILE = null;
+  for (const filePath of possiblePaths) {
+    if (fs.existsSync(filePath)) {
+      EXCEL_FILE = filePath;
+      break;
+    }
+  }
   
-  if (!fs.existsSync(EXCEL_FILE)) {
-    console.error('Excel file not found at:', EXCEL_FILE);
-    console.error('Please ensure the file exists at: web/Metacritic scraped data/METACRITIC STUFF.xlsx');
+  if (!EXCEL_FILE) {
+    console.error('Excel file not found. Tried:');
+    possiblePaths.forEach(p => console.error('  -', p));
+    console.error('\nPlease upload the Excel file to one of these locations.');
     process.exit(1);
   }
+  
+  console.log('Reading Excel file:', EXCEL_FILE);
 
   // Read the workbook
   const workbook = XLSX.readFile(EXCEL_FILE);
