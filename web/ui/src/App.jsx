@@ -1664,6 +1664,48 @@ function WhyWereHere({ apiBase }) {
         </div>
       </div>
 
+      {/* The Solution */}
+      <div style={{ marginBottom: 60, padding: 40, border: '2px solid #66c0f4', borderRadius: 8, background: 'rgba(102, 192, 244, 0.1)' }}>
+        <h2 style={{ color: '#66c0f4', fontSize: '2.2em', marginTop: 0, marginBottom: 30 }}>How IndieLens Solves All of This</h2>
+        
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 25, marginTop: 30 }}>
+          <div style={{ padding: 25, background: 'rgba(255, 255, 255, 0.05)', borderRadius: 8 }}>
+            <h3 style={{ color: '#66c0f4', fontSize: '1.3em', marginTop: 0 }}>✓ User-Driven Ratings</h3>
+            <p style={{ color: '#c7d5e0', lineHeight: 1.7, fontSize: 15 }}>
+              Ratings comes from players who <strong>spent their own money</strong> to buy the game, not <strong>game reviewers</strong> under a <strong>deadline and paycheck</strong>
+            </p>
+          </div>
+          
+          <div style={{ padding: 25, background: 'rgba(255, 255, 255, 0.05)', borderRadius: 8 }}>
+            <h3 style={{ color: '#66c0f4', fontSize: '1.3em', marginTop: 0 }}>✓ Profile Matching</h3>
+            <p style={{ color: '#c7d5e0', lineHeight: 1.7, fontSize: 15 }}>
+              Find games loved by players with <strong>similar tastes</strong> to you, not aggregate scores.
+            </p>
+          </div>
+          
+          <div style={{ padding: 25, background: 'rgba(255, 255, 255, 0.05)', borderRadius: 8 }}>
+            <h3 style={{ color: '#66c0f4', fontSize: '1.3em', marginTop: 0 }}>✓ Engagement Weighting</h3>
+            <p style={{ color: '#c7d5e0', lineHeight: 1.7, fontSize: 15 }}>
+              Ratings from players with more <strong>hours and achievements</strong> have more weight.
+            </p>
+          </div>
+          
+          <div style={{ padding: 25, background: 'rgba(255, 255, 255, 0.05)', borderRadius: 8 }}>
+            <h3 style={{ color: '#66c0f4', fontSize: '1.3em', marginTop: 0 }}>✓ Continuous Updates</h3>
+            <p style={{ color: '#c7d5e0', lineHeight: 1.7, fontSize: 15 }}>
+              Scores update as more players rate, reflecting the game's <strong>current state</strong>.
+            </p>
+          </div>
+        </div>
+        
+        <div style={{ marginTop: 40, padding: 30, background: 'rgba(255, 255, 255, 0.05)', borderRadius: 8, textAlign: 'center' }}>
+          <p style={{ color: '#c7d5e0', fontSize: '1.3em', lineHeight: 1.8, margin: 0 }}>
+            <strong style={{ color: '#66c0f4' }}>The best games aren't the ones liked by everyone.</strong><br />
+            They're the ones <strong style={{ color: '#d4af37' }}>loved by the specific group of people they're made for</strong>.
+          </p>
+        </div>
+      </div>
+
       {/* Why This Matters: Social Good */}
       <div style={{ marginBottom: 60, padding: 40, border: '2px solid #d4af37', borderRadius: 8, background: 'rgba(212, 175, 55, 0.1)' }}>
         <h2 style={{ color: '#d4af37', fontSize: '2.2em', marginTop: 0, marginBottom: 20 }}>Why This Is a Social Good</h2>
@@ -1704,48 +1746,6 @@ function WhyWereHere({ apiBase }) {
             <strong style={{ color: '#66c0f4' }}>IndieLens changes this.</strong> By creating a fair, engagement-weighted rating system, 
             great games can be discovered organically. Developers can focus on what they do best—making games—while players 
             discover quality titles through a system that actually works.
-          </p>
-        </div>
-      </div>
-
-      {/* The Solution */}
-      <div style={{ marginBottom: 60, padding: 40, border: '2px solid #66c0f4', borderRadius: 8, background: 'rgba(102, 192, 244, 0.1)' }}>
-        <h2 style={{ color: '#66c0f4', fontSize: '2.2em', marginTop: 0, marginBottom: 30 }}>How IndieLens Solves All of This</h2>
-        
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 25, marginTop: 30 }}>
-          <div style={{ padding: 25, background: 'rgba(255, 255, 255, 0.05)', borderRadius: 8 }}>
-            <h3 style={{ color: '#66c0f4', fontSize: '1.3em', marginTop: 0 }}>✓ User-Driven Ratings</h3>
-            <p style={{ color: '#c7d5e0', lineHeight: 1.7, fontSize: 15 }}>
-              Ratings comes from players who <strong>spent their own money</strong> to buy the game, not <strong>game reviewers</strong> under a <strong>deadline and paycheck</strong>
-            </p>
-          </div>
-          
-          <div style={{ padding: 25, background: 'rgba(255, 255, 255, 0.05)', borderRadius: 8 }}>
-            <h3 style={{ color: '#66c0f4', fontSize: '1.3em', marginTop: 0 }}>✓ Profile Matching</h3>
-            <p style={{ color: '#c7d5e0', lineHeight: 1.7, fontSize: 15 }}>
-              Find games loved by players with <strong>similar tastes</strong> to you, not aggregate scores.
-            </p>
-          </div>
-          
-          <div style={{ padding: 25, background: 'rgba(255, 255, 255, 0.05)', borderRadius: 8 }}>
-            <h3 style={{ color: '#66c0f4', fontSize: '1.3em', marginTop: 0 }}>✓ Engagement Weighting</h3>
-            <p style={{ color: '#c7d5e0', lineHeight: 1.7, fontSize: 15 }}>
-              Ratings from players with more <strong>hours and achievements</strong> have more weight.
-            </p>
-          </div>
-          
-          <div style={{ padding: 25, background: 'rgba(255, 255, 255, 0.05)', borderRadius: 8 }}>
-            <h3 style={{ color: '#66c0f4', fontSize: '1.3em', marginTop: 0 }}>✓ Continuous Updates</h3>
-            <p style={{ color: '#c7d5e0', lineHeight: 1.7, fontSize: 15 }}>
-              Scores update as more players rate, reflecting the game's <strong>current state</strong>.
-            </p>
-          </div>
-        </div>
-        
-        <div style={{ marginTop: 40, padding: 30, background: 'rgba(255, 255, 255, 0.05)', borderRadius: 8, textAlign: 'center' }}>
-          <p style={{ color: '#c7d5e0', fontSize: '1.3em', lineHeight: 1.8, margin: 0 }}>
-            <strong style={{ color: '#66c0f4' }}>The best games aren't the ones liked by everyone.</strong><br />
-            They're the ones <strong style={{ color: '#d4af37' }}>loved by the specific group of people they're made for</strong>.
           </p>
         </div>
       </div>
