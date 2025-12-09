@@ -1448,264 +1448,26 @@ function WhyWereHere({ apiBase }) {
         </p>
       )}
 
-      {/* The Growing Divide */}
-      <div style={{ marginBottom: 60, padding: 40, border: '2px solid #415a79', borderRadius: 8, background: 'rgba(255, 255, 255, 0.02)' }}>
-        <h2 style={{ color: '#c7d5e0', fontSize: '2.2em', marginTop: 0, marginBottom: 30 }}>The Growing Divide</h2>
-        <p style={{ fontSize: 18, color: '#c7d5e0', marginBottom: 30, lineHeight: 1.8 }}>
-          From 1996 to 2008, game critics were typically <strong style={{ color: '#66c0f4' }}>harsher</strong> than players. 
-          But starting in 2009, something changed. Critics began reviewing games more <strong style={{ color: '#d4af37' }}>positively</strong> than user reviews, 
-          and there hasn't been a single year since where critics were harsher than fans.
-        </p>
-        
-        <div style={{ marginTop: 40, marginBottom: 30 }}>
-          <h3 style={{ color: '#c7d5e0', fontSize: '1.5em', marginBottom: 20 }}>Critic vs User Score Gap Over Time</h3>
-          <svg width={chartWidth} height={chartHeight} style={{ display: 'block', margin: '0 auto', background: 'rgba(255, 255, 255, 0.02)', borderRadius: 8, padding: 20 }}>
-            {/* Grid lines */}
-            {[0, 0.5, 1.0, 1.5, 2.0].map((val, i) => (
-              <g key={i}>
-                <line
-                  x1={padding}
-                  y1={padding + (chartHeight - padding * 2) * (1 - val / maxGap)}
-                  x2={chartWidth - padding}
-                  y2={padding + (chartHeight - padding * 2) * (1 - val / maxGap)}
-                  stroke="#415a79"
-                  strokeWidth="1"
-                  strokeDasharray="4,4"
-                  opacity="0.5"
-                />
-                <text
-                  x={padding - 10}
-                  y={padding + (chartHeight - padding * 2) * (1 - val / maxGap) + 5}
-                  fill="#8f98a0"
-                  fontSize="12"
-                  textAnchor="end"
-                >
-                  {val.toFixed(1)}
-                </text>
-              </g>
-            ))}
-            
-            {/* Bars */}
-            {scoreGapData.map((item, index) => {
-              const barHeight = (Math.abs(item.gap) / maxGap) * (chartHeight - padding * 2);
-              const x = padding + index * (barWidth + 20) + 10;
-              const y = padding + (chartHeight - padding * 2) - barHeight;
-              const color = item.criticsHarsher ? '#66c0f4' : '#d4af37';
-              
-              return (
-                <g key={index}>
-                  <rect
-                    x={x}
-                    y={y}
-                    width={barWidth}
-                    height={barHeight}
-                    fill={color}
-                    opacity="0.8"
-                    rx="4"
-                  />
-                  <text
-                    x={x + barWidth / 2}
-                    y={y - 10}
-                    fill="#c7d5e0"
-                    fontSize="14"
-                    fontWeight="600"
-                    textAnchor="middle"
-                  >
-                    {item.gap.toFixed(1)}
-                  </text>
-                  <text
-                    x={x + barWidth / 2}
-                    y={chartHeight - padding + 20}
-                    fill="#8f98a0"
-                    fontSize="14"
-                    textAnchor="middle"
-                  >
-                    {item.year}
-                  </text>
-                </g>
-              );
-            })}
-            
-            {/* Zero line */}
-            <line
-              x1={padding}
-              y1={padding + (chartHeight - padding * 2) / 2}
-              x2={chartWidth - padding}
-              y2={padding + (chartHeight - padding * 2) / 2}
-              stroke="#c7d5e0"
-              strokeWidth="2"
-            />
-            <text
-              x={padding - 10}
-              y={padding + (chartHeight - padding * 2) / 2 + 5}
-              fill="#c7d5e0"
-              fontSize="12"
-              textAnchor="end"
-              fontWeight="600"
-            >
-              0
-            </text>
-            
-            {/* Labels */}
-            <text
-              x={padding - 10}
-              y={padding - 10}
-              fill="#8f98a0"
-              fontSize="12"
-              textAnchor="end"
-            >
-              Critics Harsher
-            </text>
-            <text
-              x={padding - 10}
-              y={chartHeight - padding + 10}
-              fill="#8f98a0"
-              fontSize="12"
-              textAnchor="end"
-            >
-              Critics More Positive
-            </text>
-          </svg>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: 40, marginTop: 20 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <div style={{ width: 20, height: 20, background: '#66c0f4', borderRadius: 4 }}></div>
-              <span style={{ color: '#c7d5e0', fontSize: 14 }}>Critics were harsher</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <div style={{ width: 20, height: 20, background: '#d4af37', borderRadius: 4 }}></div>
-              <span style={{ color: '#c7d5e0', fontSize: 14 }}>Critics were more positive</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* The Problems */}
-      <div style={{ marginBottom: 60, padding: 40, border: '2px solid #415a79', borderRadius: 8, background: 'rgba(255, 255, 255, 0.02)' }}>
-        <h2 style={{ color: '#c7d5e0', fontSize: '2.2em', marginTop: 0, marginBottom: 30 }}>What's Causing This?</h2>
-        
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 30, marginTop: 30 }}>
-          <div style={{ padding: 25, background: 'rgba(255, 255, 255, 0.03)', borderRadius: 8, border: '1px solid #415a79' }}>
-            <h3 style={{ color: '#66c0f4', fontSize: '1.4em', marginTop: 0 }}>Early Review Copies</h3>
-            <p style={{ color: '#c7d5e0', lineHeight: 1.7 }}>
-              Publishers control who gets early review copies. This creates pressure for critics to be "nicer" 
-              to major releases to stay on the list. Early review scores are almost always higher than final scores.
-            </p>
-          </div>
-          
-          <div style={{ padding: 25, background: 'rgba(255, 255, 255, 0.03)', borderRadius: 8, border: '1px solid #415a79' }}>
-            <h3 style={{ color: '#66c0f4', fontSize: '1.4em', marginTop: 0 }}>Lack of Diversity</h3>
-            <p style={{ color: '#c7d5e0', lineHeight: 1.7 }}>
-              The average critic is a male in their mid-20s to early 30s in a major city. This narrow perspective 
-              doesn't reflect the diverse tastes of players across cultures, ages, and genres.
-            </p>
-          </div>
-          
-          <div style={{ padding: 25, background: 'rgba(255, 255, 255, 0.03)', borderRadius: 8, border: '1px solid #415a79' }}>
-            <h3 style={{ color: '#66c0f4', fontSize: '1.4em', marginTop: 0 }}>Rushed Reviews</h3>
-            <p style={{ color: '#c7d5e0', lineHeight: 1.7 }}>
-              Strict deadlines force reviewers to rush. Many admit to playing on easiest difficulty, using cheats, 
-              or skipping content entirely. They may experience less than half of the game's actual content.
-            </p>
-          </div>
-          
-          <div style={{ padding: 25, background: 'rgba(255, 255, 255, 0.03)', borderRadius: 8, border: '1px solid #415a79' }}>
-            <h3 style={{ color: '#66c0f4', fontSize: '1.4em', marginTop: 0 }}>Genre Bias</h3>
-            <p style={{ color: '#c7d5e0', lineHeight: 1.7 }}>
-              Critics favor cinematic games (+0.8 score bump) and walking simulators (+0.95), but penalize 
-              3D platformers (-0.6) and complex gameplay. This limits what publishers are willing to fund.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Genre Bias Chart */}
-      <div style={{ marginBottom: 60, padding: 40, border: '2px solid #415a79', borderRadius: 8, background: 'rgba(255, 255, 255, 0.02)' }}>
-        <h2 style={{ color: '#c7d5e0', fontSize: '2.2em', marginTop: 0, marginBottom: 30 }}>Genre Bias in Action</h2>
-        <p style={{ fontSize: 18, color: '#c7d5e0', marginBottom: 30, lineHeight: 1.8 }}>
-          When reviewers rush, they can't fairly assess complex gameplay. They favor games with easily reviewable aspects: 
-          graphics, story, voice acting. This creates systematic bias against certain genres.
-        </p>
-        
-        <div style={{ marginTop: 40 }}>
-          <svg width={chartWidth} height={300} style={{ display: 'block', margin: '0 auto', background: 'rgba(255, 255, 255, 0.02)', borderRadius: 8, padding: 20 }}>
-            {genreBiasData.map((item, index) => {
-              const barWidth2 = (Math.abs(item.bias) / 1.0) * (chartWidth - padding * 2 - 200);
-              const x = padding + 150;
-              const y = padding + index * 60 + 10;
-              const barX = item.bias > 0 ? x : x - barWidth2;
-              
-              return (
-                <g key={index}>
-                  <text
-                    x={x - 10}
-                    y={y + 20}
-                    fill="#c7d5e0"
-                    fontSize="14"
-                    textAnchor="end"
-                  >
-                    {item.genre}
-                  </text>
-                  <rect
-                    x={barX}
-                    y={y}
-                    width={barWidth2}
-                    height={30}
-                    fill={item.color}
-                    opacity="0.8"
-                    rx="4"
-                  />
-                  <text
-                    x={item.bias > 0 ? barX + barWidth2 + 10 : barX - 10}
-                    y={y + 20}
-                    fill="#c7d5e0"
-                    fontSize="14"
-                    fontWeight="600"
-                    textAnchor={item.bias > 0 ? 'start' : 'end'}
-                  >
-                    {item.bias > 0 ? '+' : ''}{item.bias.toFixed(1)}
-                  </text>
-                </g>
-              );
-            })}
-            
-            {/* Zero line */}
-            <line
-              x1={padding + 150}
-              y1={padding}
-              x2={padding + 150}
-              y2={padding + 240}
-              stroke="#c7d5e0"
-              strokeWidth="2"
-            />
-            <text
-              x={padding + 145}
-              y={padding + 250}
-              fill="#8f98a0"
-              fontSize="12"
-              textAnchor="end"
-            >
-              Critic Score Bias
-            </text>
-          </svg>
-        </div>
-      </div>
 
       {/* Critics vs Users: The Problems */}
       <div style={{ marginBottom: 60, padding: 40, border: '2px solid #d4af37', borderRadius: 8, background: 'rgba(212, 175, 55, 0.1)' }}>
         <h2 style={{ color: '#d4af37', fontSize: '2.2em', marginTop: 0, marginBottom: 20, textAlign: 'center' }}>The Problems with Metacritic</h2>
-        <p style={{ fontSize: '1.5em', color: '#66c0f4', textAlign: 'center', marginBottom: 40, fontWeight: 700 }}>
+        <p style={{ fontSize: '1.5em', color: '#66c0f4', textAlign: 'center', marginBottom: 50, fontWeight: 700 }}>
           We are the better Metacritic.
         </p>
 
         {/* Title Comparison - Uniformity Problem */}
-        <div style={{ marginBottom: 50 }}>
-          <h3 style={{ color: '#c7d5e0', fontSize: '1.6em', marginBottom: 10, textAlign: 'center' }}>The Uniformity Problem: Game Titles</h3>
-          <p style={{ fontSize: '1em', color: '#8f98a0', textAlign: 'center', marginBottom: 20, fontStyle: 'italic' }}>
-            Critics all have essentially the same taste. Users have varied tastes.
+        <div style={{ marginBottom: 60, padding: 30, background: 'rgba(255, 255, 255, 0.05)', borderRadius: 8 }}>
+          <h3 style={{ color: '#c7d5e0', fontSize: '1.8em', marginBottom: 15, textAlign: 'center' }}>Game Title Preferences: The Uniformity Problem</h3>
+          <p style={{ fontSize: '1.1em', color: '#c7d5e0', textAlign: 'center', marginBottom: 25, lineHeight: 1.8 }}>
+            This graph reveals the core issue: <strong style={{ color: '#d4af37' }}>critics all have essentially the same taste</strong>. 
+            When you look at which games critics rate highly, you see a tight cluster—they're all rating the same titles. 
+            Meanwhile, <strong style={{ color: '#66c0f4' }}>users show diverse preferences</strong>, spreading across a wide variety of games. 
+            This uniformity means critics miss great games that don't fit their narrow preferences.
           </p>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 30, marginBottom: 30 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 30, marginBottom: 20 }}>
             <div style={{ textAlign: 'center' }}>
-              <h4 style={{ color: '#d4af37', fontSize: '1.2em', marginBottom: 15 }}>Critics (Metascore)</h4>
+              <h4 style={{ color: '#d4af37', fontSize: '1.3em', marginBottom: 15 }}>Critics (Metascore)</h4>
               <img 
                 src={`${imageBase}/Metacritic%20graphs/metascore-title.webp`} 
                 alt="Critic title preferences"
@@ -1719,7 +1481,7 @@ function WhyWereHere({ apiBase }) {
               />
             </div>
             <div style={{ textAlign: 'center' }}>
-              <h4 style={{ color: '#66c0f4', fontSize: '1.2em', marginBottom: 15 }}>Users (User Score)</h4>
+              <h4 style={{ color: '#66c0f4', fontSize: '1.3em', marginBottom: 15 }}>Users (User Score)</h4>
               <img 
                 src={`${imageBase}/Metacritic%20graphs/userscore-title.webp`} 
                 alt="User title preferences"
@@ -1736,15 +1498,17 @@ function WhyWereHere({ apiBase }) {
         </div>
 
         {/* Genre Comparison - Unjust Bias */}
-        <div style={{ marginBottom: 50, padding: 30, background: 'rgba(255, 100, 100, 0.1)', borderRadius: 8, border: '2px solid #ff6464' }}>
-          <h3 style={{ color: '#ff6464', fontSize: '1.6em', marginBottom: 10, textAlign: 'center' }}>Unjust Bias: Genre Preferences</h3>
-          <p style={{ fontSize: '1em', color: '#c7d5e0', textAlign: 'center', marginBottom: 20 }}>
-            <strong style={{ color: '#ff6464' }}>Genres are not superior to each other.</strong> Yet critics systematically favor certain genres while penalizing others. 
-            This bias limits what games get made and funded.
+        <div style={{ marginBottom: 60, padding: 30, background: 'rgba(255, 100, 100, 0.1)', borderRadius: 8, border: '2px solid #ff6464' }}>
+          <h3 style={{ color: '#ff6464', fontSize: '1.8em', marginBottom: 15, textAlign: 'center' }}>Genre Preferences: Unjust Bias</h3>
+          <p style={{ fontSize: '1.1em', color: '#c7d5e0', textAlign: 'center', marginBottom: 25, lineHeight: 1.8 }}>
+            <strong style={{ color: '#ff6464' }}>Genres are not superior to each other.</strong> Yet this graph shows critics systematically favor certain genres 
+            while penalizing others. The pattern is clear and consistent—critics cluster around genres that are easy to review 
+            (cinematic, story-driven) while undervaluing genres that require deeper engagement (platformers, complex gameplay). 
+            Users, however, show fair distribution across all genres, recognizing that quality exists in every category.
           </p>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 30, marginBottom: 30 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 30, marginBottom: 20 }}>
             <div style={{ textAlign: 'center' }}>
-              <h4 style={{ color: '#d4af37', fontSize: '1.2em', marginBottom: 15 }}>Critics (Metascore)</h4>
+              <h4 style={{ color: '#d4af37', fontSize: '1.3em', marginBottom: 15 }}>Critics (Metascore)</h4>
               <img 
                 src={`${imageBase}/Metacritic%20graphs/metascore-genre.webp`} 
                 alt="Critic genre preferences"
@@ -1756,12 +1520,9 @@ function WhyWereHere({ apiBase }) {
                   boxShadow: '0 4px 12px rgba(212, 175, 55, 0.3)'
                 }}
               />
-              <p style={{ color: '#ff6464', fontSize: '0.9em', marginTop: 10, fontWeight: 600 }}>
-                Systematic genre bias
-              </p>
             </div>
             <div style={{ textAlign: 'center' }}>
-              <h4 style={{ color: '#66c0f4', fontSize: '1.2em', marginBottom: 15 }}>Users (User Score)</h4>
+              <h4 style={{ color: '#66c0f4', fontSize: '1.3em', marginBottom: 15 }}>Users (User Score)</h4>
               <img 
                 src={`${imageBase}/Metacritic%20graphs/userscore-genre.webp`} 
                 alt="User genre preferences"
@@ -1773,22 +1534,22 @@ function WhyWereHere({ apiBase }) {
                   boxShadow: '0 4px 12px rgba(102, 192, 244, 0.3)'
                 }}
               />
-              <p style={{ color: '#66c0f4', fontSize: '0.9em', marginTop: 10, fontWeight: 600 }}>
-                Fair, diverse preferences
-              </p>
             </div>
           </div>
         </div>
 
-        {/* Publisher Comparison - Potentially Justified */}
-        <div style={{ marginBottom: 50 }}>
-          <h3 style={{ color: '#c7d5e0', fontSize: '1.6em', marginBottom: 10, textAlign: 'center' }}>Publisher Preferences</h3>
-          <p style={{ fontSize: '1em', color: '#8f98a0', textAlign: 'center', marginBottom: 20, fontStyle: 'italic' }}>
-            Some publishers may genuinely produce higher quality games, but critics show clear bias patterns.
+        {/* Publisher Comparison */}
+        <div style={{ marginBottom: 60, padding: 30, background: 'rgba(255, 255, 255, 0.05)', borderRadius: 8 }}>
+          <h3 style={{ color: '#c7d5e0', fontSize: '1.8em', marginBottom: 15, textAlign: 'center' }}>Publisher Preferences: Potential Bias</h3>
+          <p style={{ fontSize: '1.1em', color: '#c7d5e0', textAlign: 'center', marginBottom: 25, lineHeight: 1.8 }}>
+            Some publishers may genuinely produce higher quality games due to larger budgets and resources. However, this graph reveals 
+            that critics show clear clustering around certain publishers, while users distribute their preferences more evenly. 
+            The question is: are critics favoring these publishers because of quality, or because of marketing relationships and early access? 
+            Users' more balanced distribution suggests they're evaluating games on their own merits, not publisher reputation.
           </p>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 30, marginBottom: 30 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 30, marginBottom: 20 }}>
             <div style={{ textAlign: 'center' }}>
-              <h4 style={{ color: '#d4af37', fontSize: '1.2em', marginBottom: 15 }}>Critics (Metascore)</h4>
+              <h4 style={{ color: '#d4af37', fontSize: '1.3em', marginBottom: 15 }}>Critics (Metascore)</h4>
               <img 
                 src={`${imageBase}/Metacritic%20graphs/metascore-publisher.webp`} 
                 alt="Critic publisher preferences"
@@ -1802,7 +1563,7 @@ function WhyWereHere({ apiBase }) {
               />
             </div>
             <div style={{ textAlign: 'center' }}>
-              <h4 style={{ color: '#66c0f4', fontSize: '1.2em', marginBottom: 15 }}>Users (User Score)</h4>
+              <h4 style={{ color: '#66c0f4', fontSize: '1.3em', marginBottom: 15 }}>Users (User Score)</h4>
               <img 
                 src={`${imageBase}/Metacritic%20graphs/userscore-publisher.webp`} 
                 alt="User publisher preferences"
@@ -1818,15 +1579,18 @@ function WhyWereHere({ apiBase }) {
           </div>
         </div>
 
-        {/* Developer Comparison - Potentially Justified */}
-        <div style={{ marginBottom: 30 }}>
-          <h3 style={{ color: '#c7d5e0', fontSize: '1.6em', marginBottom: 10, textAlign: 'center' }}>Developer Preferences</h3>
-          <p style={{ fontSize: '1em', color: '#8f98a0', textAlign: 'center', marginBottom: 20, fontStyle: 'italic' }}>
-            Some developers may genuinely produce higher quality games, but critics show clear bias patterns.
+        {/* Developer Comparison */}
+        <div style={{ marginBottom: 40, padding: 30, background: 'rgba(255, 255, 255, 0.05)', borderRadius: 8 }}>
+          <h3 style={{ color: '#c7d5e0', fontSize: '1.8em', marginBottom: 15, textAlign: 'center' }}>Developer Preferences: Potential Bias</h3>
+          <p style={{ fontSize: '1.1em', color: '#c7d5e0', textAlign: 'center', marginBottom: 25, lineHeight: 1.8 }}>
+            Similar to publishers, some developers may genuinely produce higher quality games. But this graph shows critics clustering 
+            around certain developers while users spread their preferences more widely. While some developers do consistently deliver 
+            quality, the tight clustering suggests critics may be influenced by developer reputation and relationships rather than 
+            evaluating each game independently. Users' diverse preferences show they're discovering quality from a wider range of developers.
           </p>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 30 }}>
             <div style={{ textAlign: 'center' }}>
-              <h4 style={{ color: '#d4af37', fontSize: '1.2em', marginBottom: 15 }}>Critics (Metascore)</h4>
+              <h4 style={{ color: '#d4af37', fontSize: '1.3em', marginBottom: 15 }}>Critics (Metascore)</h4>
               <img 
                 src={`${imageBase}/Metacritic%20graphs/metascore-developer.webp`} 
                 alt="Critic developer preferences"
@@ -1840,7 +1604,7 @@ function WhyWereHere({ apiBase }) {
               />
             </div>
             <div style={{ textAlign: 'center' }}>
-              <h4 style={{ color: '#66c0f4', fontSize: '1.2em', marginBottom: 15 }}>Users (User Score)</h4>
+              <h4 style={{ color: '#66c0f4', fontSize: '1.3em', marginBottom: 15 }}>Users (User Score)</h4>
               <img 
                 src={`${imageBase}/Metacritic%20graphs/userscore-developer.webp`} 
                 alt="User developer preferences"
