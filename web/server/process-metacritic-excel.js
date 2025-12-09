@@ -47,27 +47,119 @@ function processExcelData() {
   
   console.log(`Found ${rawData.length} rows in Excel file`);
   
-  // Process the data - adjust column names based on your Excel structure
+  // Debug: Show first row to see column names
+  if (rawData.length > 0) {
+    console.log('\nFirst row sample (to identify column names):');
+    console.log(Object.keys(rawData[0]));
+    console.log('Sample data:', JSON.stringify(rawData[0], null, 2));
+  }
+  
+  // Find column names by trying common variations
+  const firstRow = rawData[0] || {};
+  const allKeys = Object.keys(firstRow);
+  
+  // Find title column
+  const titleKey = allKeys.find(k => 
+    /title|game|name/i.test(k) && !/score|rating|date|year|genre/i.test(k)
+  ) || allKeys[0] || 'Title';
+  
+  // Find critic score column
+  const criticKey = allKeys.find(k => 
+    /critic|metascore|mc.*score/i.test(k)
+  ) || allKeys.find(k => /score/i.test(k) && !/user/i.test(k)) || 'Critic Score';
+  
+  // Find user score column
+  const userKey = allKeys.find(k => 
+    /user.*score|user.*rating/i.test(k)
+  ) || allKeys.find(k => /user/i.test(k)) || 'User Score';
+  
+  // Find genre column
+  const genreKey = allKeys.find(k => 
+    /genre|category|type/i.test(k)
+  ) || 'Genre';
+  
+  // Find date/year column
+  const dateKey = allKeys.find(k => 
+    /date|year|release/i.test(k)
+  ) || 'Release Date';
+  
+  console.log(`\nDetected columns:`);
+  console.log(`  Title: ${titleKey}`);
+  console.log(`  Critic Score: ${criticKey}`);
+  console.log(`  User Score: ${userKey}`);
+  console.log(`  Genre: ${genreKey}`);
+  console.log(`  Date: ${dateKey}\n`);
+  
+  // Process the data
   const games = rawData.map((row, index) => {
-    // Try to find the relevant columns - adjust these based on your Excel structure
-    const title = row['Title'] || row['Game'] || row['Name'] || row['Game Title'] || `Game ${index}`;
-    const criticScore = parseFloat(row['Critic Score'] || row['Metascore'] || row['Critic'] || row['MC Score'] || 0);
-    const userScore = parseFloat(row['User Score'] || row['User'] || row['User Rating'] || 0);
-    const genre = row['Genre'] || row['Category'] || 'Unknown';
-    const releaseDate = row['Release Date'] || row['Date'] || row['Year'] || null;
+    const title = row[titleKey] || `Game ${index}`;
+    
+    // Parse scores - handle various formats
+    let criticScore = 0;
+    let userScore = 0;
+    
+    const criticVal = row[criticKey];
+    const userVal = row[userKey];
+    
+    if (criticVal !== null && criticVal !== undefined && criticVal !== '') {
+      criticScore = parseFloat(criticVal);
+      if (isNaN(criticScore)) criticScore = 0;
+    }
+    
+    if (userVal !== null && userVal !== undefined && userVal !== '') {
+      userScore = parseFloat(userVal);
+      if (isNaN(userScore)) userScore = 0;
+    }
+    
+    const genre = row[genreKey] || 'Unknown';
+    
+    // Parse date - handle Excel date numbers, strings, etc.
+    let releaseDate = null;
+    const dateVal = row[dateKey];
+    if (dateVal !== null && dateVal !== undefined && dateVal !== '') {
+      // If it's an Excel date number (like 44927)
+      if (typeof dateVal === 'number' && dateVal > 1000 && dateVal < 100000) {
+        // Convert Excel date number to date string
+        const excelEpoch = new Date(1899, 11, 30);
+        const date = new Date(excelEpoch.getTime() + dateVal * 86400000);
+        releaseDate = date.toISOString().split('T')[0];
+      } else {
+        // Try to parse as date string
+        const dateStr = String(dateVal);
+        // Try to extract year from various formats
+        const yearMatch = dateStr.match(/(\d{4})/);
+        if (yearMatch) {
+          const year = parseInt(yearMatch[1]);
+          if (year >= 1990 && year <= 2030) {
+            // If it's just a year, use Jan 1
+            if (dateStr.match(/^\d{4}$/)) {
+              releaseDate = `${year}-01-01`;
+            } else {
+              // Try to parse full date
+              const parsed = new Date(dateStr);
+              if (!isNaN(parsed.getTime())) {
+                releaseDate = parsed.toISOString().split('T')[0];
+              } else {
+                releaseDate = `${year}-01-01`;
+              }
+            }
+          }
+        }
+      }
+    }
     
     // Calculate score difference (critic - user)
     const scoreDifference = criticScore - userScore;
     
     return {
       title: String(title),
-      criticScore: isNaN(criticScore) ? 0 : Math.round(criticScore * 10) / 10,
-      userScore: isNaN(userScore) ? 0 : Math.round(userScore * 10) / 10,
+      criticScore: Math.round(criticScore * 10) / 10,
+      userScore: Math.round(userScore * 10) / 10,
       genre: String(genre),
-      releaseDate: releaseDate ? String(releaseDate) : null,
-      scoreDifference: isNaN(scoreDifference) ? 0 : Math.round(scoreDifference * 10) / 10,
+      releaseDate: releaseDate,
+      scoreDifference: Math.round(scoreDifference * 10) / 10,
     };
-  }).filter(game => game.criticScore > 0 || game.userScore > 0); // Filter out invalid entries
+  }).filter(game => game.criticScore > 0); // Only keep games with valid critic scores
   
   console.log(`Processed ${games.length} valid games`);
   

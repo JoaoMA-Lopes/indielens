@@ -1386,13 +1386,14 @@ function WhyWereHere({ apiBase }) {
 
     // Convert stats.byGenre to chart format
     const genres = Object.entries(data.stats.byGenre)
+      .filter(([genre, stats]) => stats.count >= 5) // Only show genres with at least 5 games
       .map(([genre, stats]) => ({
         genre,
         bias: stats.averageDifference || 0,
         color: (stats.averageDifference || 0) > 0 ? '#d4af37' : '#66c0f4',
       }))
       .sort((a, b) => Math.abs(b.bias) - Math.abs(a.bias))
-      .slice(0, 4); // Top 4
+      .slice(0, 10); // Top 10 most biased genres
 
     return genres.length > 0 ? genres : defaultGenreBiasData;
   }, [data]);
