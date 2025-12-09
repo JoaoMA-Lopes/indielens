@@ -274,7 +274,7 @@ export default function App() {
       />
       <hr className="separator" />
       {tab === 'whywerehere' ? (
-        <WhyWereHere />
+        <WhyWereHere apiBase={apiBase} />
       ) : tab === 'howitworks' ? (
         <div className="container" style={{ maxWidth: '900px', margin: '40px auto', padding: '40px' }}>
           <h1 style={{ color: '#c7d5e0', fontSize: '3em', marginBottom: 30 }}>How IndieLens Weighting Works</h1>
@@ -1314,20 +1314,108 @@ function TagSegment({ title, games, onSelectGame, imageUrl }) {
   );
 }
 
-function WhyWereHere() {
-  // Data for the critic-user score gap over time
-  const scoreGapData = [
+function WhyWereHere({ apiBase }) {
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
+
+  // Default/fallback data for the critic-user score gap over time
+  const defaultScoreGapData = [
     { year: '1996-2001', gap: 0.5, criticsHarsher: true },
     { year: '2002-2008', gap: 0.3, criticsHarsher: true },
     { year: '2009-2012', gap: 0.8, criticsHarsher: false },
     { year: '2013-2018', gap: 1.8, criticsHarsher: false },
   ];
 
-  const maxGap = 2.0;
+  const defaultGenreBiasData = [
+    { genre: 'Walking Sims', bias: 0.95, color: '#d4af37' },
+    { genre: 'Cinematic', bias: 0.8, color: '#d4af37' },
+    { genre: '3D Platformers', bias: -0.6, color: '#66c0f4' },
+    { genre: 'Old FPS', bias: -0.4, color: '#66c0f4' },
+  ];
+
+  // Fetch data from API
+  React.useEffect(() => {
+    async function fetchData() {
+      try {
+        setLoading(true);
+        const res = await fetch(`${apiBase}/metacritic-data`);
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}`);
+        }
+        const json = await res.json();
+        if (json.status === 'ok') {
+          setData(json);
+        } else {
+          throw new Error(json.error || 'Failed to fetch data');
+        }
+      } catch (e) {
+        console.error('Error fetching Metacritic data:', e);
+        setError(e.message);
+        // Use fallback data
+        setData({ isFallback: true, stats: { byYear: {}, byGenre: {} } });
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, [apiBase]);
+
+  // Process data for charts
+  const scoreGapData = React.useMemo(() => {
+    if (!data || !data.stats || !data.stats.byYear) {
+      return defaultScoreGapData;
+    }
+
+    // Convert stats.byYear to chart format
+    const years = Object.keys(data.stats.byYear)
+      .sort()
+      .map(year => ({
+        year,
+        gap: Math.abs(data.stats.byYear[year].averageDifference || 0),
+        criticsHarsher: (data.stats.byYear[year].averageDifference || 0) < 0,
+      }));
+
+    return years.length > 0 ? years : defaultScoreGapData;
+  }, [data]);
+
+  const genreBiasData = React.useMemo(() => {
+    if (!data || !data.stats || !data.stats.byGenre) {
+      return defaultGenreBiasData;
+    }
+
+    // Convert stats.byGenre to chart format
+    const genres = Object.entries(data.stats.byGenre)
+      .map(([genre, stats]) => ({
+        genre,
+        bias: stats.averageDifference || 0,
+        color: (stats.averageDifference || 0) > 0 ? '#d4af37' : '#66c0f4',
+      }))
+      .sort((a, b) => Math.abs(b.bias) - Math.abs(a.bias))
+      .slice(0, 4); // Top 4
+
+    return genres.length > 0 ? genres : defaultGenreBiasData;
+  }, [data]);
+
+  const maxGap = Math.max(2.0, ...scoreGapData.map(d => Math.abs(d.gap)));
   const chartWidth = 800;
   const chartHeight = 400;
   const padding = 60;
   const barWidth = (chartWidth - padding * 2) / scoreGapData.length - 20;
+
+  if (loading) {
+    return (
+      <div className="container" style={{ maxWidth: '1200px', margin: '40px auto', padding: '40px' }}>
+        <h1 style={{ color: '#c7d5e0', fontSize: '3em', marginBottom: 10, textAlign: 'center' }}>Why We're Here</h1>
+        <p style={{ color: '#8f98a0', fontSize: '1.2em', textAlign: 'center', marginBottom: 50 }}>
+          The gaming industry has a review problem. Here's why IndieLens exists.
+        </p>
+        <div style={{ textAlign: 'center', padding: '60px 0', color: '#8f98a0' }}>
+          Loading data...
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container" style={{ maxWidth: '1200px', margin: '40px auto', padding: '40px' }}>
@@ -1335,6 +1423,11 @@ function WhyWereHere() {
       <p style={{ color: '#8f98a0', fontSize: '1.2em', textAlign: 'center', marginBottom: 50 }}>
         The gaming industry has a review problem. Here's why IndieLens exists.
       </p>
+      {data?.isFallback && (
+        <p style={{ color: '#d4af37', fontSize: '0.9em', textAlign: 'center', marginBottom: 30, padding: '10px', background: 'rgba(212, 175, 55, 0.1)', borderRadius: 4 }}>
+          Using fallback data. Run scrape-and-cache.js on the server to update with real Metacritic data.
+        </p>
+      )}
 
       {/* The Growing Divide */}
       <div style={{ marginBottom: 60, padding: 40, border: '2px solid #415a79', borderRadius: 8, background: 'rgba(255, 255, 255, 0.02)' }}>
@@ -1516,12 +1609,7 @@ function WhyWereHere() {
         
         <div style={{ marginTop: 40 }}>
           <svg width={chartWidth} height={300} style={{ display: 'block', margin: '0 auto', background: 'rgba(255, 255, 255, 0.02)', borderRadius: 8, padding: 20 }}>
-            {[
-              { genre: 'Walking Sims', bias: 0.95, color: '#d4af37' },
-              { genre: 'Cinematic', bias: 0.8, color: '#d4af37' },
-              { genre: '3D Platformers', bias: -0.6, color: '#66c0f4' },
-              { genre: 'Old FPS', bias: -0.4, color: '#66c0f4' },
-            ].map((item, index) => {
+            {genreBiasData.map((item, index) => {
               const barWidth2 = (Math.abs(item.bias) / 1.0) * (chartWidth - padding * 2 - 200);
               const x = padding + 150;
               const y = padding + index * 60 + 10;
@@ -1591,7 +1679,7 @@ function WhyWereHere() {
           <div style={{ padding: 25, background: 'rgba(255, 255, 255, 0.05)', borderRadius: 8 }}>
             <h3 style={{ color: '#66c0f4', fontSize: '1.3em', marginTop: 0 }}>✓ User-Driven Ratings</h3>
             <p style={{ color: '#c7d5e0', lineHeight: 1.7, fontSize: 15 }}>
-              Ratings come from players who <strong>own and played</strong> the game, not early review copies.
+              Ratings comes from players who spent their own money to buy the game, not game reviewers under a deadline and paycheck
             </p>
           </div>
           
