@@ -67,10 +67,34 @@ console.log('[DEBUG] Metacritic graphs path:', metacriticGraphsPath);
 console.log('[DEBUG] Metacritic graphs exists:', fs.existsSync(metacriticGraphsPath));
 if (fs.existsSync(metacriticGraphsPath)) {
   const files = fs.readdirSync(metacriticGraphsPath);
-  console.log('[DEBUG] Metacritic graphs files:', files.slice(0, 5).join(', '), '...');
+  console.log('[DEBUG] Metacritic graphs files:', files.slice(0, 10).join(', '), '...');
+  
+  // Serve with multiple path variations to handle URL encoding
   app.use('/Metacritic graphs', express.static(metacriticGraphsPath));
-  // Also serve via /api for consistency with frontend
+  app.use('/Metacritic%20graphs', express.static(metacriticGraphsPath));
   app.use('/api/Metacritic graphs', express.static(metacriticGraphsPath));
+  app.use('/api/Metacritic%20graphs', express.static(metacriticGraphsPath));
+  
+  // Also add a direct route handler for better compatibility
+  app.get('/api/Metacritic graphs/:filename', (req, res) => {
+    const filename = req.params.filename;
+    const filePath = path.join(metacriticGraphsPath, filename);
+    if (fs.existsSync(filePath)) {
+      res.sendFile(filePath);
+    } else {
+      res.status(404).send('File not found');
+    }
+  });
+  
+  app.get('/api/Metacritic%20graphs/:filename', (req, res) => {
+    const filename = req.params.filename;
+    const filePath = path.join(metacriticGraphsPath, filename);
+    if (fs.existsSync(filePath)) {
+      res.sendFile(filePath);
+    } else {
+      res.status(404).send('File not found');
+    }
+  });
 }
 
 const PORT = process.env.PORT || 5179;
