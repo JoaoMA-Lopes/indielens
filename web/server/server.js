@@ -65,6 +65,8 @@ app.use('/genre-images', (req, res, next) => {
 const metacriticGraphsPath = path.resolve(__dirname, '../Metacritic graphs');
 if (fs.existsSync(metacriticGraphsPath)) {
   app.use('/Metacritic graphs', express.static(metacriticGraphsPath));
+  // Also serve via /api for consistency with frontend
+  app.use('/api/Metacritic graphs', express.static(metacriticGraphsPath));
 }
 
 const PORT = process.env.PORT || 5179;
