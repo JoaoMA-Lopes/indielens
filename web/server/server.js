@@ -231,6 +231,54 @@ app.post('/ingest', async (req, res) => {
   }
 });
 
+// Update Steam Friend Code and re-ingest library
+app.post('/account/update-steam-library', async (req, res) => {
+  try {
+    const { steamId, friendCode } = req.body;
+    if (!steamId) return res.status(400).json({ status: 'error', error: 'steamId required' });
+    if (!friendCode) return res.status(400).json({ status: 'error', error: 'friendCode required' });
+    
+    if (!dbPool) return res.status(500).json({ status: 'error', error: 'Database not configured' });
+    
+    // Convert friend code to steamID64
+    // Formula: steamID64 = friendCode + 76561197960265728
+    const ID64_BASE = BigInt('76561197960265728');
+    const friendCodeNum = BigInt(friendCode);
+    const newSteamId = String(friendCodeNum + ID64_BASE);
+    
+    console.log(`[DEBUG] /account/update-steam-library: Converting friend code ${friendCode} to steamID64 ${newSteamId}`);
+    
+    // Update user account with new friend code and steamid
+    await dbPool.query(
+      'UPDATE user_accounts SET steam_friend_code = ?, steamid = ? WHERE CAST(steamid AS CHAR) = ?',
+      [String(friendCode), newSteamId, String(steamId)]
+    );
+    
+    // Re-ingest library with new steamId
+    try {
+      const result = await runCli(['--ingest', newSteamId]);
+      res.json({ 
+        status: 'ok', 
+        message: 'Steam library updated successfully',
+        steamId: newSteamId,
+        ingestResult: result
+      });
+    } catch (ingestError) {
+      // Even if ingest fails, the friend code was updated
+      console.error('[ERROR] Ingest failed after updating friend code:', ingestError.message);
+      res.json({ 
+        status: 'partial', 
+        message: 'Friend code updated but library ingestion failed. You can try re-ingesting later.',
+        steamId: newSteamId,
+        error: ingestError.message
+      });
+    }
+  } catch (e) {
+    console.error('[ERROR] /account/update-steam-library:', e);
+    res.status(500).json({ status: 'error', error: e.message });
+  }
+});
+
 // Initialize user_accounts table if it doesn't exist
 async function initUserAccountsTable() {
   if (!dbPool) return;

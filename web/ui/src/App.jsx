@@ -3085,6 +3085,9 @@ function MyAccount({ apiBase, steamId, username }) {
   const [usernameValue, setUsernameValue] = useState('');
   const [emailValue, setEmailValue] = useState('');
   const [saving, setSaving] = useState(false);
+  const [friendCodeValue, setFriendCodeValue] = useState('');
+  const [updatingLibrary, setUpdatingLibrary] = useState(false);
+  const [libraryUpdateResult, setLibraryUpdateResult] = useState(null);
   
   useEffect(() => {
     async function fetchAccount() {
@@ -3104,6 +3107,7 @@ function MyAccount({ apiBase, steamId, username }) {
         setAccount(json.account);
         setUsernameValue(json.account.username || '');
         setEmailValue(json.account.email || '');
+        setFriendCodeValue(json.account.steam_friend_code || '');
       } catch (e) {
         setError(e.message);
       } finally {
@@ -3207,6 +3211,22 @@ function MyAccount({ apiBase, steamId, username }) {
         >
           Password
         </button>
+        <button
+          onClick={() => setActiveTab('steam')}
+          style={{
+            padding: '12px 20px',
+            border: 'none',
+            background: 'transparent',
+            color: activeTab === 'steam' ? '#c7d5e0' : '#8f98a0',
+            fontSize: '14px',
+            fontWeight: activeTab === 'steam' ? 600 : 400,
+            cursor: 'pointer',
+            borderBottom: activeTab === 'steam' ? '3px solid #415a79' : '3px solid transparent',
+            marginBottom: '-1px'
+          }}
+        >
+          Steam Library
+        </button>
       </div>
       
       {/* Tab Content */}
@@ -3275,6 +3295,101 @@ function MyAccount({ apiBase, steamId, username }) {
               }}
             >
               {saving ? 'Saving...' : 'Save Changes'}
+            </button>
+          </div>
+        </div>
+      ) : activeTab === 'steam' ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+          <div>
+            <label style={{ display: 'block', color: '#c7d5e0', fontSize: '14px', fontWeight: 600, marginBottom: 8 }}>
+              Steam Friend Code
+            </label>
+            <input
+              type="text"
+              value={friendCodeValue}
+              onChange={(e) => setFriendCodeValue(e.target.value)}
+              placeholder="Enter your Steam friend code"
+              style={{
+                width: '100%',
+                padding: '10px 12px',
+                border: '1px solid #415a79',
+                borderRadius: 0,
+                fontSize: '14px',
+                background: 'rgba(255, 255, 255, 0.05)',
+                color: '#c7d5e0',
+                boxSizing: 'border-box'
+              }}
+            />
+            <small style={{ color: '#8f98a0', fontSize: '12px', marginTop: 4, display: 'block' }}>
+              Your Steam friend code is a number that identifies your Steam account. You can find it in Steam → Friends → Add a Friend → "Your Friend Code"
+            </small>
+          </div>
+          {libraryUpdateResult && (
+            <div style={{
+              padding: '12px 16px',
+              borderRadius: '4px',
+              backgroundColor: libraryUpdateResult.status === 'ok' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(191, 78, 48, 0.1)',
+              border: `1px solid ${libraryUpdateResult.status === 'ok' ? '#10B981' : '#BF4E30'}`,
+              color: libraryUpdateResult.status === 'ok' ? '#10B981' : '#BF4E30',
+              fontSize: '14px'
+            }}>
+              {libraryUpdateResult.message}
+            </div>
+          )}
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: 10 }}>
+            <button
+              onClick={async () => {
+                if (!friendCodeValue.trim()) {
+                  setLibraryUpdateResult({ status: 'error', message: 'Please enter a Steam friend code' });
+                  return;
+                }
+                setUpdatingLibrary(true);
+                setLibraryUpdateResult(null);
+                try {
+                  const res = await fetch(`${apiBase}/account/update-steam-library`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ steamId, friendCode: friendCodeValue.trim() })
+                  });
+                  const json = await res.json();
+                  if (!res.ok || json.status === 'error') {
+                    throw new Error(json.error || 'Failed to update Steam library');
+                  }
+                  setLibraryUpdateResult({ 
+                    status: json.status === 'ok' ? 'ok' : 'partial',
+                    message: json.message || 'Steam library updated successfully'
+                  });
+                  // Reload account data to get updated steamId
+                  const accountRes = await fetch(`${apiBase}/account?steamId=${json.steamId || steamId}`);
+                  if (accountRes.ok) {
+                    const accountJson = await accountRes.json();
+                    setAccount(accountJson.account);
+                    // Update localStorage with new steamId if it changed
+                    if (json.steamId && json.steamId !== steamId) {
+                      localStorage.setItem('indielens_steamId', String(json.steamId));
+                      window.location.reload(); // Reload to update steamId in parent component
+                    }
+                  }
+                } catch (e) {
+                  setLibraryUpdateResult({ status: 'error', message: e.message });
+                } finally {
+                  setUpdatingLibrary(false);
+                }
+              }}
+              disabled={updatingLibrary || !friendCodeValue.trim()}
+              style={{
+                padding: '10px 30px',
+                background: updatingLibrary || !friendCodeValue.trim() ? 'rgba(255, 255, 255, 0.1)' : '#66c0f4',
+                border: '1px solid #415a79',
+                borderRadius: 0,
+                color: updatingLibrary || !friendCodeValue.trim() ? '#8f98a0' : '#ffffff',
+                fontSize: '14px',
+                fontWeight: 600,
+                cursor: updatingLibrary || !friendCodeValue.trim() ? 'not-allowed' : 'pointer',
+                transition: 'background 0.2s'
+              }}
+            >
+              {updatingLibrary ? 'Updating Library...' : 'Update Steam Library'}
             </button>
           </div>
         </div>
