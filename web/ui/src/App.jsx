@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
 
 export default function App() {
   const [steamId, setSteamId] = useState('');
@@ -2217,6 +2217,46 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
   const [scoreBreakdown, setScoreBreakdown] = useState(null);
   const [loadingBreakdown, setLoadingBreakdown] = useState(false);
 
+  // Define loadScoreBreakdown outside useEffect so it can be called from other places
+  const loadScoreBreakdown = useCallback(async () => {
+    if (!game?.appid) return;
+    try {
+      setLoadingBreakdown(true);
+      // Ensure steamId is a valid string (not null, undefined, empty, or the string "null")
+      const validSteamId = steamId && steamId !== 'null' && steamId !== 'undefined' && String(steamId).trim() !== '' && String(steamId) !== 'null'
+        ? String(steamId).trim() 
+        : null;
+      console.log('[DEBUG] loadScoreBreakdown: steamId=', steamId, 'validSteamId=', validSteamId, 'game.appid=', game.appid);
+      const url = validSteamId 
+        ? `${apiBase}/game/${game.appid}/score-breakdown?steamId=${encodeURIComponent(validSteamId)}`
+        : `${apiBase}/game/${game.appid}/score-breakdown`;
+      console.log('[DEBUG] Loading score breakdown from:', url, 'steamId type:', typeof steamId, 'steamId value:', steamId);
+      const res = await fetch(url);
+      if (res.ok) {
+        const json = await res.json();
+        console.log('[DEBUG] Score breakdown response:', json);
+        if (json.status === 'ok' && json.breakdown) {
+          console.log('[DEBUG] Breakdown data:', {
+            ratingCount: json.breakdown.ratingCount,
+            currentUser: json.breakdown.currentUser ? 'found' : 'not found',
+            currentUserSteamId: json.breakdown.currentUser?.steamid,
+            contributions: json.breakdown.contributions?.length
+          });
+          setScoreBreakdown(json.breakdown);
+        } else {
+          console.log('[DEBUG] No breakdown data:', json.message);
+          setScoreBreakdown(null);
+        }
+      } else {
+        console.error('[DEBUG] Score breakdown HTTP error:', res.status, res.statusText);
+      }
+    } catch (e) {
+      console.error('Score breakdown load error:', e);
+    } finally {
+      setLoadingBreakdown(false);
+    }
+  }, [game?.appid, apiBase, steamId]);
+
   useEffect(() => {
     async function load() {
       try {
@@ -2236,45 +2276,6 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
       }
     }
     
-    async function loadScoreBreakdown() {
-      if (!game?.appid) return;
-      try {
-        setLoadingBreakdown(true);
-        // Ensure steamId is a valid string (not null, undefined, empty, or the string "null")
-        const validSteamId = steamId && steamId !== 'null' && steamId !== 'undefined' && String(steamId).trim() !== '' && String(steamId) !== 'null'
-          ? String(steamId).trim() 
-          : null;
-        console.log('[DEBUG] loadScoreBreakdown: steamId=', steamId, 'validSteamId=', validSteamId, 'game.appid=', game.appid);
-        const url = validSteamId 
-          ? `${apiBase}/game/${game.appid}/score-breakdown?steamId=${encodeURIComponent(validSteamId)}`
-          : `${apiBase}/game/${game.appid}/score-breakdown`;
-        console.log('[DEBUG] Loading score breakdown from:', url, 'steamId type:', typeof steamId, 'steamId value:', steamId);
-        const res = await fetch(url);
-        if (res.ok) {
-          const json = await res.json();
-          console.log('[DEBUG] Score breakdown response:', json);
-          if (json.status === 'ok' && json.breakdown) {
-            console.log('[DEBUG] Breakdown data:', {
-              ratingCount: json.breakdown.ratingCount,
-              currentUser: json.breakdown.currentUser ? 'found' : 'not found',
-              currentUserSteamId: json.breakdown.currentUser?.steamid,
-              contributions: json.breakdown.contributions?.length
-            });
-            setScoreBreakdown(json.breakdown);
-          } else {
-            console.log('[DEBUG] No breakdown data:', json.message);
-            setScoreBreakdown(null);
-          }
-        } else {
-          console.error('[DEBUG] Score breakdown HTTP error:', res.status, res.statusText);
-        }
-      } catch (e) {
-        console.error('Score breakdown load error:', e);
-      } finally {
-        setLoadingBreakdown(false);
-      }
-    }
-    
     if (game && game.appid) {
       load();
       // Only load score breakdown if we have a game - steamId might not be loaded yet, but that's OK
@@ -2284,7 +2285,7 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
       setLoading(false);
       setError('No game selected');
     }
-  }, [game?.appid, apiBase, steamId]);
+  }, [game?.appid, apiBase, steamId, loadScoreBreakdown]);
 
   if (loading) {
     return (
