@@ -100,6 +100,7 @@ if (fs.existsSync(metacriticGraphsPath)) {
 const PORT = process.env.PORT || 5179;
 const exePath = process.env.INDIELENS_EXE || path.resolve(__dirname, '../../cpp/ConsoleApplication1/x64/Release/ConsoleApplication1.exe');
 const cfgPath = process.env.INDIELENS_CONFIG || path.resolve(__dirname, '../../cpp/config.json');
+const STEAM_API_KEY = process.env.STEAM_API_KEY || '';
 let dbPool = null;
 try {
   const cfg = JSON.parse(fs.readFileSync(cfgPath, 'utf-8'));
@@ -220,12 +221,178 @@ app.get('/health', (_req, res) => {
   res.json({ status: 'ok' });
 });
 
+// Ingest Steam library using Steam API directly (fallback when C++ executable is not available)
+async function ingestSteamLibrary(steamId) {
+  if (!dbPool) {
+    throw new Error('Database not configured');
+  }
+  
+  if (!STEAM_API_KEY) {
+    throw new Error('STEAM_API_KEY not configured. Please set STEAM_API_KEY environment variable.');
+  }
+  
+  const steamIdStr = String(steamId).trim();
+  console.log(`[INGEST] Starting Steam library ingestion for steamId: ${steamIdStr}`);
+  
+  // Fetch owned games from Steam API
+  const ownedGamesUrl = `https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=${STEAM_API_KEY}&steamid=${steamIdStr}&include_played_free_games=1&include_appinfo=1`;
+  
+  const gamesRes = await fetch(ownedGamesUrl);
+  if (!gamesRes.ok) {
+    throw new Error(`Steam API error: ${gamesRes.status} ${gamesRes.statusText}`);
+  }
+  
+  const gamesData = await gamesRes.json();
+  if (!gamesData.response || !gamesData.response.games) {
+    throw new Error('No games found in Steam API response');
+  }
+  
+  const games = gamesData.response.games;
+  console.log(`[INGEST] Found ${games.length} games for steamId ${steamIdStr}`);
+  
+  let processedGames = 0;
+  let processedAchievements = 0;
+  
+  // Process each game
+  for (const game of games) {
+    const appid = game.appid;
+    const playtimeForever = game.playtime_forever || 0;
+    const lastPlayed = game.rtime_last_played || 0;
+    const gameName = game.name || `AppID ${appid}`;
+    
+    // Ensure game exists in games table
+    try {
+      await dbPool.query(
+        'INSERT INTO games (appid, name) VALUES (?, ?) ON DUPLICATE KEY UPDATE name = VALUES(name)',
+        [appid, gameName]
+      );
+    } catch (e) {
+      console.warn(`[INGEST] Could not insert game ${appid}:`, e.message);
+    }
+    
+    // Upsert user game
+    try {
+      await dbPool.query(
+        'INSERT INTO user_games (steamid, appid, playtime_forever, last_played) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE playtime_forever = VALUES(playtime_forever), last_played = VALUES(last_played)',
+        [steamIdStr, appid, playtimeForever, lastPlayed]
+      );
+      processedGames++;
+    } catch (e) {
+      console.warn(`[INGEST] Could not insert user_game for ${appid}:`, e.message);
+    }
+    
+    // Fetch achievements for this game (optional, can be slow)
+    try {
+      const achievementsUrl = `https://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v1/?key=${STEAM_API_KEY}&steamid=${steamIdStr}&appid=${appid}`;
+      const achRes = await fetch(achievementsUrl);
+      
+      if (achRes.ok) {
+        const achData = await achRes.json();
+        if (achData.playerstats && achData.playerstats.success && achData.playerstats.achievements) {
+          // Ensure game_achievements table exists
+          try {
+            await dbPool.query(`
+              CREATE TABLE IF NOT EXISTS game_achievements (
+                appid INT NOT NULL,
+                apiname VARCHAR(255) NOT NULL,
+                display_name VARCHAR(255),
+                description TEXT,
+                icon VARCHAR(255),
+                icongray VARCHAR(255),
+                PRIMARY KEY (appid, apiname),
+                FOREIGN KEY (appid) REFERENCES games(appid)
+              ) ENGINE=InnoDB
+            `);
+          } catch (e) {
+            // Table might already exist, ignore
+          }
+          
+          // Ensure user_achievements table exists
+          try {
+            await dbPool.query(`
+              CREATE TABLE IF NOT EXISTS user_achievements (
+                steamid BIGINT UNSIGNED NOT NULL,
+                appid INT NOT NULL,
+                apiname VARCHAR(255) NOT NULL,
+                achieved TINYINT(1) DEFAULT 0,
+                unlocktime INT DEFAULT 0,
+                PRIMARY KEY (steamid, appid, apiname),
+                FOREIGN KEY (appid) REFERENCES games(appid)
+              ) ENGINE=InnoDB
+            `);
+          } catch (e) {
+            // Table might already exist, ignore
+          }
+          
+          // Process achievements
+          for (const ach of achData.playerstats.achievements) {
+            const apiname = ach.apiname;
+            const achieved = ach.achieved === 1;
+            const unlocktime = ach.unlocktime || 0;
+            
+            // Insert game achievement (if not exists)
+            try {
+              await dbPool.query(
+                'INSERT IGNORE INTO game_achievements (appid, apiname, display_name, description, icon, icongray) VALUES (?, ?, ?, ?, ?, ?)',
+                [appid, apiname, ach.displayName || null, ach.description || null, ach.icon || null, ach.icongray || null]
+              );
+            } catch (e) {
+              // Ignore errors
+            }
+            
+            // Insert user achievement
+            try {
+              await dbPool.query(
+                'INSERT INTO user_achievements (steamid, appid, apiname, achieved, unlocktime) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE achieved = VALUES(achieved), unlocktime = VALUES(unlocktime)',
+                [steamIdStr, appid, apiname, achieved ? 1 : 0, unlocktime]
+              );
+              processedAchievements++;
+            } catch (e) {
+              // Ignore errors
+            }
+          }
+        }
+      }
+    } catch (e) {
+      // Achievements are optional, continue even if they fail
+      console.warn(`[INGEST] Could not fetch achievements for ${appid}:`, e.message);
+    }
+  }
+  
+  console.log(`[INGEST] Completed: ${processedGames} games, ${processedAchievements} achievements processed`);
+  
+  return {
+    status: 'ok',
+    steamId: steamIdStr,
+    gamesProcessed: processedGames,
+    achievementsProcessed: processedAchievements,
+    totalGames: games.length
+  };
+}
+
 app.post('/ingest', async (req, res) => {
   try {
     const { steamId } = req.body;
     if (!steamId) return res.status(400).json({ error: 'steamId required' });
-    const result = await runCli(['--ingest', String(steamId)]);
-    res.json(result);
+    
+    // Try C++ executable first
+    try {
+      const result = await runCli(['--ingest', String(steamId)]);
+      res.json(result);
+    } catch (e) {
+      // If C++ executable not available, use Node.js fallback
+      if (e.message.includes('ENOENT') || e.message.includes('spawn')) {
+        console.log('[INGEST] C++ executable not available, using Node.js fallback');
+        try {
+          const result = await ingestSteamLibrary(steamId);
+          res.json(result);
+        } catch (fallbackError) {
+          res.status(500).json({ error: fallbackError.message });
+        }
+      } else {
+        res.status(500).json({ error: e.message });
+      }
+    }
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
@@ -256,7 +423,20 @@ app.post('/account/update-steam-library', async (req, res) => {
     
     // Re-ingest library with new steamId
     try {
-      const result = await runCli(['--ingest', newSteamId]);
+      // Try C++ executable first
+      let result;
+      try {
+        result = await runCli(['--ingest', newSteamId]);
+      } catch (e) {
+        // If C++ executable not available, use Node.js fallback
+        if (e.message.includes('ENOENT') || e.message.includes('spawn')) {
+          console.log('[UPDATE-STEAM-LIBRARY] C++ executable not available, using Node.js fallback');
+          result = await ingestSteamLibrary(newSteamId);
+        } else {
+          throw e;
+        }
+      }
+      
       res.json({ 
         status: 'ok', 
         message: 'Steam library updated successfully',
