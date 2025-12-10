@@ -2257,6 +2257,11 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
     }
   }, [game?.appid, apiBase, steamId]);
 
+  // Make sure loadScoreBreakdown is always available (defensive programming)
+  if (typeof loadScoreBreakdown !== 'function') {
+    console.error('loadScoreBreakdown is not a function!');
+  }
+
   useEffect(() => {
     async function load() {
       try {
@@ -2743,7 +2748,11 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                       setDetails(detailJson);
                     }
                     // Reload score breakdown to show updated contribution
-                    loadScoreBreakdown();
+                    try {
+                      await loadScoreBreakdown();
+                    } catch (e) {
+                      console.error('Error reloading score breakdown:', e);
+                    }
                   } catch (e) {
                     setRatingError(e.message);
                   } finally {
