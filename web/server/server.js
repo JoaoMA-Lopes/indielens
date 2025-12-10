@@ -687,6 +687,19 @@ app.post('/rate', async (req, res) => {
     const { steamId, appid, rating, reviewText } = req.body;
     if (!steamId || !appid || rating == null) return res.status(400).json({ error: 'steamId, appid, rating required' });
     
+    // Check if user owns the game
+    if (dbPool) {
+      const [ownedRows] = await dbPool.query(
+        'SELECT appid FROM user_games WHERE steamid = ? AND appid = ?',
+        [steamId, appid]
+      );
+      if (ownedRows.length === 0) {
+        return res.status(403).json({ 
+          error: 'You must own this game on Steam to rate it. Please add your Steam library to your account first.' 
+        });
+      }
+    }
+    
     let result;
     try {
       result = await runCli(['--rate', String(steamId), String(appid), String(rating)]);
@@ -975,9 +988,25 @@ app.get('/game/:appid', async (req, res) => {
     const appid = parseInt(req.params.appid, 10);
     if (!appid) return res.status(400).json({ error: 'Invalid appid' });
     
+    const steamId = req.query.steamId ? String(req.query.steamId).trim() : null;
+    
     // Get score from database (weighted mean of ratings)
     const scoreData = await getGameScoreFromDB(appid);
     const score = scoreData ? scoreData.score : null; // null if no ratings exist
+
+    // Check if user owns the game
+    let userOwns = false;
+    if (steamId && dbPool) {
+      try {
+        const [ownedRows] = await dbPool.query(
+          'SELECT appid FROM user_games WHERE steamid = ? AND appid = ?',
+          [steamId, appid]
+        );
+        userOwns = ownedRows.length > 0;
+      } catch (e) {
+        console.warn('Error checking game ownership:', e.message);
+      }
+    }
 
     // Fetch from Steam Store API for description
     let steamData = {};
@@ -1004,7 +1033,7 @@ app.get('/game/:appid', async (req, res) => {
     }
 
     if (!dbPool) {
-      return res.json({ appid, name: null, score, genres: [], tags: [], ...steamData });
+      return res.json({ appid, name: null, score, genres: [], tags: [], userOwns, ...steamData });
     }
 
     const [gameRows] = await dbPool.query('SELECT name, developer, publisher FROM games WHERE appid = ?', [appid]);
@@ -1020,6 +1049,7 @@ app.get('/game/:appid', async (req, res) => {
       genres: genreRows.map(r => r.genre),
       tags: tagRows.map(r => r.tag),
       score,
+      userOwns,
       ...steamData
     });
   } catch (e) {

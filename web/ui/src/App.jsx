@@ -2221,7 +2221,10 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
     async function load() {
       try {
         setError(null);
-        const res = await fetch(`${apiBase}/game/${game.appid}`);
+        const url = steamId 
+          ? `${apiBase}/game/${game.appid}?steamId=${encodeURIComponent(steamId)}`
+          : `${apiBase}/game/${game.appid}`;
+        const res = await fetch(url);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const json = await res.json();
         setDetails(json);
@@ -2636,9 +2639,17 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
         {steamId && (
           <div className="description-box" style={{ marginBottom: 40 }}>
             <h3>Submit Your Rating</h3>
-            <p style={{ color: '#8f98a0', marginBottom: 20, fontSize: 14 }}>
-              Rate this game from 0-100. Your rating will be weighted based on your gaming profile and engagement.
-            </p>
+            {details && !details.userOwns ? (
+              <div style={{ padding: '16px', backgroundColor: 'rgba(191, 78, 48, 0.1)', borderRadius: '8px', border: '1px solid #BF4E30', marginBottom: 20 }}>
+                <p style={{ color: '#BF4E30', margin: 0, fontSize: 14, fontWeight: 600 }}>
+                  ⚠️ You must own this game on Steam to rate it. Please add your Steam library to your account first.
+                </p>
+              </div>
+            ) : (
+              <p style={{ color: '#8f98a0', marginBottom: 20, fontSize: 14 }}>
+                Rate this game from 0-100. Your rating will be weighted based on your gaming profile and engagement.
+              </p>
+            )}
             <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 16 }}>
               <input
                 type="number"
@@ -2651,8 +2662,8 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                   
                   // Preview weighting breakdown when user enters a valid rating
                   if (value && Number(value) >= 0 && Number(value) <= 100 && !isNaN(value)) {
-                    if (!steamId) {
-                      // User not logged in, don't show preview
+                    if (!steamId || (details && !details.userOwns)) {
+                      // User not logged in or doesn't own game, don't show preview
                       setPreviewBreakdown(null);
                       return;
                     }
@@ -2680,7 +2691,7 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                   }
                 }}
                 placeholder="0-100"
-                disabled={submitting}
+                disabled={submitting || (details && !details.userOwns)}
                 style={{
                   padding: '10px 12px',
                   border: '1px solid #415a79',
@@ -2694,6 +2705,10 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                 onClick={async () => {
                   if (!userRating || userRating < 0 || userRating > 100) {
                     setRatingError('Please enter a rating between 0 and 100');
+                    return;
+                  }
+                  if (details && !details.userOwns) {
+                    setRatingError('You must own this game on Steam to rate it.');
                     return;
                   }
                   setSubmitting(true);
@@ -2718,7 +2733,10 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                     setPreviewBreakdown(null); // Clear preview after submission
                     setReviewText(''); // Clear review text after submission
                     // Reload game details to get updated score
-                    const detailRes = await fetch(`${apiBase}/game/${game.appid}`);
+                    const url = steamId 
+                      ? `${apiBase}/game/${game.appid}?steamId=${encodeURIComponent(steamId)}`
+                      : `${apiBase}/game/${game.appid}`;
+                    const detailRes = await fetch(url);
                     if (detailRes.ok) {
                       const detailJson = await detailRes.json();
                       setDetails(detailJson);
@@ -2731,7 +2749,7 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                     setSubmitting(false);
                   }
                 }}
-                disabled={submitting || !userRating || userRating < 0 || userRating > 100}
+                disabled={submitting || !userRating || userRating < 0 || userRating > 100 || (details && !details.userOwns)}
                 style={{
                   padding: '10px 24px',
                   background: '#BF4E30',
@@ -2757,7 +2775,7 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                 value={reviewText}
                 onChange={(e) => setReviewText(e.target.value)}
                 placeholder="Share your thoughts about this game..."
-                disabled={submitting}
+                disabled={submitting || (details && !details.userOwns)}
                 rows={4}
                 style={{
                   width: '100%',
