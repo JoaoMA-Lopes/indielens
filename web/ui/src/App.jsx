@@ -276,111 +276,128 @@ export default function App() {
       {tab === 'whywerehere' ? (
         <WhyWereHere apiBase={apiBase} />
       ) : tab === 'howitworks' ? (
-        <div className="container" style={{ maxWidth: '900px', margin: '40px auto', padding: '40px' }}>
-          <h1 style={{ color: '#c7d5e0', fontSize: '3em', marginBottom: 30 }}>How IndieLens Weighting Works</h1>
-          <div style={{ lineHeight: 1.8, color: '#c7d5e0' }}>
-            <div style={{ marginBottom: 40, padding: 30, border: '2px solid #415a79', borderRadius: 8 }}>
-              <h2 style={{ color: '#c7d5e0', fontSize: '2em', marginTop: 0 }}>Overview</h2>
-              <p style={{ fontSize: 18, color: '#c7d5e0' }}>
-                IndieLens uses a sophisticated weighting system to ensure your game ratings have appropriate influence on aggregate scores. 
-                Your raw rating (0-100) is transformed into a weighted score based on three key factors that measure your expertise and engagement.
+        <div className="container" style={{ maxWidth: '1200px', margin: '40px auto', padding: '40px' }}>
+          <h1 style={{ color: '#c7d5e0', fontSize: '3em', marginBottom: 10, textAlign: 'center' }}>How IndieLens Weighting Works</h1>
+          <p style={{ color: '#8f98a0', fontSize: '1.2em', textAlign: 'center', marginBottom: 50 }}>
+            IndieLens uses a sophisticated weighting system to ensure your game ratings have appropriate influence on aggregate scores.
+          </p>
+          
+          <div style={{ marginBottom: 60, padding: 40, border: '2px solid #4ECDC4', borderRadius: 8, background: 'rgba(78, 205, 196, 0.1)' }}>
+            <h2 style={{ color: '#4ECDC4', fontSize: '2.2em', marginTop: 0, marginBottom: 20, textAlign: 'center' }}>Overview</h2>
+            <p style={{ fontSize: '1.1em', color: '#c7d5e0', textAlign: 'center', lineHeight: 1.8 }}>
+              Your raw rating (0-100) is transformed into a weighted score based on three key factors that measure your expertise and engagement.
+            </p>
+          </div>
+          
+          <div style={{ marginBottom: 60, padding: 40, border: '2px solid #8B5CF6', borderRadius: 8, background: 'rgba(139, 92, 246, 0.1)' }}>
+            <h2 style={{ color: '#8B5CF6', fontSize: '2.2em', marginTop: 0, marginBottom: 20, textAlign: 'center' }}>The Formula</h2>
+            <div style={{ textAlign: 'center', marginBottom: 25 }}>
+              <p style={{ fontSize: '1.5em', color: '#c7d5e0', fontWeight: 'bold', marginBottom: 15 }}>
+                Weight = ProfileMatch × Engagement × SoftPenaltyAPH
               </p>
             </div>
-            
-            <div style={{ marginBottom: 40, padding: 30, border: '2px solid #415a79', borderRadius: 8 }}>
-              <h2 style={{ color: '#c7d5e0', fontSize: '2em', marginTop: 0 }}>The Formula</h2>
-              <p style={{ fontSize: 18, color: '#c7d5e0', marginBottom: 20 }}>
-                <strong>Weight = ProfileMatch × Engagement × SoftPenaltyAPH</strong>
-              </p>
-              <p style={{ fontSize: 16, color: '#c7d5e0' }}>
-                Your final weight determines how much your rating contributes to the game's overall IndieLens score. 
-                Higher weights mean your opinion has more impact.
-              </p>
-            </div>
-            
-            <div style={{ marginBottom: 40, padding: 30, border: '2px solid #415a79', borderRadius: 8 }}>
-              <h2 style={{ color: '#c7d5e0', fontSize: '2em', marginTop: 0 }}>1. Profile Match</h2>
-              <p style={{ fontSize: 16, color: '#c7d5e0', marginBottom: 15 }}>
-                Measures how well the target game aligns with your gaming history using:
-              </p>
-              <ul style={{ fontSize: 16, color: '#c7d5e0', paddingLeft: 30 }}>
-                <li><strong>Tag Similarity:</strong> Jaccard similarity over game tags (how many tags overlap with games you've played)</li>
-                <li><strong>Genre Similarity:</strong> Jaccard similarity over genres</li>
-                <li><strong>Developer Match:</strong> Bonus if you've played other games by the same developer</li>
-              </ul>
-              <p style={{ fontSize: 16, color: '#c7d5e0', marginTop: 15 }}>
-                Each similarity is weighted by your engagement with those similar games, so games similar to games you loved 
-                count more than games similar to games you barely played.
-              </p>
-            </div>
-            
-            <div style={{ marginBottom: 40, padding: 30, border: '2px solid #415a79', borderRadius: 8 }}>
-              <h2 style={{ color: '#c7d5e0', fontSize: '2em', marginTop: 0 }}>2. Engagement</h2>
-              <p style={{ fontSize: 16, color: '#c7d5e0', marginBottom: 15 }}>
-                Combines your playtime and achievement completion for the target game:
-              </p>
-              <p style={{ fontSize: 16, color: '#c7d5e0', marginBottom: 15 }}>
-                <strong>E = α × (H / (H + H^(1/2))) + (1 - α) × A</strong>
-              </p>
-              <p style={{ fontSize: 16, color: '#c7d5e0' }}>
-                Where H is normalized playtime and A is achievement completion rate. This rewards meaningful play 
-                while damping the effect of idle time. High engagement means you've actually played the game, not just left it running.
-              </p>
-            </div>
-            
-            <div style={{ marginBottom: 40, padding: 30, border: '2px solid #415a79', borderRadius: 8 }}>
-              <h2 style={{ color: '#c7d5e0', fontSize: '2em', marginTop: 0 }}>3. Soft Penalty (Achievements Per Hour)</h2>
-              <p style={{ fontSize: 16, color: '#c7d5e0', marginBottom: 15 }}>
-                Compares your achievements-per-hour on this game to a similarity-weighted baseline from your similar games.
-              </p>
-              <p style={{ fontSize: 16, color: '#c7d5e0' }}>
-                This gently down-weights only extreme outliers where you have many hours but very few achievements compared 
-                to your typical pattern. It doesn't penalize genres that naturally use quirky or rare achievements, 
-                since the baseline is calculated from your similar games.
-              </p>
-            </div>
-            
-            <div style={{ marginBottom: 40, padding: 30, border: '2px solid #415a79', borderRadius: 8 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 15 }}>
-                <h2 style={{ color: '#c7d5e0', fontSize: '2em', marginTop: 0 }}>The Result</h2>
-                {'ai' in window && 'summarizer' in window.ai && (
-                  <button
-                    onClick={async () => {
-                      try {
-                        const text = `When you rate a game, your rating is multiplied by your calculated weight. Games where you have high profile match, high engagement, and normal achievement patterns will have the most influence. This ensures that scores reflect the opinions of players who are genuinely familiar with similar games and have actually engaged with the title.`;
-                        const result = await window.ai.summarizer.summarize(text);
-                        if (result && result.summary) {
-                          const summaryDiv = document.getElementById('summary-result');
-                          if (summaryDiv) {
-                            summaryDiv.innerHTML = `<p style="color: #c7d5e0; font-style: italic; margin-top: 12px;"><strong>Summary:</strong> ${result.summary}</p>`;
-                          }
-                        }
-                      } catch (e) {
-                        console.error('Summarizer API error:', e);
-                        alert('Summarizer API is not available. Make sure you are using Chrome with the built-in AI enabled.');
-                      }
-                    }}
-                    style={{
-                      padding: '6px 12px',
-                      background: 'rgba(255, 255, 255, 0.1)',
-                      border: '1px solid #415a79',
-                      borderRadius: '4px',
-                      fontSize: 12,
-                      cursor: 'pointer',
-                      color: '#c7d5e0'
-                    }}
-                  >
-                    📝 Summarize (Chrome AI)
-                  </button>
-                )}
+            <p style={{ fontSize: '1.1em', color: '#c7d5e0', textAlign: 'center', lineHeight: 1.8 }}>
+              Your final weight determines how much your rating contributes to the game's overall IndieLens score. 
+              Higher weights mean your opinion has more impact.
+            </p>
+          </div>
+          
+          <div style={{ marginBottom: 60, padding: 40, border: '2px solid #10B981', borderRadius: 8, background: 'rgba(16, 185, 129, 0.1)' }}>
+            <h2 style={{ color: '#10B981', fontSize: '2.2em', marginTop: 0, marginBottom: 20, textAlign: 'center' }}>1. Profile Match</h2>
+            <p style={{ fontSize: '1.1em', color: '#c7d5e0', textAlign: 'center', marginBottom: 25, lineHeight: 1.8 }}>
+              Measures how well the target game aligns with your gaming history using:
+            </p>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20, marginBottom: 25 }}>
+              <div style={{ padding: 20, background: 'rgba(255, 255, 255, 0.05)', borderRadius: 8 }}>
+                <p style={{ fontSize: 16, color: '#c7d5e0', lineHeight: 1.7 }}>
+                  <strong style={{ color: '#10B981' }}>Tag Similarity:</strong> Jaccard similarity over game tags (how many tags overlap with games you've played)
+                </p>
               </div>
-              <p style={{ fontSize: 16, color: '#c7d5e0' }}>
-                When you rate a game, your rating is multiplied by your calculated weight. Games where you have high profile match, 
-                high engagement, and normal achievement patterns will have the most influence. This ensures that scores reflect 
-                the opinions of players who are genuinely familiar with similar games and have actually engaged with the title.
-              </p>
-              <div id="summary-result"></div>
+              <div style={{ padding: 20, background: 'rgba(255, 255, 255, 0.05)', borderRadius: 8 }}>
+                <p style={{ fontSize: 16, color: '#c7d5e0', lineHeight: 1.7 }}>
+                  <strong style={{ color: '#10B981' }}>Genre Similarity:</strong> Jaccard similarity over genres
+                </p>
+              </div>
+              <div style={{ padding: 20, background: 'rgba(255, 255, 255, 0.05)', borderRadius: 8 }}>
+                <p style={{ fontSize: 16, color: '#c7d5e0', lineHeight: 1.7 }}>
+                  <strong style={{ color: '#10B981' }}>Developer Match:</strong> Bonus if you've played other games by the same developer
+                </p>
+              </div>
             </div>
+            <p style={{ fontSize: '1.1em', color: '#c7d5e0', textAlign: 'center', lineHeight: 1.8 }}>
+              Each similarity is weighted by your engagement with those similar games, so games similar to games you loved 
+              count more than games similar to games you barely played.
+            </p>
+          </div>
+          
+          <div style={{ marginBottom: 60, padding: 40, border: '2px solid #F59E0B', borderRadius: 8, background: 'rgba(245, 158, 11, 0.1)' }}>
+            <h2 style={{ color: '#F59E0B', fontSize: '2.2em', marginTop: 0, marginBottom: 20, textAlign: 'center' }}>2. Engagement</h2>
+            <p style={{ fontSize: '1.1em', color: '#c7d5e0', textAlign: 'center', marginBottom: 25, lineHeight: 1.8 }}>
+              Combines your playtime and achievement completion for the target game:
+            </p>
+            <div style={{ textAlign: 'center', marginBottom: 25, padding: 20, background: 'rgba(255, 255, 255, 0.05)', borderRadius: 8 }}>
+              <p style={{ fontSize: '1.3em', color: '#c7d5e0', fontWeight: 'bold' }}>
+                E = α × (H / (H + H^(1/2))) + (1 - α) × A
+              </p>
+            </div>
+            <p style={{ fontSize: '1.1em', color: '#c7d5e0', textAlign: 'center', lineHeight: 1.8 }}>
+              Where H is normalized playtime and A is achievement completion rate. This rewards meaningful play 
+              while damping the effect of idle time. High engagement means you've actually played the game, not just left it running.
+            </p>
+          </div>
+          
+          <div style={{ marginBottom: 60, padding: 40, border: '2px solid #EC4899', borderRadius: 8, background: 'rgba(236, 72, 153, 0.1)' }}>
+            <h2 style={{ color: '#EC4899', fontSize: '2.2em', marginTop: 0, marginBottom: 20, textAlign: 'center' }}>3. Soft Penalty (Achievements Per Hour)</h2>
+            <p style={{ fontSize: '1.1em', color: '#c7d5e0', textAlign: 'center', marginBottom: 20, lineHeight: 1.8 }}>
+              Compares your achievements-per-hour on this game to a similarity-weighted baseline from your similar games.
+            </p>
+            <p style={{ fontSize: '1.1em', color: '#c7d5e0', textAlign: 'center', lineHeight: 1.8 }}>
+              This gently down-weights only extreme outliers where you have many hours but very few achievements compared 
+              to your typical pattern. It doesn't penalize genres that naturally use quirky or rare achievements, 
+              since the baseline is calculated from your similar games.
+            </p>
+          </div>
+          
+          <div style={{ marginBottom: 60, padding: 40, border: '2px solid #3B82F6', borderRadius: 8, background: 'rgba(59, 130, 246, 0.1)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+              <h2 style={{ color: '#3B82F6', fontSize: '2.2em', marginTop: 0, textAlign: 'center', flex: 1 }}>The Result</h2>
+              {'ai' in window && 'summarizer' in window.ai && (
+                <button
+                  onClick={async () => {
+                    try {
+                      const text = `When you rate a game, your rating is multiplied by your calculated weight. Games where you have high profile match, high engagement, and normal achievement patterns will have the most influence. This ensures that scores reflect the opinions of players who are genuinely familiar with similar games and have actually engaged with the title.`;
+                      const result = await window.ai.summarizer.summarize(text);
+                      if (result && result.summary) {
+                        const summaryDiv = document.getElementById('summary-result');
+                        if (summaryDiv) {
+                          summaryDiv.innerHTML = `<p style="color: #c7d5e0; font-style: italic; margin-top: 12px; text-align: center;"><strong>Summary:</strong> ${result.summary}</p>`;
+                        }
+                      }
+                    } catch (e) {
+                      console.error('Summarizer API error:', e);
+                      alert('Summarizer API is not available. Make sure you are using Chrome with the built-in AI enabled.');
+                    }
+                  }}
+                  style={{
+                    padding: '8px 16px',
+                    background: 'rgba(59, 130, 246, 0.2)',
+                    border: '1px solid #3B82F6',
+                    borderRadius: '6px',
+                    fontSize: 14,
+                    cursor: 'pointer',
+                    color: '#c7d5e0'
+                  }}
+                >
+                  📝 Summarize (Chrome AI)
+                </button>
+              )}
+            </div>
+            <p style={{ fontSize: '1.1em', color: '#c7d5e0', textAlign: 'center', lineHeight: 1.8 }}>
+              When you rate a game, your rating is multiplied by your calculated weight. Games where you have high profile match, 
+              high engagement, and normal achievement patterns will have the most influence. This ensures that scores reflect 
+              the opinions of players who are genuinely familiar with similar games and have actually engaged with the title.
+            </p>
+            <div id="summary-result"></div>
           </div>
         </div>
       ) : tab === 'myaccount' && steamId ? (
