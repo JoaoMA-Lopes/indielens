@@ -227,6 +227,7 @@ export default function App() {
   
   const handleHeaderSearch = (query) => {
     setSearchQuery(query);
+    setSelectedHeaderGenre(''); // Clear selected genre when searching
     setTab('browse');
   };
 
@@ -1934,12 +1935,15 @@ function Browse({ apiBase, data, setData, onSelectGame, selectedGenre, searchQue
   }, []);
 
   useEffect(() => {
-    if (selectedGenre) {
-      // When genre is selected, loadTags() handles loading games
+    if (searchQuery && searchQuery.trim()) {
+      // If there's a search query, always use load() for search (ignore genre)
+      load({ genre: '', q: searchQuery.trim(), sort: sortBy });
+    } else if (selectedGenre) {
+      // When genre is selected (and no search), loadTags() handles loading games
       loadTags();
     } else {
-      // When no genre, use load() for search/browse
-      load({ genre: '', q: searchQuery || '', sort: sortBy });
+      // When no genre and no search, use load() for browse
+      load({ genre: '', q: '', sort: sortBy });
     }
   }, [selectedGenre, searchQuery, sortBy, load]);
 
