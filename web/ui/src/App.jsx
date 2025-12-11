@@ -1852,7 +1852,14 @@ function Browse({ apiBase, data, setData, onSelectGame, selectedGenre, searchQue
   const load = React.useCallback(async (params = {}) => {
     setLoading(true);
     try {
-      const qs = new URLSearchParams(params).toString();
+      // Remove empty parameters to avoid issues
+      const cleanParams = {};
+      if (params.q && params.q.trim()) cleanParams.q = params.q.trim();
+      if (params.genre && params.genre.trim()) cleanParams.genre = params.genre.trim();
+      if (params.tag && params.tag.trim()) cleanParams.tag = params.tag.trim();
+      if (params.sort && params.sort.trim()) cleanParams.sort = params.sort.trim();
+      
+      const qs = new URLSearchParams(cleanParams).toString();
       const url = `${apiBase}/browse${qs ? ('?'+qs) : ''}`;
       console.log('[DEBUG] Browse load: fetching from', url);
       const res = await fetch(url);

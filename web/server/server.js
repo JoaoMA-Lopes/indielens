@@ -1036,9 +1036,11 @@ app.get('/browse', async (req, res) => {
     const genresById = new Map(genreRows.map(r => [String(r.appid), (r.genres||'').split(',').map(g => g.trim()).filter(Boolean)]));
     const tagsById = new Map(tagRows.map(r => [String(r.appid), (r.tags||'').split(',').map(t => t.trim()).filter(Boolean)]));
 
-    const q = (req.query.q || '').toString().toLowerCase();
+    const q = (req.query.q || '').toString().trim().toLowerCase();
     const genreFilter = (req.query.genre || '').toString().trim().toLowerCase();
     const tagFilter = (req.query.tag || '').toString().trim().toLowerCase();
+    
+    console.log(`[DEBUG] /browse: q="${q}", genre="${genreFilter}", tag="${tagFilter}"`);
 
     // Get scores from database for all games in a single query
     let scoresById = new Map();
@@ -1083,11 +1085,22 @@ app.get('/browse', async (req, res) => {
       return { appid: Number(id), name, developer, score, popularity, genres: gameGenres, tags: gameTags, imageUrl };
     });
     const filtered = items.filter(it => {
-      const okQ = q ? (it.name||'').toLowerCase().includes(q) : true;
+      // Search in name, developer, genres, and tags
+      let okQ = true;
+      if (q && q.trim()) {
+        const searchTerm = q.trim().toLowerCase();
+        const nameMatch = (it.name || '').toLowerCase().includes(searchTerm);
+        const developerMatch = (it.developer || '').toLowerCase().includes(searchTerm);
+        const genreMatch = (it.genres || []).some(g => g.trim().toLowerCase().includes(searchTerm));
+        const tagMatch = (it.tags || []).some(t => t.trim().toLowerCase().includes(searchTerm));
+        okQ = nameMatch || developerMatch || genreMatch || tagMatch;
+      }
       const okG = genreFilter ? (it.genres||[]).some(g=>g.trim().toLowerCase()===genreFilter) : true;
       const okT = tagFilter ? (it.tags||[]).some(t=>t.trim().toLowerCase()===tagFilter) : true;
       return okQ && okG && okT;
     });
+    
+    console.log(`[DEBUG] /browse: Total items: ${items.length}, Filtered items: ${filtered.length}, Search term: "${q}"`);
     
     // Apply sorting (default to score if not specified)
     const sortBy = (req.query.sort || 'score').toString().toLowerCase();
