@@ -1187,7 +1187,10 @@ const handleBrowse = async (req, res) => {
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
-});
+};
+
+app.get('/browse', handleBrowse);
+app.get('/api/browse', handleBrowse);
 
 app.get('/genres', async (_req, res) => {
   try {
