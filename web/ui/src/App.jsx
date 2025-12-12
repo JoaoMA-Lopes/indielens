@@ -1461,8 +1461,8 @@ function WhyWereHere({ apiBase }) {
       <div className="container" style={{ maxWidth: '1200px', margin: '40px auto', padding: '40px' }}>
         <h1 style={{ color: '#c7d5e0', fontSize: '3em', marginBottom: 10, textAlign: 'center' }}>Why We're Here</h1>
         <p style={{ color: '#8f98a0', fontSize: '1.2em', textAlign: 'center', marginBottom: 20 }}>
-          Metacritic is the most used and respected game scoring system in the industry. Their scores were <strong style={{ color: '#66c0f4' }}>mandatorily displayed on Steam</strong> for years, 
-          and publishers consider them to determine bonuses, funding, and marketing budgets.
+          <strong style={{ color: '#66c0f4' }}>Metacritic and IGN</strong> are the most used and respected game scoring systems in the industry. Metacritic scores were <strong style={{ color: '#66c0f4' }}>mandatorily displayed on Steam</strong> for years, 
+          and publishers consider both platforms to determine bonuses, funding, and marketing budgets. However, both follow the same basic formula—aggregating critic reviews—which leads to the same fundamental problems.
         </p>
         <p style={{ color: '#8f98a0', fontSize: '1.2em', textAlign: 'center', marginBottom: 50 }}>
           The discrepancies shown below reveal a systematic bias that affects which games get made, funded, and discovered. Here's why IndieLens exists.
@@ -1493,9 +1493,9 @@ function WhyWereHere({ apiBase }) {
 
       {/* Critics vs Users: The Problems */}
       <div style={{ marginBottom: 60, padding: 40, border: '2px solid #d4af37', borderRadius: 8, background: 'rgba(212, 175, 55, 0.1)' }}>
-        <h2 style={{ color: '#d4af37', fontSize: '2.2em', marginTop: 0, marginBottom: 20, textAlign: 'center' }}>The Problems with Metacritic</h2>
+        <h2 style={{ color: '#d4af37', fontSize: '2.2em', marginTop: 0, marginBottom: 20, textAlign: 'center' }}>The Problems with Metacritic and IGN</h2>
         <p style={{ fontSize: '1.5em', color: '#66c0f4', textAlign: 'center', marginBottom: 50, fontWeight: 700 }}>
-          We are the better Metacritic.
+          We are the better alternative to Metacritic and IGN.
         </p>
 
         {/* Title Comparison - Uniformity Problem */}
