@@ -1192,7 +1192,7 @@ const handleBrowse = async (req, res) => {
 app.get('/browse', handleBrowse);
 app.get('/api/browse', handleBrowse);
 
-app.get('/genres', async (_req, res) => {
+const handleGenres = async (_req, res) => {
   try {
     if (!dbPool) return res.json({ genres: [] });
     // Get genres ordered by number of games (most popular first)
@@ -1206,9 +1206,12 @@ app.get('/genres', async (_req, res) => {
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
-});
+};
 
-app.get('/tags', async (req, res) => {
+app.get('/genres', handleGenres);
+app.get('/api/genres', handleGenres);
+
+const handleTags = async (req, res) => {
   try {
     if (!dbPool) return res.json({ tags: [] });
     const genre = (req.query.genre || '').toString().trim();

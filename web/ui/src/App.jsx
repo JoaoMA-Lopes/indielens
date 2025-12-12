@@ -222,11 +222,7 @@ export default function App() {
         const genres = json.genres || [];
         setHeaderGenres(genres);
         
-        // If no genre is selected and we have genres, select the first one by default
-        const savedGenre = localStorage.getItem('indielens_selectedGenre');
-        if (!savedGenre && genres.length > 0) {
-          setSelectedHeaderGenre(genres[0]);
-        }
+        // Don't auto-select first genre - let user see "All Games" by default
       } catch {}
     }
     fetchGenres();
