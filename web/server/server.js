@@ -101,6 +101,10 @@ const PORT = process.env.PORT || 5179;
 const exePath = process.env.INDIELENS_EXE || path.resolve(__dirname, '../../cpp/ConsoleApplication1/x64/Release/ConsoleApplication1.exe');
 const cfgPath = process.env.INDIELENS_CONFIG || path.resolve(__dirname, '../../cpp/config.json');
 const STEAM_API_KEY = process.env.STEAM_API_KEY || '';
+const RAINDROP_API_KEY = process.env.RAINDROP_API_KEY || '';
+const RAINDROP_API_URL = process.env.RAINDROP_API_URL || 'https://api.raindrop.ai/v1';
+const VULTR_API_KEY = process.env.VULTR_API_KEY || '';
+const VULTR_AI_ENDPOINT = process.env.VULTR_AI_ENDPOINT || 'https://api.vultr.com/v2/ai/inference';
 let dbPool = null;
 try {
   const cfg = JSON.parse(fs.readFileSync(cfgPath, 'utf-8'));
@@ -1838,8 +1842,262 @@ app.get('/metacritic-data', async (req, res) => {
   }
 });
 
+// ============================================
+// Raindrop & Vultr AI Integration Endpoints
+// ============================================
+
+// 1. Raindrop SmartInference: Summarize game descriptions
+app.post('/api/raindrop/summarize', async (req, res) => {
+  try {
+    const { text, maxLength = 200 } = req.body;
+    if (!text) {
+      return res.status(400).json({ error: 'Text is required' });
+    }
+
+    // Try Raindrop SmartInference API
+    if (RAINDROP_API_KEY) {
+      try {
+        const response = await fetch(`${RAINDROP_API_URL}/inference/summarize`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${RAINDROP_API_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            text: text,
+            max_length: maxLength
+          })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          return res.json({ 
+            status: 'ok', 
+            summary: data.summary || data.text || data,
+            source: 'raindrop'
+          });
+        }
+      } catch (e) {
+        console.log('[RAINDROP] API call failed, using fallback:', e.message);
+      }
+    }
+
+    // Fallback: Simple text truncation with smart cutoff
+    const cleanText = text.replace(/<[^>]*>/g, '').trim();
+    if (cleanText.length <= maxLength) {
+      return res.json({ 
+        status: 'ok', 
+        summary: cleanText,
+        source: 'fallback'
+      });
+    }
+
+    // Find a good cutoff point (sentence boundary)
+    let summary = cleanText.substring(0, maxLength);
+    const lastPeriod = summary.lastIndexOf('.');
+    const lastExclamation = summary.lastIndexOf('!');
+    const lastQuestion = summary.lastIndexOf('?');
+    const lastSentence = Math.max(lastPeriod, lastExclamation, lastQuestion);
+    
+    if (lastSentence > maxLength * 0.7) {
+      summary = summary.substring(0, lastSentence + 1);
+    } else {
+      summary = summary.substring(0, maxLength - 3) + '...';
+    }
+
+    res.json({ 
+      status: 'ok', 
+      summary: summary.trim(),
+      source: 'fallback'
+    });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// 2. Raindrop SmartInference: Personalized game recommendations
+app.post('/api/raindrop/recommendation', async (req, res) => {
+  try {
+    const { gameName, gameGenres, gameTags, userProfile, steamId } = req.body;
+    if (!gameName) {
+      return res.status(400).json({ error: 'Game name is required' });
+    }
+
+    // Build user profile summary
+    let userProfileText = '';
+    if (userProfile && steamId && dbPool) {
+      try {
+        const [similarGames] = await dbPool.query(
+          `SELECT g.name, ug.playtime_forever 
+           FROM user_games ug
+           JOIN games g ON g.appid = ug.appid
+           WHERE CAST(ug.steamid AS CHAR) = ?
+           ORDER BY ug.playtime_forever DESC
+           LIMIT 5`,
+          [String(steamId)]
+        );
+        
+        if (similarGames.length > 0) {
+          userProfileText = `User has played: ${similarGames.map(g => g.name).join(', ')}. `;
+        }
+      } catch (e) {
+        console.log('[RAINDROP] Could not fetch user profile:', e.message);
+      }
+    }
+
+    const prompt = `Explain why "${gameName}" (Genres: ${gameGenres?.join(', ') || 'N/A'}, Tags: ${gameTags?.slice(0, 5).join(', ') || 'N/A'}) would be a good match for a user. ${userProfileText}Provide a brief, personalized explanation (2-3 sentences).`;
+
+    // Try Raindrop SmartInference API
+    if (RAINDROP_API_KEY) {
+      try {
+        const response = await fetch(`${RAINDROP_API_URL}/inference/prompt`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${RAINDROP_API_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            prompt: prompt,
+            max_tokens: 150
+          })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          return res.json({ 
+            status: 'ok', 
+            explanation: data.text || data.response || data,
+            source: 'raindrop'
+          });
+        }
+      } catch (e) {
+        console.log('[RAINDROP] API call failed, using fallback:', e.message);
+      }
+    }
+
+    // Fallback: Generate explanation based on profile match
+    const genresMatch = gameGenres && userProfileText ? 
+      gameGenres.some(g => userProfileText.toLowerCase().includes(g.toLowerCase())) : false;
+    
+    const explanation = genresMatch 
+      ? `"${gameName}" matches your gaming preferences based on similar genres and gameplay styles you've enjoyed. The game's mechanics and design align with titles you've spent significant time playing, suggesting it would resonate with your gaming taste.`
+      : `"${gameName}" offers gameplay elements that may appeal to you based on your gaming history. While it may be a new genre for you, the game's design and community reception suggest it could be a worthwhile discovery.`;
+
+    res.json({ 
+      status: 'ok', 
+      explanation: explanation,
+      source: 'fallback'
+    });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// 3. Vultr AI Inference: Explain weight calculation
+app.post('/api/vultr/explain-weight', async (req, res) => {
+  try {
+    const { weight, profileMatch, engagement, penaltyAPH, gameName, hours, achievements } = req.body;
+    
+    if (weight === undefined) {
+      return res.status(400).json({ error: 'Weight data is required' });
+    }
+
+    const weightData = {
+      finalWeight: (weight * 100).toFixed(1) + '%',
+      profileMatch: (profileMatch * 100).toFixed(1) + '%',
+      engagement: (engagement * 100).toFixed(1) + '%',
+      penalty: (penaltyAPH * 100).toFixed(1) + '%',
+      hours: hours || 0,
+      achievements: achievements || 0
+    };
+
+    const prompt = `Explain in simple terms how the weight calculation works for "${gameName || 'this game'}". 
+Weight = ${weightData.profileMatch} (Profile Match) × ${weightData.engagement} (Engagement) × ${weightData.penalty} (Penalty) = ${weightData.finalWeight} final weight.
+User has ${weightData.hours} hours and ${weightData.achievements}% achievements. 
+Provide a clear, friendly explanation (2-3 sentences) of what this means.`;
+
+    // Try Vultr AI Inference API
+    if (VULTR_API_KEY) {
+      try {
+        const response = await fetch(VULTR_AI_ENDPOINT, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${VULTR_API_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            model: 'llama-3.1-8b-instruct',
+            messages: [
+              {
+                role: 'user',
+                content: prompt
+              }
+            ],
+            max_tokens: 200
+          })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const explanation = data.choices?.[0]?.message?.content || 
+                            data.response || 
+                            data.text || 
+                            JSON.stringify(data);
+          
+          return res.json({ 
+            status: 'ok', 
+            explanation: explanation,
+            source: 'vultr'
+          });
+        }
+      } catch (e) {
+        console.log('[VULTR] API call failed, using fallback:', e.message);
+      }
+    }
+
+    // Fallback: Generate explanation based on values
+    let explanation = `Your weight of ${weightData.finalWeight} means your rating will have `;
+    
+    if (weight >= 0.8) {
+      explanation += `significant impact on the game's score. `;
+    } else if (weight >= 0.5) {
+      explanation += `moderate impact on the game's score. `;
+    } else {
+      explanation += `limited impact on the game's score. `;
+    }
+
+    explanation += `This is calculated from your profile match (${weightData.profileMatch}), engagement level (${weightData.engagement}), and achievement penalty (${weightData.penalty}). `;
+    
+    if (hours > 50 && achievements > 50) {
+      explanation += `Your high playtime and achievement completion show strong engagement with this game.`;
+    } else if (hours < 10) {
+      explanation += `Your limited playtime suggests you may not have fully experienced the game yet.`;
+    } else {
+      explanation += `Your playtime and achievements contribute to your engagement score.`;
+    }
+
+    res.json({ 
+      status: 'ok', 
+      explanation: explanation,
+      source: 'fallback'
+    });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`IndieLens bridge listening on ${PORT}`);
+  if (RAINDROP_API_KEY) {
+    console.log('[RAINDROP] API key configured');
+  } else {
+    console.log('[RAINDROP] API key not configured, using fallback mode');
+  }
+  if (VULTR_API_KEY) {
+    console.log('[VULTR] API key configured');
+  } else {
+    console.log('[VULTR] API key not configured, using fallback mode');
+  }
 }).on('error', (err) => {
   if (err.code === 'EADDRINUSE') {
     console.error(`Port ${PORT} is already in use. Please stop the other process or change the PORT.`);

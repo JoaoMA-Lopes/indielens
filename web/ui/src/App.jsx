@@ -378,36 +378,40 @@ export default function App() {
           <div style={{ marginBottom: 60, padding: 40, border: '2px solid #3B82F6', borderRadius: 8, background: 'rgba(59, 130, 246, 0.1)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
               <h2 style={{ color: '#3B82F6', fontSize: '2.2em', marginTop: 0, textAlign: 'center', flex: 1 }}>The Result</h2>
-              {'ai' in window && 'summarizer' in window.ai && (
-                <button
-                  onClick={async () => {
-                    try {
-                      const text = `When you rate a game, your rating is multiplied by your calculated weight. Games where you have high profile match, high engagement, and normal achievement patterns will have the most influence. This ensures that scores reflect the opinions of players who are genuinely familiar with similar games and have actually engaged with the title.`;
-                      const result = await window.ai.summarizer.summarize(text);
-                      if (result && result.summary) {
-                        const summaryDiv = document.getElementById('summary-result');
-                        if (summaryDiv) {
-                          summaryDiv.innerHTML = `<p style="color: #c7d5e0; font-style: italic; margin-top: 12px; text-align: center;"><strong>Summary:</strong> ${result.summary}</p>`;
-                        }
+              <button
+                onClick={async () => {
+                  try {
+                    const text = `When you rate a game, your rating is multiplied by your calculated weight. Games where you have high profile match, high engagement, and normal achievement patterns will have the most influence. This ensures that scores reflect the opinions of players who are genuinely familiar with similar games and have actually engaged with the title.`;
+                    const apiBase = window.location.hostname === 'localhost' ? 'http://localhost:5179' : '/api';
+                    const response = await fetch(`${apiBase}/raindrop/summarize`, {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ text, maxLength: 150 })
+                    });
+                    const result = await response.json();
+                    if (result.status === 'ok' && result.summary) {
+                      const summaryDiv = document.getElementById('summary-result');
+                      if (summaryDiv) {
+                        summaryDiv.innerHTML = `<p style="color: #c7d5e0; font-style: italic; margin-top: 12px; text-align: center;"><strong>Summary:</strong> ${result.summary}</p>`;
                       }
-                    } catch (e) {
-                      console.error('Summarizer API error:', e);
-                      alert('Summarizer API is not available. Make sure you are using Chrome with the built-in AI enabled.');
                     }
-                  }}
-                  style={{
-                    padding: '8px 16px',
-                    background: 'rgba(59, 130, 246, 0.2)',
-                    border: '1px solid #3B82F6',
-                    borderRadius: '6px',
-                    fontSize: 14,
-                    cursor: 'pointer',
-                    color: '#c7d5e0'
-                  }}
-                >
-                  📝 Summarize (Chrome AI)
-                </button>
-              )}
+                  } catch (e) {
+                    console.error('Summarize error:', e);
+                    alert('Failed to summarize. Please try again.');
+                  }
+                }}
+                style={{
+                  padding: '8px 16px',
+                  background: 'rgba(59, 130, 246, 0.2)',
+                  border: '1px solid #3B82F6',
+                  borderRadius: '6px',
+                  fontSize: 14,
+                  cursor: 'pointer',
+                  color: '#c7d5e0'
+                }}
+              >
+                📝 Summarize (SmartInference)
+              </button>
             </div>
             <p style={{ fontSize: '1.1em', color: '#c7d5e0', textAlign: 'center', lineHeight: 1.8 }}>
               When you rate a game, your rating is multiplied by your calculated weight. Games where you have high profile match, 
@@ -2620,41 +2624,43 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
           <div className="description-box">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
               <h3>About</h3>
-              {'ai' in window && 'summarizer' in window.ai && (
-                <button
-                  onClick={async () => {
-                    try {
-                      // Extract text from HTML
-                      const tempDiv = document.createElement('div');
-                      tempDiv.innerHTML = shortDesc;
-                      const text = tempDiv.textContent || tempDiv.innerText || '';
-                      const result = await window.ai.summarizer.summarize(text);
-                      if (result && result.summary) {
-                        // Show summary in a new div or alert
-                        const summaryDiv = document.getElementById('summary-about');
-                        if (summaryDiv) {
-                          const summaryText = result.summary || result.text || result;
-                          summaryDiv.innerHTML = `<p style="color: #c7d5e0; font-style: italic; margin-top: 12px;"><strong>Summary:</strong> ${summaryText}</p>`;
-                        }
+              <button
+                onClick={async () => {
+                  try {
+                    // Extract text from HTML
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = shortDesc;
+                    const text = tempDiv.textContent || tempDiv.innerText || '';
+                    const apiBase = window.location.hostname === 'localhost' ? 'http://localhost:5179' : '/api';
+                    const response = await fetch(`${apiBase}/raindrop/summarize`, {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ text, maxLength: 200 })
+                    });
+                    const result = await response.json();
+                    if (result.status === 'ok' && result.summary) {
+                      const summaryDiv = document.getElementById('summary-about');
+                      if (summaryDiv) {
+                        summaryDiv.innerHTML = `<p style="color: #c7d5e0; font-style: italic; margin-top: 12px;"><strong>Summary:</strong> ${result.summary}</p>`;
                       }
-                    } catch (e) {
-                      console.error('Summarizer API error:', e);
-                      alert('Summarizer API is not available. Make sure you are using Chrome with the built-in AI enabled.');
                     }
-                  }}
-                  style={{
-                    padding: '6px 12px',
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    border: '1px solid #415a79',
-                    borderRadius: '4px',
-                    fontSize: 12,
-                    cursor: 'pointer',
-                    color: '#c7d5e0'
-                  }}
-                >
-                  📝 Summarize (Chrome AI)
-                </button>
-              )}
+                  } catch (e) {
+                    console.error('Summarize error:', e);
+                    alert('Failed to summarize. Please try again.');
+                  }
+                }}
+                style={{
+                  padding: '6px 12px',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  border: '1px solid #415a79',
+                  borderRadius: '4px',
+                  fontSize: 12,
+                  cursor: 'pointer',
+                  color: '#c7d5e0'
+                }}
+              >
+                📝 Summarize (SmartInference)
+              </button>
             </div>
             <div dangerouslySetInnerHTML={{ __html: shortDesc }} />
             <div id="summary-about"></div>
@@ -2665,46 +2671,43 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
           <div className="description-box">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
               <h3>Description</h3>
-              {'ai' in window && 'summarizer' in window.ai && (
-                <button
-                  onClick={async () => {
-                    try {
-                      // Extract text from HTML
-                      const tempDiv = document.createElement('div');
-                      tempDiv.innerHTML = detailedDesc;
-                      const text = tempDiv.textContent || tempDiv.innerText || '';
-                      let result;
-                      if (typeof window.ai.summarizer.summarize === 'function') {
-                        result = await window.ai.summarizer.summarize(text);
-                      } else {
-                        throw new Error('Summarizer API method not found');
+              <button
+                onClick={async () => {
+                  try {
+                    // Extract text from HTML
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = detailedDesc;
+                    const text = tempDiv.textContent || tempDiv.innerText || '';
+                    const apiBase = window.location.hostname === 'localhost' ? 'http://localhost:5179' : '/api';
+                    const response = await fetch(`${apiBase}/raindrop/summarize`, {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ text, maxLength: 200 })
+                    });
+                    const result = await response.json();
+                    if (result.status === 'ok' && result.summary) {
+                      const summaryDiv = document.getElementById('summary-description');
+                      if (summaryDiv) {
+                        summaryDiv.innerHTML = `<p style="color: #c7d5e0; font-style: italic; margin-top: 12px;"><strong>Summary:</strong> ${result.summary}</p>`;
                       }
-                      if (result && (result.summary || result.text || result)) {
-                        const summaryDiv = document.getElementById('summary-description');
-                        if (summaryDiv) {
-                          const summaryText = result.summary || result.text || result;
-                          summaryDiv.innerHTML = `<p style="color: #c7d5e0; font-style: italic; margin-top: 12px;"><strong>Summary:</strong> ${summaryText}</p>`;
-                        }
-                      }
-                    } catch (e) {
-                      console.error('Summarizer API error:', e);
-                      console.error('window.ai.summarizer:', window.ai.summarizer);
-                      alert('Summarizer API error: ' + e.message);
                     }
-                  }}
-                  style={{
-                    padding: '6px 12px',
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    border: '1px solid #415a79',
-                    borderRadius: '4px',
-                    fontSize: 12,
-                    cursor: 'pointer',
-                    color: '#c7d5e0'
-                  }}
-                >
-                  📝 Summarize (Chrome AI)
-                </button>
-              )}
+                  } catch (e) {
+                    console.error('Summarize error:', e);
+                    alert('Failed to summarize. Please try again.');
+                  }
+                }}
+                style={{
+                  padding: '6px 12px',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  border: '1px solid #415a79',
+                  borderRadius: '4px',
+                  fontSize: 12,
+                  cursor: 'pointer',
+                  color: '#c7d5e0'
+                }}
+              >
+                📝 Summarize (SmartInference)
+              </button>
             </div>
             <div dangerouslySetInnerHTML={{ __html: detailedDesc }} />
             <div id="summary-description"></div>
@@ -2716,70 +2719,49 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
           <div className="description-box" style={{ marginBottom: 24 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
               <h3>AI Game Recommendation</h3>
-              {'ai' in window && 'prompt' in window.ai && (
-                <button
-                  onClick={async () => {
-                    try {
-                      // Get user's gaming profile data
-                      const promptText = `Explain why the game "${details.name}" (AppID: ${details.appid}) matches my gaming profile. Use mathematical formulas and specific user data from my Steam library. Include:
-- Profile Match calculation (Jaccard similarity over tags/genres, developer match)
-- Engagement calculation (playtime and achievement completion)
-- How this compares to similar games I've played
-- Why my rating would have high or low weighting
-- Specific examples from my gaming history`;
-
-                      // Try different API calling methods
-                      let result;
-                      if (typeof window.ai.prompt.prompt === 'function') {
-                        try {
-                          result = await window.ai.prompt.prompt(promptText, {
-                            systemInstruction: `You are an expert gaming analytics assistant. Explain game recommendations using the IndieLens weighting system with mathematical precision and user-specific data.`
-                          });
-                        } catch (e) {
-                          // Try without systemInstruction
-                          result = await window.ai.prompt.prompt(promptText);
-                        }
-                      } else {
-                        console.error('Prompt API structure:', window.ai.prompt);
-                        throw new Error('Prompt API method not found. Available: ' + Object.keys(window.ai.prompt || {}).join(', '));
+              <button
+                onClick={async () => {
+                  try {
+                    const apiBase = window.location.hostname === 'localhost' ? 'http://localhost:5179' : '/api';
+                    const response = await fetch(`${apiBase}/raindrop/recommendation`, {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        gameName: details.name,
+                        gameGenres: details.genres || [],
+                        gameTags: details.tags || [],
+                        userProfile: true,
+                        steamId: steamId
+                      })
+                    });
+                    const result = await response.json();
+                    if (result.status === 'ok' && result.explanation) {
+                      const explanationDiv = document.getElementById('ai-explanation');
+                      if (explanationDiv) {
+                        explanationDiv.innerHTML = `<div style="padding: 16px; background: rgba(255, 255, 255, 0.05); border: 1px solid #415a79; border-radius: 4px; margin-top: 12px;"><p style="color: #c7d5e0; white-space: pre-wrap; line-height: 1.6;">${result.explanation}</p></div>`;
                       }
-                      
-                      if (result && (result.text || result.response || result)) {
-                        const explanationDiv = document.getElementById('ai-explanation');
-                        if (explanationDiv) {
-                          const responseText = result.text || result.response || String(result);
-                          explanationDiv.innerHTML = `<div style="padding: 16px; background: rgba(255, 255, 255, 0.05); border: 1px solid #415a79; border-radius: 4px; margin-top: 12px;"><p style="color: #c7d5e0; white-space: pre-wrap; line-height: 1.6;">${responseText}</p></div>`;
-                        }
-                      }
-                    } catch (e) {
-                      console.error('Prompt API error:', e);
-                      console.error('window.ai structure:', window.ai ? Object.keys(window.ai) : 'window.ai not found');
-                      console.error('window.ai.prompt structure:', window.ai?.prompt ? Object.keys(window.ai.prompt) : 'prompt not found');
-                      alert('Prompt API error: ' + e.message + '\n\nCheck browser console (F12) for detailed API structure information.');
                     }
-                  }}
-                  style={{
-                    padding: '6px 12px',
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    border: '1px solid #415a79',
-                    borderRadius: '4px',
-                    fontSize: 12,
-                    cursor: 'pointer',
-                    color: '#c7d5e0'
-                  }}
-                >
-                  🤖 Explain Match (Chrome AI)
-                </button>
-              )}
+                  } catch (e) {
+                    console.error('Recommendation error:', e);
+                    alert('Failed to generate recommendation. Please try again.');
+                  }
+                }}
+                style={{
+                  padding: '6px 12px',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  border: '1px solid #415a79',
+                  borderRadius: '4px',
+                  fontSize: 12,
+                  cursor: 'pointer',
+                  color: '#c7d5e0'
+                }}
+              >
+                🤖 Explain Match (SmartInference)
+              </button>
             </div>
             <p style={{ color: '#8f98a0', fontSize: 14, marginBottom: 0 }}>
               Get an AI-powered explanation of why this game matches your gaming profile, with mathematical details and user data.
             </p>
-            {!('ai' in window) || !('prompt' in window.ai) ? (
-              <div style={{ marginTop: 12, padding: 12, background: 'rgba(255, 193, 7, 0.2)', border: '1px solid #ffc107', borderRadius: '4px', fontSize: 12, color: '#ffc107' }}>
-                <strong>Note:</strong> Prompt API not available. Enable it in <code>chrome://flags</code> by searching for "Prompt API" or "on-device prompt".
-              </div>
-            ) : null}
             <div id="ai-explanation"></div>
           </div>
         )}
@@ -3073,6 +3055,54 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                       Your contribution to the game's aggregate IndieLens score
                     </div>
                   </div>
+                  
+                  {/* Vultr AI Explanation Button */}
+                  <button
+                    onClick={async () => {
+                      try {
+                        const apiBase = window.location.hostname === 'localhost' ? 'http://localhost:5179' : '/api';
+                        const breakdown = previewBreakdown.breakdown || {};
+                        const userGame = details.userGame || {};
+                        const response = await fetch(`${apiBase}/vultr/explain-weight`, {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({
+                            weight: previewBreakdown.weight || 0,
+                            profileMatch: breakdown.profileMatch || 0,
+                            engagement: breakdown.engagement || 0,
+                            penaltyAPH: breakdown.softPenaltyAPH || breakdown.penaltyAPH || 1.0,
+                            gameName: details.name,
+                            hours: userGame.playtime_forever || 0,
+                            achievements: userGame.achievements_unlocked || 0
+                          })
+                        });
+                        const result = await response.json();
+                        if (result.status === 'ok' && result.explanation) {
+                          const explanationDiv = document.getElementById('weight-explanation');
+                          if (explanationDiv) {
+                            explanationDiv.innerHTML = `<div style="padding: 16px; background: rgba(59, 130, 246, 0.1); border: 1px solid #3B82F6; border-radius: 4px; margin-top: 12px;"><p style="color: #c7d5e0; white-space: pre-wrap; line-height: 1.6;">${result.explanation}</p></div>`;
+                          }
+                        }
+                      } catch (e) {
+                        console.error('Weight explanation error:', e);
+                        alert('Failed to generate explanation. Please try again.');
+                      }
+                    }}
+                    style={{
+                      marginTop: 12,
+                      padding: '8px 16px',
+                      background: 'rgba(59, 130, 246, 0.2)',
+                      border: '1px solid #3B82F6',
+                      borderRadius: '6px',
+                      fontSize: 14,
+                      cursor: 'pointer',
+                      color: '#c7d5e0',
+                      width: '100%'
+                    }}
+                  >
+                    🤖 Explain Weight Calculation (Vultr AI)
+                  </button>
+                  <div id="weight-explanation"></div>
                 </div>
               </div>
             )}
