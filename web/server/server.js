@@ -1877,10 +1877,15 @@ app.post('/api/raindrop/summarize', async (req, res) => {
             summary: data.summary || data.text || data,
             source: 'raindrop'
           });
+        } else {
+          const errorText = await response.text().catch(() => 'Unknown error');
+          console.log(`[RAINDROP] API returned ${response.status}:`, errorText);
         }
       } catch (e) {
         console.log('[RAINDROP] API call failed, using fallback:', e.message);
       }
+    } else {
+      console.log('[RAINDROP] API key not configured, using fallback');
     }
 
     // Fallback: Simple text truncation with smart cutoff

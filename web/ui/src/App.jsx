@@ -409,16 +409,24 @@ export default function App() {
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({ text, maxLength: 150 })
                     });
+                    
+                    if (!response.ok) {
+                      const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+                      throw new Error(errorData.error || `Server error: ${response.status}`);
+                    }
+                    
                     const result = await response.json();
                     if (result.status === 'ok' && result.summary) {
                       const summaryDiv = document.getElementById('summary-result');
                       if (summaryDiv) {
                         summaryDiv.innerHTML = `<p style="color: #c7d5e0; font-style: italic; margin-top: 12px; text-align: center;"><strong>Summary:</strong> ${result.summary}</p>`;
                       }
+                    } else {
+                      throw new Error(result.error || 'Failed to get summary');
                     }
                   } catch (e) {
                     console.error('Summarize error:', e);
-                    alert('Failed to summarize. Please try again.');
+                    alert(`Failed to summarize: ${e.message}. Using fallback method.`);
                   }
                 }}
                 style={{
@@ -2750,16 +2758,24 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({ text, maxLength: 200 })
                     });
+                    
+                    if (!response.ok) {
+                      const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+                      throw new Error(errorData.error || `Server error: ${response.status}`);
+                    }
+                    
                     const result = await response.json();
                     if (result.status === 'ok' && result.summary) {
                       const summaryDiv = document.getElementById('summary-about');
                       if (summaryDiv) {
                         summaryDiv.innerHTML = `<p style="color: #c7d5e0; font-style: italic; margin-top: 12px;"><strong>Summary:</strong> ${result.summary}</p>`;
                       }
+                    } else {
+                      throw new Error(result.error || 'Failed to get summary');
                     }
                   } catch (e) {
                     console.error('Summarize error:', e);
-                    alert('Failed to summarize. Please try again.');
+                    alert(`Failed to summarize: ${e.message}. The system will use a fallback method.`);
                   }
                 }}
                 style={{
@@ -2797,16 +2813,24 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({ text, maxLength: 200 })
                     });
+                    
+                    if (!response.ok) {
+                      const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+                      throw new Error(errorData.error || `Server error: ${response.status}`);
+                    }
+                    
                     const result = await response.json();
                     if (result.status === 'ok' && result.summary) {
                       const summaryDiv = document.getElementById('summary-description');
                       if (summaryDiv) {
                         summaryDiv.innerHTML = `<p style="color: #c7d5e0; font-style: italic; margin-top: 12px;"><strong>Summary:</strong> ${result.summary}</p>`;
                       }
+                    } else {
+                      throw new Error(result.error || 'Failed to get summary');
                     }
                   } catch (e) {
                     console.error('Summarize error:', e);
-                    alert('Failed to summarize. Please try again.');
+                    alert(`Failed to summarize: ${e.message}. The system will use a fallback method.`);
                   }
                 }}
                 style={{
