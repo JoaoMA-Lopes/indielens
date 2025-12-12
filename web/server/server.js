@@ -139,7 +139,11 @@ function normalizeScore(rawScore) {
   // This ensures no game gets exactly 100 and creates better distribution
   let normalized = rawScore;
   
-  if (normalized >= 95) {
+  // Always apply normalization, even for scores below 95
+  if (normalized >= 100) {
+    // Any score >= 100 becomes 99.9
+    normalized = 99.9;
+  } else if (normalized >= 95) {
     // Compress scores 95-100 into 90-99.9 range for better distribution
     normalized = 90 + (normalized - 95) * 1.98; // Maps 95->90, 100->99.9
   } else if (normalized >= 85) {
