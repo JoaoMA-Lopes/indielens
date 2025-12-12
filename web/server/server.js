@@ -463,7 +463,7 @@ app.post('/account/update-steam-library', async (req, res) => {
       
       return res.json({ 
         status: 'ok', 
-        message: 'Friend code updated. Steam library already ingested.',
+        message: `Friend code updated. Steam library already ingested (${gameCount} games found).`,
         steamId: newSteamId,
         gameCount: gameCount,
         alreadyIngested: true
