@@ -45,6 +45,11 @@ export default function App() {
     }
   }, [steamId, username]);
   
+  // Smooth scroll to top when tab changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [tab]);
+  
   function handleLogout() {
     setSteamId('');
     setUsername('');
@@ -242,7 +247,11 @@ export default function App() {
           onLogout={handleLogout}
           genres={headerGenres}
           selectedGenre={selectedHeaderGenre}
-          onGenreChange={(g) => { setSelectedHeaderGenre(g === selectedHeaderGenre ? '' : g); setTab('browse'); }}
+          onGenreChange={(g) => { 
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setSelectedHeaderGenre(g === selectedHeaderGenre ? '' : g); 
+            setTab('browse'); 
+          }}
           onSearch={handleHeaderSearch}
           onHowItWorks={() => setTab('howitworks')}
           onWhyWereHere={() => setTab('whywerehere')}
@@ -250,7 +259,11 @@ export default function App() {
           onMyAccount={() => setTab('myaccount')}
         />
         <hr className="separator" />
-        <GameDetail apiBase={apiBase} game={selectedGame} steamId={steamId} onClose={() => { setTab('browse'); setSelectedGame(null); }} />
+        <GameDetail apiBase={apiBase} game={selectedGame} steamId={steamId} onClose={() => { 
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          setTab('browse'); 
+          setSelectedGame(null); 
+        }} />
       </>
     );
   }
@@ -265,7 +278,10 @@ export default function App() {
         onLogout={handleLogout}
         genres={headerGenres}
         selectedGenre={selectedHeaderGenre}
-        onGenreChange={(g) => { setSelectedHeaderGenre(g === selectedHeaderGenre ? '' : g); setTab('browse'); }}
+          onGenreChange={(g) => { 
+            setSelectedHeaderGenre(g === selectedHeaderGenre ? '' : g); 
+            setTab('browse'); 
+          }}
         onSearch={handleHeaderSearch}
           onHowItWorks={() => setTab('howitworks')}
           onWhyWereHere={() => setTab('whywerehere')}
@@ -757,7 +773,11 @@ export default function App() {
       )}
 
       {tab === 'browse' && (
-        <Browse apiBase={apiBase} data={browse} setData={setBrowse} onSelectGame={(g) => { setTab('detail'); setSelectedGame(g); }} selectedGenre={selectedHeaderGenre} searchQuery={searchQuery} />
+        <Browse apiBase={apiBase} data={browse} setData={setBrowse} onSelectGame={(g) => { 
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          setTab('detail'); 
+          setSelectedGame(g); 
+        }} selectedGenre={selectedHeaderGenre} searchQuery={searchQuery} />
       )}
       {tab === 'rate' && steamId && (
         <div style={{ marginTop: 40 }}>
@@ -2345,7 +2365,43 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
     return (
       <div className="container" style={{ minHeight: '100vh', padding: '40px' }}>
         <div className="detail-back" onClick={onClose}>← Back to Browse</div>
-        <p>Loading game details...</p>
+        <div style={{ textAlign: 'center', padding: '60px 20px' }}>
+          <div style={{ marginBottom: '20px' }}>
+            <div style={{ 
+              width: '100%', 
+              height: '300px', 
+              background: 'linear-gradient(90deg, #1a2633 25%, #2a475e 50%, #1a2633 75%)',
+              backgroundSize: '200% 100%',
+              animation: 'shimmer 1.5s infinite',
+              borderRadius: '8px',
+              marginBottom: '20px'
+            }} />
+            <style>{`
+              @keyframes shimmer {
+                0% { background-position: -200% 0; }
+                100% { background-position: 200% 0; }
+              }
+            `}</style>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginTop: '20px' }}>
+            {[0, 1, 2].map(i => (
+              <div key={i} style={{
+                width: '12px',
+                height: '12px',
+                borderRadius: '50%',
+                background: '#66c0f4',
+                animation: `pulse 1.4s ease-in-out ${i * 0.2}s infinite`
+              }} />
+            ))}
+          </div>
+          <p style={{ marginTop: '20px', color: '#8f98a0' }}>Loading game details...</p>
+          <style>{`
+            @keyframes pulse {
+              0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
+              40% { opacity: 1; transform: scale(1.2); }
+            }
+          `}</style>
+        </div>
       </div>
     );
   }
@@ -2490,8 +2546,44 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                     <div style={{ fontSize: '26px', color: '#8f98a0', marginLeft: 40 }}>
                       {scoreBreakdown.currentUser.contribution.toFixed(1)}% of total score
                       <br />
-                      <span style={{ fontSize: '24px', color: '#999' }}>
-                        Weight: {(scoreBreakdown.currentUser.weight * 100).toFixed(1)}% • Rating: {scoreBreakdown.currentUser.rating}
+                      <span style={{ fontSize: '24px', color: '#999', position: 'relative' }}>
+                        Weight: <span style={{ 
+                          borderBottom: '1px dotted #66c0f4', 
+                          cursor: 'help',
+                          position: 'relative'
+                        }} 
+                        onMouseEnter={(e) => {
+                          const tooltip = document.createElement('div');
+                          tooltip.id = 'weight-tooltip';
+                          tooltip.style.cssText = `
+                            position: absolute;
+                            background: #1a2633;
+                            border: 1px solid #415a79;
+                            padding: 12px;
+                            border-radius: 6px;
+                            color: #c7d5e0;
+                            font-size: 14px;
+                            width: 300px;
+                            z-index: 1000;
+                            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                            pointer-events: none;
+                          `;
+                          tooltip.innerHTML = `
+                            <strong>Weight Calculation:</strong><br/>
+                            Weight = ProfileMatch × Engagement × PenaltyAPH<br/><br/>
+                            <strong>Your Weight:</strong> ${(scoreBreakdown.currentUser.weight * 100).toFixed(1)}%<br/>
+                            This determines how much your rating contributes to the game's overall score.
+                          `;
+                          document.body.appendChild(tooltip);
+                          const rect = e.target.getBoundingClientRect();
+                          tooltip.style.top = (rect.bottom + 8) + 'px';
+                          tooltip.style.left = (rect.left) + 'px';
+                        }}
+                        onMouseLeave={() => {
+                          const tooltip = document.getElementById('weight-tooltip');
+                          if (tooltip) tooltip.remove();
+                        }}
+                        >{(scoreBreakdown.currentUser.weight * 100).toFixed(1)}%</span> • Rating: {scoreBreakdown.currentUser.rating}
                       </span>
                     </div>
                   </div>
