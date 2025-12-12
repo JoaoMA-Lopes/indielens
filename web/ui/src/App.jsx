@@ -303,10 +303,10 @@ export default function App() {
               src={logoPath} 
               alt="IndieLens Logo" 
               style={{ 
-                height: '80px', 
-                width: '80px', 
+                height: '120px', 
+                width: '120px', 
                 objectFit: 'contain',
-                filter: 'drop-shadow(0 0 12px rgba(102, 192, 244, 0.7))',
+                filter: 'drop-shadow(0 0 16px rgba(102, 192, 244, 0.8))',
                 backgroundColor: 'transparent',
                 background: 'transparent',
                 mixBlendMode: 'normal',
@@ -1517,10 +1517,14 @@ function WhyWereHere({ apiBase, logoPath = '/logo.png' }) {
             src={logoPath || '/logo.png'} 
             alt="IndieLens Logo" 
             style={{ 
-              height: '80px', 
-              width: '80px', 
+              height: '120px', 
+              width: '120px', 
               objectFit: 'contain',
-              filter: 'drop-shadow(0 0 12px rgba(102, 192, 244, 0.7))'
+              filter: 'drop-shadow(0 0 16px rgba(102, 192, 244, 0.8))',
+              backgroundColor: 'transparent',
+              background: 'transparent',
+              mixBlendMode: 'normal',
+              imageRendering: 'crisp-edges'
             }}
             onError={(e) => { e.currentTarget.style.display = 'none'; }}
           />
@@ -1547,10 +1551,10 @@ function WhyWereHere({ apiBase, logoPath = '/logo.png' }) {
           src={logoPath || '/logo.png'} 
           alt="IndieLens Logo" 
           style={{ 
-            height: '80px', 
-            width: '80px', 
+            height: '120px', 
+            width: '120px', 
             objectFit: 'contain',
-            filter: 'drop-shadow(0 0 12px rgba(102, 192, 244, 0.7))',
+            filter: 'drop-shadow(0 0 16px rgba(102, 192, 244, 0.8))',
             backgroundColor: 'transparent',
             background: 'transparent',
             mixBlendMode: 'normal',
