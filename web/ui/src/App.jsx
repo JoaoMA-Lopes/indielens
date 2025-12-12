@@ -1319,7 +1319,7 @@ function TagSegment({ title, games, onSelectGame, imageUrl }) {
               <img src={item.imageUrl} alt={item.name || 'Game'} onError={(e)=>{e.currentTarget.style.display='none';}} />
               <div className="tag-segment-card-title">{item.name || 'Unknown title'}</div>
               <div className="tag-segment-card-score" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '6px' }}>
-                <span className="badge">{item.score?.toFixed(0) ?? '—'}</span>
+                <span className="badge">{item.score ? Math.min(99.9, parseFloat(item.score.toFixed(1))) : '—'}</span>
                 {item.developer && (
                   <span className="tag-segment-card-developer">{item.developer}</span>
                 )}
@@ -2374,7 +2374,8 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
     );
   }
 
-  const score = d.score ? Math.round(d.score) : null;
+  // Don't round - use toFixed(1) to show one decimal, but cap at 99.9 visually
+  const score = d.score ? Math.min(99.9, parseFloat(d.score.toFixed(1))) : null;
   const getScoreColor = (s) => {
     if (!s) return '#999';
     if (s >= 75) return '#66cc33';
