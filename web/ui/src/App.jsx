@@ -1670,6 +1670,44 @@ function WhyWereHere({ apiBase }) {
         </div>
       </div>
 
+      {/* IGN: Same Formula, Same Problems */}
+      <div style={{ marginBottom: 60, padding: 40, border: '2px solid #d4af37', borderRadius: 8, background: 'rgba(212, 175, 55, 0.1)' }}>
+        <h2 style={{ color: '#d4af37', fontSize: '2.2em', marginTop: 0, marginBottom: 20 }}>IGN: Equally Important, But Same Fundamental Flaws</h2>
+        <p style={{ fontSize: '1.1em', color: '#c7d5e0', textAlign: 'center', marginBottom: 30, lineHeight: 1.8 }}>
+          IGN is one of the most influential game review platforms, with scores that publishers and developers take seriously. 
+          However, IGN follows the <strong style={{ color: '#d4af37' }}>same basic formula as Metacritic</strong>—aggregating critic reviews—which means 
+          it suffers from the same fundamental problems.
+        </p>
+        
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 25, marginTop: 30 }}>
+          <div style={{ padding: 25, background: 'rgba(255, 100, 100, 0.1)', borderRadius: 8, border: '1px solid #ff6464' }}>
+            <h3 style={{ color: '#ff6464', fontSize: '1.4em', marginTop: 0 }}>Critic Uniformity</h3>
+            <p style={{ color: '#c7d5e0', lineHeight: 1.7 }}>
+              Like Metacritic, IGN aggregates reviews from professional critics who tend to have <strong>similar tastes and preferences</strong>. 
+              This creates a uniformity problem where great games that don't fit the mainstream critic mold get overlooked.
+            </p>
+          </div>
+          
+          <div style={{ padding: 25, background: 'rgba(255, 100, 100, 0.1)', borderRadius: 8, border: '1px solid #ff6464' }}>
+            <h3 style={{ color: '#ff6464', fontSize: '1.4em', marginTop: 0 }}>No User Engagement Data</h3>
+            <p style={{ color: '#c7d5e0', lineHeight: 1.7 }}>
+              IGN scores come from critics who play games <strong>under deadline and for a paycheck</strong>, not players who 
+              <strong>spent their own money</strong> and genuinely engaged with the game. There's no way to weight reviews by actual 
+              playtime or achievement completion.
+            </p>
+          </div>
+          
+          <div style={{ padding: 25, background: 'rgba(255, 100, 100, 0.1)', borderRadius: 8, border: '1px solid #ff6464' }}>
+            <h3 style={{ color: '#ff6464', fontSize: '1.4em', marginTop: 0 }}>No Profile Matching</h3>
+            <p style={{ color: '#c7d5e0', lineHeight: 1.7 }}>
+              IGN shows aggregate scores that don't account for your gaming preferences. A strategy game enthusiast's review 
+              of a new strategy game counts the same as someone who's never played the genre. There's no way to find games 
+              loved by players with <strong>similar tastes</strong> to you.
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Steam Reviews: Better but Not Perfect */}
       <div style={{ marginBottom: 60, padding: 40, border: '2px solid #8f98a0', borderRadius: 8, background: 'rgba(143, 152, 160, 0.1)' }}>
         <h2 style={{ color: '#c7d5e0', fontSize: '2.2em', marginTop: 0, marginBottom: 20 }}>Steam Reviews: A Step Forward, But Not Enough</h2>
