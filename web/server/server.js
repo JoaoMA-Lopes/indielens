@@ -1855,40 +1855,66 @@ app.post('/api/raindrop/summarize', async (req, res) => {
       return res.status(400).json({ error: 'Text is required' });
     }
 
-    // Try Raindrop SmartInference API
-    if (RAINDROP_API_KEY) {
-      try {
-        const response = await fetch(`${RAINDROP_API_URL}/inference/summarize`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${RAINDROP_API_KEY}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            text: text,
-            max_length: maxLength
-          })
+    // Skip API call if no key - go straight to fallback
+    if (!RAINDROP_API_KEY || RAINDROP_API_KEY.trim() === '') {
+      // Fallback: Simple text truncation with smart cutoff
+      const cleanText = text.replace(/<[^>]*>/g, '').trim();
+      if (cleanText.length <= maxLength) {
+        return res.json({ 
+          status: 'ok', 
+          summary: cleanText,
+          source: 'fallback'
         });
-
-        if (response.ok) {
-          const data = await response.json();
-          return res.json({ 
-            status: 'ok', 
-            summary: data.summary || data.text || data,
-            source: 'raindrop'
-          });
-        } else {
-          const errorText = await response.text().catch(() => 'Unknown error');
-          console.log(`[RAINDROP] API returned ${response.status}:`, errorText);
-        }
-      } catch (e) {
-        console.log('[RAINDROP] API call failed, using fallback:', e.message);
       }
-    } else {
-      console.log('[RAINDROP] API key not configured, using fallback');
+
+      // Find a good cutoff point (sentence boundary)
+      let summary = cleanText.substring(0, maxLength);
+      const lastPeriod = summary.lastIndexOf('.');
+      const lastExclamation = summary.lastIndexOf('!');
+      const lastQuestion = summary.lastIndexOf('?');
+      const lastSentence = Math.max(lastPeriod, lastExclamation, lastQuestion);
+      
+      if (lastSentence > maxLength * 0.7) {
+        summary = summary.substring(0, lastSentence + 1);
+      } else {
+        summary = summary.substring(0, maxLength - 3) + '...';
+      }
+
+      return res.json({ 
+        status: 'ok', 
+        summary: summary.trim(),
+        source: 'fallback'
+      });
     }
 
-    // Fallback: Simple text truncation with smart cutoff
+    // Only try API if key is configured
+    try {
+      const response = await fetch(`${RAINDROP_API_URL}/inference/summarize`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${RAINDROP_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          text: text,
+          max_length: maxLength
+        }),
+        timeout: 5000 // 5 second timeout
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        return res.json({ 
+          status: 'ok', 
+          summary: data.summary || data.text || data,
+          source: 'raindrop'
+        });
+      }
+    } catch (e) {
+      console.log('[RAINDROP] API call failed, using fallback:', e.message);
+    }
+
+    // Fallback if API fails
     const cleanText = text.replace(/<[^>]*>/g, '').trim();
     if (cleanText.length <= maxLength) {
       return res.json({ 
@@ -1898,7 +1924,6 @@ app.post('/api/raindrop/summarize', async (req, res) => {
       });
     }
 
-    // Find a good cutoff point (sentence boundary)
     let summary = cleanText.substring(0, maxLength);
     const lastPeriod = summary.lastIndexOf('.');
     const lastExclamation = summary.lastIndexOf('!');
@@ -1917,8 +1942,7 @@ app.post('/api/raindrop/summarize', async (req, res) => {
       source: 'fallback'
     });
   } catch (e) {
-    // Even if everything fails, try to return something useful
-    console.error('[RAINDROP] Error in summarize endpoint:', e);
+    // Final fallback - always return something
     const cleanText = (req.body.text || '').replace(/<[^>]*>/g, '').trim();
     const maxLen = req.body.maxLength || 200;
     const fallbackSummary = cleanText.length > maxLen ? cleanText.substring(0, maxLen - 3) + '...' : cleanText;
@@ -2026,51 +2050,80 @@ app.post('/api/vultr/explain-weight', async (req, res) => {
       achievements: achievements || 0
     };
 
-    const prompt = `Explain in simple terms how the weight calculation works for "${gameName || 'this game'}". 
+    // Skip API call if no key - go straight to fallback
+    if (!VULTR_API_KEY || VULTR_API_KEY.trim() === '') {
+      // Fallback: Generate explanation based on values
+      let explanation = `Your weight of ${weightData.finalWeight} means your rating will have `;
+      
+      if (weight >= 0.8) {
+        explanation += `significant impact on the game's score. `;
+      } else if (weight >= 0.5) {
+        explanation += `moderate impact on the game's score. `;
+      } else {
+        explanation += `limited impact on the game's score. `;
+      }
+
+      explanation += `This is calculated from your profile match (${weightData.profileMatch}), engagement level (${weightData.engagement}), and achievement penalty (${weightData.penalty}). `;
+      
+      if (hours > 50 && achievements > 50) {
+        explanation += `Your high playtime and achievement completion show strong engagement with this game.`;
+      } else if (hours < 10) {
+        explanation += `Your limited playtime suggests you may not have fully experienced the game yet.`;
+      } else {
+        explanation += `Your playtime and achievements contribute to your engagement score.`;
+      }
+
+      return res.json({ 
+        status: 'ok', 
+        explanation: explanation,
+        source: 'fallback'
+      });
+    }
+
+    // Only try API if key is configured
+    try {
+      const prompt = `Explain in simple terms how the weight calculation works for "${gameName || 'this game'}". 
 Weight = ${weightData.profileMatch} (Profile Match) × ${weightData.engagement} (Engagement) × ${weightData.penalty} (Penalty) = ${weightData.finalWeight} final weight.
 User has ${weightData.hours} hours and ${weightData.achievements}% achievements. 
 Provide a clear, friendly explanation (2-3 sentences) of what this means.`;
 
-    // Try Vultr AI Inference API
-    if (VULTR_API_KEY) {
-      try {
-        const response = await fetch(VULTR_AI_ENDPOINT, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${VULTR_API_KEY}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            model: 'llama-3.1-8b-instruct',
-            messages: [
-              {
-                role: 'user',
-                content: prompt
-              }
-            ],
-            max_tokens: 200
-          })
-        });
+      const response = await fetch(VULTR_AI_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${VULTR_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: 'llama-3.1-8b-instruct',
+          messages: [
+            {
+              role: 'user',
+              content: prompt
+            }
+          ],
+          max_tokens: 200
+        }),
+        timeout: 5000 // 5 second timeout
+      });
 
-        if (response.ok) {
-          const data = await response.json();
-          const explanation = data.choices?.[0]?.message?.content || 
-                            data.response || 
-                            data.text || 
-                            JSON.stringify(data);
-          
-          return res.json({ 
-            status: 'ok', 
-            explanation: explanation,
-            source: 'vultr'
-          });
-        }
-      } catch (e) {
-        console.log('[VULTR] API call failed, using fallback:', e.message);
+      if (response.ok) {
+        const data = await response.json();
+        const explanation = data.choices?.[0]?.message?.content || 
+                          data.response || 
+                          data.text || 
+                          JSON.stringify(data);
+        
+        return res.json({ 
+          status: 'ok', 
+          explanation: explanation,
+          source: 'vultr'
+        });
       }
+    } catch (e) {
+      console.log('[VULTR] API call failed, using fallback:', e.message);
     }
 
-    // Fallback: Generate explanation based on values
+    // Fallback if API fails
     let explanation = `Your weight of ${weightData.finalWeight} means your rating will have `;
     
     if (weight >= 0.8) {
@@ -2097,8 +2150,7 @@ Provide a clear, friendly explanation (2-3 sentences) of what this means.`;
       source: 'fallback'
     });
   } catch (e) {
-    // Even if everything fails, return a basic explanation
-    console.error('[VULTR] Error in explain-weight endpoint:', e);
+    // Final fallback - always return something
     const weight = req.body.weight || 0;
     const basicExplanation = `Your weight of ${(weight * 100).toFixed(1)}% determines how much your rating contributes to the game's overall score. Higher weights mean your opinion has more impact based on your profile match, engagement, and playtime.`;
     return res.json({ 
