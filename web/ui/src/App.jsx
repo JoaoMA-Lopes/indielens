@@ -68,6 +68,10 @@ export default function App() {
       : '/api';
   }, []);
 
+  // Logo path - works in both dev and production
+  // Add cache buster version - update this number when logo changes
+  const logoPath = '/logo.png?v=2';
+
   async function ingest() {
     setError(''); setResult(null); setLoading(true);
     try {
@@ -291,12 +295,12 @@ export default function App() {
       />
       <hr className="separator" />
       {tab === 'whywerehere' ? (
-        <WhyWereHere apiBase={apiBase} />
+        <WhyWereHere apiBase={apiBase} logoPath={logoPath} />
       ) : tab === 'howitworks' ? (
         <div className="container" style={{ maxWidth: '1200px', margin: '40px auto', padding: '40px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px', marginBottom: 20 }}>
             <img 
-              src="/logo.png" 
+              src={logoPath} 
               alt="IndieLens Logo" 
               style={{ 
                 height: '48px', 
@@ -808,7 +812,7 @@ export default function App() {
   );
 }
 
-function Header({ onLogin, onRegister, steamId, username, onLogout, genres, selectedGenre, onGenreChange, onSearch, onHowItWorks, onWhyWereHere, onMyRatings, onMyAccount, onDeveloperMode }) {
+function Header({ onLogin, onRegister, steamId, username, onLogout, genres, selectedGenre, onGenreChange, onSearch, onHowItWorks, onWhyWereHere, onMyRatings, onMyAccount, onDeveloperMode, logoPath = '/logo.png' }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [showMoreDropdown, setShowMoreDropdown] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -858,7 +862,7 @@ function Header({ onLogin, onRegister, steamId, username, onLogout, genres, sele
       <div className="header-left">
         <a href="/" className="logo" style={{ color: '#fff', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px' }} onClick={(e) => { e.preventDefault(); onGenreChange(''); }}>
           <img 
-            src="/logo.png" 
+            src={logoPath} 
             alt="IndieLens Logo" 
             style={{ 
               height: '32px', 
@@ -866,7 +870,14 @@ function Header({ onLogin, onRegister, steamId, username, onLogout, genres, sele
               objectFit: 'contain',
               filter: 'drop-shadow(0 0 4px rgba(102, 192, 244, 0.5))'
             }}
-            onError={(e) => { e.currentTarget.style.display = 'none'; }}
+            onError={(e) => { 
+              // Try alternative path if first fails
+              if (e.currentTarget.src.endsWith('/logo.png')) {
+                e.currentTarget.src = './logo.png';
+              } else {
+                e.currentTarget.style.display = 'none';
+              }
+            }}
           />
           <span>IndieLens</span>
         </a>
@@ -1487,7 +1498,7 @@ function WhyWereHere({ apiBase }) {
       <div className="container" style={{ maxWidth: '1200px', margin: '40px auto', padding: '40px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px', marginBottom: 20 }}>
           <img 
-            src="/logo.png" 
+            src={logoPath || '/logo.png'} 
             alt="IndieLens Logo" 
             style={{ 
               height: '48px', 
