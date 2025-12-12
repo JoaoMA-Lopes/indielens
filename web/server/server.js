@@ -445,6 +445,31 @@ app.post('/account/update-steam-library', async (req, res) => {
     
     console.log(`[DEBUG] /account/update-steam-library: Converting friend code ${friendCode} to steamID64 ${newSteamId}`);
     
+    // Check if library is already ingested for this steamId
+    const [existingGames] = await dbPool.query(
+      'SELECT COUNT(*) as game_count FROM user_games WHERE CAST(steamid AS CHAR) = ?',
+      [newSteamId]
+    );
+    
+    const gameCount = existingGames[0]?.game_count || 0;
+    const alreadyIngested = gameCount > 0;
+    
+    if (alreadyIngested) {
+      // Library already ingested, just update friend code
+      await dbPool.query(
+        'UPDATE user_accounts SET steam_friend_code = ?, steamid = ? WHERE CAST(steamid AS CHAR) = ?',
+        [String(friendCode), newSteamId, String(steamId)]
+      );
+      
+      return res.json({ 
+        status: 'ok', 
+        message: 'Friend code updated. Steam library already ingested.',
+        steamId: newSteamId,
+        gameCount: gameCount,
+        alreadyIngested: true
+      });
+    }
+    
     // Update user account with new friend code and steamid
     await dbPool.query(
       'UPDATE user_accounts SET steam_friend_code = ?, steamid = ? WHERE CAST(steamid AS CHAR) = ?',
