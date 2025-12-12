@@ -847,35 +847,38 @@ async function calculateWeightFallback(steamId, appid) {
     
     console.log(`[DEBUG] calculateWeightFallback: nonlinearhours=${nonlinearhours.toFixed(3)}, raw_engagement=${raw_engagement.toFixed(3)}`);
     
-    // Scale engagement to achieve 12x ratio: 200h+100% = 12x weight of 2h+2%
-    // For 213h+92%: raw_engagement ≈ 0.92, should give much higher engagement
-    // Use a scaling that properly rewards high engagement
-    const base_raw = 0.0555;  // 2h+2% baseline
+    // Scale engagement to achieve 10x ratio: 200h+100% = 10x weight of 2h+1%
+    // Base case: 2h + 1% achievements
+    //   nonlinearhours = 2/(2+20) = 0.091
+    //   raw_engagement = 0.5 * 0.091 + 0.5 * 0.01 = 0.0505
+    // Target case: 200h + 100% achievements  
+    //   nonlinearhours = 200/(200+20) = 0.909
+    //   raw_engagement = 0.5 * 0.909 + 0.5 * 1.0 = 0.9545
+    // We want: engagement(0.9545) = 10 * engagement(0.0505)
+    
+    const base_raw = 0.0505;   // 2h+1% baseline
     const target_raw = 0.9545; // 200h+100% target
-    const base_engagement = 0.01;  // Minimum engagement (2h+2%) = 0.01
-    // For 200h+100%, engagement should be 12x base = 0.12
-    // But we want much higher values for very engaged players (213h+92% should get ~0.70)
-    // Target higher engagement values to achieve the 12x ratio
-    const target_engagement = 0.70; // Much higher target for 200h+100% (213h+92% will get ~0.75)
+    const base_engagement = 0.1;  // Base engagement for 2h+1% = 0.1
+    const target_engagement = 1.0; // Target engagement for 200h+100% = 1.0 (10x base)
     
     let engagement;
     if (raw_engagement <= base_raw) {
-      engagement = base_engagement;
+      // For very low engagement, scale linearly from 0
+      engagement = (raw_engagement / base_raw) * base_engagement;
+      if (engagement < 0.01) engagement = 0.01; // Minimum floor
     } else if (raw_engagement >= target_raw) {
-      // For very high engagement (above 200h+100%), scale up to near maximum
+      // For very high engagement (above 200h+100%), scale beyond 1.0 (no upper limit)
       const excess = (raw_engagement - target_raw) / (1.0 - target_raw);
-      engagement = target_engagement + excess * (0.90 - target_engagement);
+      // Allow engagement to go above 1.0 for extremely engaged players
+      engagement = target_engagement + excess * 0.5; // Can go up to ~1.5 for 100% engagement
     } else {
-      // Interpolate between base and target
+      // Interpolate linearly between base and target
       const ratio = (raw_engagement - base_raw) / (target_raw - base_raw);
-      // Use a curve that accelerates for higher values (power of 0.6 instead of 0.7 for more aggressive scaling)
-      const curvedRatio = Math.pow(ratio, 0.6);
-      engagement = base_engagement + curvedRatio * (target_engagement - base_engagement);
+      engagement = base_engagement + ratio * (target_engagement - base_engagement);
     }
     
-    // Clamp to reasonable bounds [0.01, 1.0]
+    // Only clamp minimum, allow values above 1.0
     if (engagement < 0.01) engagement = 0.01;
-    if (engagement > 1.0) engagement = 1.0;
     
     console.log(`[DEBUG] calculateWeightFallback: engagement=${(engagement * 100).toFixed(1)}%`);
     
@@ -925,9 +928,10 @@ async function calculateWeightFallback(steamId, appid) {
       }
     }
     
+    // Weight can exceed 1.0 (100%) - no upper limit
     const weight = profileMatch * engagement * penaltyAPH;
     
-    console.log(`[DEBUG] calculateWeightFallback: profileMatch=${(profileMatch * 100).toFixed(1)}%, penaltyAPH=${(penaltyAPH * 100).toFixed(1)}%, final_weight=${weight.toFixed(4)}`);
+    console.log(`[DEBUG] calculateWeightFallback: profileMatch=${(profileMatch * 100).toFixed(1)}%, engagement=${(engagement * 100).toFixed(1)}%, penaltyAPH=${(penaltyAPH * 100).toFixed(1)}%, final_weight=${weight.toFixed(4)} (${(weight * 100).toFixed(1)}%)`);
     
     return { weight, profileMatch, engagement, penaltyAPH };
   } catch (e) {
