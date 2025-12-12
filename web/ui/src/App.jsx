@@ -303,14 +303,16 @@ export default function App() {
               src={logoPath} 
               alt="IndieLens Logo" 
               style={{ 
-                height: '120px', 
-                width: '120px', 
+                height: '200px', 
+                width: '200px', 
                 objectFit: 'contain',
-                filter: 'drop-shadow(0 0 16px rgba(102, 192, 244, 0.8))',
+                filter: 'drop-shadow(0 0 20px rgba(102, 192, 244, 0.9))',
                 backgroundColor: 'transparent',
                 background: 'transparent',
                 mixBlendMode: 'normal',
-                imageRendering: 'crisp-edges'
+                imageRendering: 'crisp-edges',
+                display: 'block',
+                margin: '0 auto'
               }}
               onError={(e) => { e.currentTarget.style.display = 'none'; }}
             />
@@ -1517,14 +1519,16 @@ function WhyWereHere({ apiBase, logoPath = '/logo.png' }) {
             src={logoPath || '/logo.png'} 
             alt="IndieLens Logo" 
             style={{ 
-              height: '120px', 
-              width: '120px', 
+              height: '200px', 
+              width: '200px', 
               objectFit: 'contain',
-              filter: 'drop-shadow(0 0 16px rgba(102, 192, 244, 0.8))',
+              filter: 'drop-shadow(0 0 20px rgba(102, 192, 244, 0.9))',
               backgroundColor: 'transparent',
               background: 'transparent',
               mixBlendMode: 'normal',
-              imageRendering: 'crisp-edges'
+              imageRendering: 'crisp-edges',
+              display: 'block',
+              margin: '0 auto'
             }}
             onError={(e) => { e.currentTarget.style.display = 'none'; }}
           />
