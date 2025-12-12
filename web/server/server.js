@@ -1984,37 +1984,53 @@ app.post('/api/raindrop/recommendation', async (req, res) => {
       }
     }
 
-    const prompt = `Explain why "${gameName}" (Genres: ${gameGenres?.join(', ') || 'N/A'}, Tags: ${gameTags?.slice(0, 5).join(', ') || 'N/A'}) would be a good match for a user. ${userProfileText}Provide a brief, personalized explanation (2-3 sentences).`;
+    // Skip API call if no key - go straight to fallback
+    if (!RAINDROP_API_KEY || RAINDROP_API_KEY.trim() === '') {
+      // Fallback: Generate explanation based on profile match
+      const genresMatch = gameGenres && userProfileText ? 
+        gameGenres.some(g => userProfileText.toLowerCase().includes(g.toLowerCase())) : false;
+      
+      const explanation = genresMatch 
+        ? `"${gameName}" matches your gaming preferences based on similar genres and gameplay styles you've enjoyed. The game's mechanics and design align with titles you've spent significant time playing, suggesting it would resonate with your gaming taste.`
+        : `"${gameName}" offers gameplay elements that may appeal to you based on your gaming history. While it may be a new genre for you, the game's design and community reception suggest it could be a worthwhile discovery.`;
 
-    // Try Raindrop SmartInference API
-    if (RAINDROP_API_KEY) {
-      try {
-        const response = await fetch(`${RAINDROP_API_URL}/inference/prompt`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${RAINDROP_API_KEY}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            prompt: prompt,
-            max_tokens: 150
-          })
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          return res.json({ 
-            status: 'ok', 
-            explanation: data.text || data.response || data,
-            source: 'raindrop'
-          });
-        }
-      } catch (e) {
-        console.log('[RAINDROP] API call failed, using fallback:', e.message);
-      }
+      return res.json({ 
+        status: 'ok', 
+        explanation: explanation,
+        source: 'fallback'
+      });
     }
 
-    // Fallback: Generate explanation based on profile match
+    // Only try API if key is configured
+    const prompt = `Explain why "${gameName}" (Genres: ${gameGenres?.join(', ') || 'N/A'}, Tags: ${gameTags?.slice(0, 5).join(', ') || 'N/A'}) would be a good match for a user. ${userProfileText}Provide a brief, personalized explanation (2-3 sentences).`;
+
+    try {
+      const response = await fetch(`${RAINDROP_API_URL}/inference/prompt`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${RAINDROP_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          prompt: prompt,
+          max_tokens: 150
+        }),
+        timeout: 5000
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        return res.json({ 
+          status: 'ok', 
+          explanation: data.text || data.response || data,
+          source: 'raindrop'
+        });
+      }
+    } catch (e) {
+      console.log('[RAINDROP] API call failed, using fallback:', e.message);
+    }
+
+    // Fallback if API fails
     const genresMatch = gameGenres && userProfileText ? 
       gameGenres.some(g => userProfileText.toLowerCase().includes(g.toLowerCase())) : false;
     
@@ -2022,7 +2038,7 @@ app.post('/api/raindrop/recommendation', async (req, res) => {
       ? `"${gameName}" matches your gaming preferences based on similar genres and gameplay styles you've enjoyed. The game's mechanics and design align with titles you've spent significant time playing, suggesting it would resonate with your gaming taste.`
       : `"${gameName}" offers gameplay elements that may appeal to you based on your gaming history. While it may be a new genre for you, the game's design and community reception suggest it could be a worthwhile discovery.`;
 
-    res.json({ 
+    return res.json({ 
       status: 'ok', 
       explanation: explanation,
       source: 'fallback'
