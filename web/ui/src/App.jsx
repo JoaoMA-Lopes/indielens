@@ -2760,13 +2760,18 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                     tempDiv.innerHTML = shortDesc;
                     const text = tempDiv.textContent || tempDiv.innerText || '';
                     const apiBase = window.location.hostname === 'localhost' ? 'http://localhost:5179' : '/api';
+                    console.log('Calling summarize API:', `${apiBase}/raindrop/summarize`);
                     const response = await fetch(`${apiBase}/raindrop/summarize`, {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({ text, maxLength: 200 })
                     });
                     
-                    const result = await response.json().catch(() => null);
+                    console.log('Response status:', response.status, response.statusText);
+                    const result = await response.json().catch((e) => {
+                      console.error('JSON parse error:', e);
+                      return null;
+                    });
                     console.log('Summarize result:', result);
                     
                     if (result && result.status === 'ok' && result.summary) {
@@ -2775,8 +2780,10 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                         summaryDiv.innerHTML = `<p style="color: #c7d5e0; font-style: italic; margin-top: 12px;"><strong>Summary:</strong> ${result.summary} ${sourceBadge}</p>`;
                       }
                     } else {
+                      console.error('Invalid result:', result);
                       if (summaryDiv) {
-                        summaryDiv.innerHTML = '<p style="color: #8f98a0; margin-top: 12px;">Failed to generate summary.</p>';
+                        const errorMsg = result?.error || `Status: ${response.status}`;
+                        summaryDiv.innerHTML = `<p style="color: #ff6b6b; margin-top: 12px;">Error: ${errorMsg}. Check console for details.</p>`;
                       }
                     }
                   } catch (e) {
@@ -2821,13 +2828,18 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                     tempDiv.innerHTML = detailedDesc;
                     const text = tempDiv.textContent || tempDiv.innerText || '';
                     const apiBase = window.location.hostname === 'localhost' ? 'http://localhost:5179' : '/api';
+                    console.log('Calling summarize API:', `${apiBase}/raindrop/summarize`);
                     const response = await fetch(`${apiBase}/raindrop/summarize`, {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({ text, maxLength: 200 })
                     });
                     
-                    const result = await response.json().catch(() => null);
+                    console.log('Response status:', response.status, response.statusText);
+                    const result = await response.json().catch((e) => {
+                      console.error('JSON parse error:', e);
+                      return null;
+                    });
                     console.log('Summarize result:', result);
                     
                     if (result && result.status === 'ok' && result.summary) {
@@ -2836,8 +2848,10 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                         summaryDiv.innerHTML = `<p style="color: #c7d5e0; font-style: italic; margin-top: 12px;"><strong>Summary:</strong> ${result.summary} ${sourceBadge}</p>`;
                       }
                     } else {
+                      console.error('Invalid result:', result);
                       if (summaryDiv) {
-                        summaryDiv.innerHTML = '<p style="color: #8f98a0; margin-top: 12px;">Failed to generate summary.</p>';
+                        const errorMsg = result?.error || `Status: ${response.status}`;
+                        summaryDiv.innerHTML = `<p style="color: #ff6b6b; margin-top: 12px;">Error: ${errorMsg}. Check console for details.</p>`;
                       }
                     }
                   } catch (e) {
