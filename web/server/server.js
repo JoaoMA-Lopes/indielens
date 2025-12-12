@@ -1911,13 +1911,22 @@ app.post('/api/raindrop/summarize', async (req, res) => {
       summary = summary.substring(0, maxLength - 3) + '...';
     }
 
-    res.json({ 
+    return res.json({ 
       status: 'ok', 
       summary: summary.trim(),
       source: 'fallback'
     });
   } catch (e) {
-    res.status(500).json({ error: e.message });
+    // Even if everything fails, try to return something useful
+    console.error('[RAINDROP] Error in summarize endpoint:', e);
+    const cleanText = (req.body.text || '').replace(/<[^>]*>/g, '').trim();
+    const maxLen = req.body.maxLength || 200;
+    const fallbackSummary = cleanText.length > maxLen ? cleanText.substring(0, maxLen - 3) + '...' : cleanText;
+    return res.json({ 
+      status: 'ok', 
+      summary: fallbackSummary,
+      source: 'fallback'
+    });
   }
 });
 
