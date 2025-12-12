@@ -1094,9 +1094,9 @@ app.get('/browse', async (req, res) => {
             const rawScore = parseFloat(row.sum_weighted) / parseFloat(row.sum_weights);
             const normalized = normalizeScore(rawScore);
             
-            // Debug log for scores near 100
-            if (rawScore >= 95) {
-              console.log(`[DEBUG] /browse: appid=${row.appid}, rawScore=${rawScore.toFixed(2)}, normalized=${normalized}`);
+            // Debug log for ALL scores to see what's happening
+            if (rawScore >= 90 || normalized >= 90) {
+              console.log(`[DEBUG] /browse: appid=${row.appid}, rawScore=${rawScore.toFixed(2)}, normalized=${normalized}, sum_weighted=${row.sum_weighted}, sum_weights=${row.sum_weights}`);
             }
             
             scoresById.set(row.appid, {
