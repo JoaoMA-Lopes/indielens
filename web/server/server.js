@@ -1300,7 +1300,10 @@ const handleTags = async (req, res) => {
     console.error('Tags endpoint error:', e);
     res.status(500).json({ error: e.message });
   }
-});
+};
+
+app.get('/tags', handleTags);
+app.get('/api/tags', handleTags);
 
 app.get('/game/:appid', async (req, res) => {
   try {
