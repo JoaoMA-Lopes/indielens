@@ -2091,13 +2091,21 @@ Provide a clear, friendly explanation (2-3 sentences) of what this means.`;
       explanation += `Your playtime and achievements contribute to your engagement score.`;
     }
 
-    res.json({ 
+    return res.json({ 
       status: 'ok', 
       explanation: explanation,
       source: 'fallback'
     });
   } catch (e) {
-    res.status(500).json({ error: e.message });
+    // Even if everything fails, return a basic explanation
+    console.error('[VULTR] Error in explain-weight endpoint:', e);
+    const weight = req.body.weight || 0;
+    const basicExplanation = `Your weight of ${(weight * 100).toFixed(1)}% determines how much your rating contributes to the game's overall score. Higher weights mean your opinion has more impact based on your profile match, engagement, and playtime.`;
+    return res.json({ 
+      status: 'ok', 
+      explanation: basicExplanation,
+      source: 'fallback'
+    });
   }
 });
 
