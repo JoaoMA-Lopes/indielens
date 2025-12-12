@@ -1848,7 +1848,7 @@ app.get('/metacritic-data', async (req, res) => {
 // ============================================
 
 // 1. Raindrop SmartInference: Summarize game descriptions
-app.post('/api/raindrop/summarize', async (req, res) => {
+app.post('/raindrop/summarize', async (req, res) => {
   try {
     const { text, maxLength = 200 } = req.body;
     if (!text) {
@@ -1955,7 +1955,7 @@ app.post('/api/raindrop/summarize', async (req, res) => {
 });
 
 // 2. Raindrop SmartInference: Personalized game recommendations
-app.post('/api/raindrop/recommendation', async (req, res) => {
+app.post('/raindrop/recommendation', async (req, res) => {
   try {
     const { gameName, gameGenres, gameTags, userProfile, steamId } = req.body;
     if (!gameName) {
@@ -2049,7 +2049,7 @@ app.post('/api/raindrop/recommendation', async (req, res) => {
 });
 
 // 3. Vultr AI Inference: Explain weight calculation
-app.post('/api/vultr/explain-weight', async (req, res) => {
+app.post('/vultr/explain-weight', async (req, res) => {
   try {
     const { weight, profileMatch, engagement, penaltyAPH, gameName, hours, achievements } = req.body;
     
