@@ -129,6 +129,30 @@ function writeScores(obj) {
 
 // Calculate weighted mean score from database user_ratings table
 // Returns { score: number, popularity: number } or null if no ratings exist
+// Normalize score to distribute ratings better and cap at 99.9
+function normalizeScore(rawScore) {
+  if (rawScore === null || rawScore === undefined || isNaN(rawScore)) {
+    return null;
+  }
+  
+  // Apply distribution: cap at 99.9 and compress high scores slightly
+  // This ensures no game gets exactly 100 and creates better distribution
+  let normalized = rawScore;
+  
+  if (normalized >= 95) {
+    // Compress scores 95-100 into 90-99.9 range for better distribution
+    normalized = 90 + (normalized - 95) * 1.98; // Maps 95->90, 100->99.9
+  } else if (normalized >= 85) {
+    // Slight compression for 85-95 range
+    normalized = 80 + (normalized - 85) * 1.5; // Maps 85->80, 95->95
+  }
+  
+  // Ensure max is 99.9 and min is 0
+  normalized = Math.min(99.9, Math.max(0, normalized));
+  
+  return normalized;
+}
+
 async function getGameScoreFromDB(appid) {
   if (!dbPool) return null;
   
@@ -152,8 +176,10 @@ async function getGameScoreFromDB(appid) {
     const sumWeighted = parseFloat(rows[0].sum_weighted);
     const ratingCount = parseInt(rows[0].rating_count);
     
+    const rawScore = sumWeighted / sumWeights;
+    
     return {
-      score: sumWeighted / sumWeights,
+      score: normalizeScore(rawScore),
       popularity: sumWeights,
       ratingCount: ratingCount
     };
@@ -1061,8 +1087,10 @@ app.get('/browse', async (req, res) => {
         
         for (const row of scoreRows) {
           if (row.sum_weights && row.sum_weights > 0) {
+            const rawScore = parseFloat(row.sum_weighted) / parseFloat(row.sum_weights);
+            
             scoresById.set(row.appid, {
-              score: parseFloat(row.sum_weighted) / parseFloat(row.sum_weights),
+              score: normalizeScore(rawScore),
               popularity: parseFloat(row.sum_weights),
               ratingCount: parseInt(row.rating_count)
             });
