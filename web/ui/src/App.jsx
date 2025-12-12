@@ -1400,7 +1400,7 @@ function TagSegment({ title, games, onSelectGame, imageUrl }) {
   );
 }
 
-function WhyWereHere({ apiBase }) {
+function WhyWereHere({ apiBase, logoPath = '/logo.png' }) {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
@@ -1533,10 +1533,27 @@ function WhyWereHere({ apiBase }) {
 
   return (
     <div className="container" style={{ maxWidth: '1200px', margin: '40px auto', padding: '40px' }}>
-      <h1 style={{ color: '#c7d5e0', fontSize: '3em', marginBottom: 10, textAlign: 'center' }}>Why We're Here</h1>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px', marginBottom: 20 }}>
+        <img 
+          src={logoPath || '/logo.png'} 
+          alt="IndieLens Logo" 
+          style={{ 
+            height: '48px', 
+            width: '48px', 
+            objectFit: 'contain',
+            filter: 'drop-shadow(0 0 8px rgba(102, 192, 244, 0.6))',
+            backgroundColor: 'transparent',
+            background: 'transparent',
+            mixBlendMode: 'normal',
+            imageRendering: 'crisp-edges'
+          }}
+          onError={(e) => { e.currentTarget.style.display = 'none'; }}
+        />
+        <h1 style={{ color: '#c7d5e0', fontSize: '3em', marginBottom: 0, textAlign: 'center' }}>Why We're Here</h1>
+      </div>
       <p style={{ color: '#8f98a0', fontSize: '1.2em', textAlign: 'center', marginBottom: 20 }}>
-        Metacritic is the most used and respected game scoring system in the industry. Their scores were <strong style={{ color: '#66c0f4' }}>mandatorily displayed on Steam</strong> for years, 
-        and publishers consider them to determine bonuses, funding, and marketing budgets.
+        <strong style={{ color: '#66c0f4' }}>Metacritic and IGN</strong> are the most used and respected game scoring systems in the industry. Metacritic scores were <strong style={{ color: '#66c0f4' }}>mandatorily displayed on Steam</strong> for years, 
+        and publishers consider both platforms to determine bonuses, funding, and marketing budgets. However, both follow the same basic formula—aggregating critic reviews—which leads to the same fundamental problems.
       </p>
       <p style={{ color: '#8f98a0', fontSize: '1.2em', textAlign: 'center', marginBottom: 50 }}>
         The discrepancies shown below reveal a systematic bias that affects which games get made, funded, and discovered. Here's why IndieLens exists.
