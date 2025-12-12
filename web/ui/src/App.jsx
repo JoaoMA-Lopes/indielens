@@ -2749,6 +2749,11 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
               <h3>About</h3>
               <button
                 onClick={async () => {
+                  const summaryDiv = document.getElementById('summary-about');
+                  if (summaryDiv) {
+                    summaryDiv.innerHTML = '<p style="color: #8f98a0; margin-top: 12px;">Generating summary...</p>';
+                  }
+                  
                   try {
                     // Extract text from HTML
                     const tempDiv = document.createElement('div');
@@ -2762,16 +2767,23 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                     });
                     
                     const result = await response.json().catch(() => null);
+                    console.log('Summarize result:', result);
+                    
                     if (result && result.status === 'ok' && result.summary) {
-                      const summaryDiv = document.getElementById('summary-about');
                       if (summaryDiv) {
                         const sourceBadge = result.source === 'raindrop' ? '<span style="color: #66c0f4; font-size: 0.85em;">(AI Summary)</span>' : '<span style="color: #8f98a0; font-size: 0.85em;">(Smart Truncation)</span>';
                         summaryDiv.innerHTML = `<p style="color: #c7d5e0; font-style: italic; margin-top: 12px;"><strong>Summary:</strong> ${result.summary} ${sourceBadge}</p>`;
                       }
+                    } else {
+                      if (summaryDiv) {
+                        summaryDiv.innerHTML = '<p style="color: #8f98a0; margin-top: 12px;">Failed to generate summary.</p>';
+                      }
                     }
                   } catch (e) {
                     console.error('Summarize error:', e);
-                    // Silent fail - don't show alert
+                    if (summaryDiv) {
+                      summaryDiv.innerHTML = '<p style="color: #8f98a0; margin-top: 12px;">Error generating summary.</p>';
+                    }
                   }
                 }}
                 style={{
@@ -2798,6 +2810,11 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
               <h3>Description</h3>
               <button
                 onClick={async () => {
+                  const summaryDiv = document.getElementById('summary-description');
+                  if (summaryDiv) {
+                    summaryDiv.innerHTML = '<p style="color: #8f98a0; margin-top: 12px;">Generating summary...</p>';
+                  }
+                  
                   try {
                     // Extract text from HTML
                     const tempDiv = document.createElement('div');
@@ -2811,16 +2828,23 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                     });
                     
                     const result = await response.json().catch(() => null);
+                    console.log('Summarize result:', result);
+                    
                     if (result && result.status === 'ok' && result.summary) {
-                      const summaryDiv = document.getElementById('summary-description');
                       if (summaryDiv) {
                         const sourceBadge = result.source === 'raindrop' ? '<span style="color: #66c0f4; font-size: 0.85em;">(AI Summary)</span>' : '<span style="color: #8f98a0; font-size: 0.85em;">(Smart Truncation)</span>';
                         summaryDiv.innerHTML = `<p style="color: #c7d5e0; font-style: italic; margin-top: 12px;"><strong>Summary:</strong> ${result.summary} ${sourceBadge}</p>`;
                       }
+                    } else {
+                      if (summaryDiv) {
+                        summaryDiv.innerHTML = '<p style="color: #8f98a0; margin-top: 12px;">Failed to generate summary.</p>';
+                      }
                     }
                   } catch (e) {
                     console.error('Summarize error:', e);
-                    // Silent fail - don't show alert
+                    if (summaryDiv) {
+                      summaryDiv.innerHTML = '<p style="color: #8f98a0; margin-top: 12px;">Error generating summary.</p>';
+                    }
                   }
                 }}
                 style={{
