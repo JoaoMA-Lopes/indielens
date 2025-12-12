@@ -294,7 +294,20 @@ export default function App() {
         <WhyWereHere apiBase={apiBase} />
       ) : tab === 'howitworks' ? (
         <div className="container" style={{ maxWidth: '1200px', margin: '40px auto', padding: '40px' }}>
-          <h1 style={{ color: '#c7d5e0', fontSize: '3em', marginBottom: 10, textAlign: 'center' }}>How IndieLens Weighting Works</h1>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px', marginBottom: 20 }}>
+            <img 
+              src="/logo.png" 
+              alt="IndieLens Logo" 
+              style={{ 
+                height: '48px', 
+                width: '48px', 
+                objectFit: 'contain',
+                filter: 'drop-shadow(0 0 8px rgba(102, 192, 244, 0.6))'
+              }}
+              onError={(e) => { e.currentTarget.style.display = 'none'; }}
+            />
+            <h1 style={{ color: '#c7d5e0', fontSize: '3em', marginBottom: 0, textAlign: 'center' }}>How IndieLens Weighting Works</h1>
+          </div>
           <p style={{ color: '#8f98a0', fontSize: '1.2em', textAlign: 'center', marginBottom: 50 }}>
             IndieLens uses a sophisticated weighting system to ensure your game ratings have appropriate influence on aggregate scores.
           </p>
@@ -843,7 +856,20 @@ function Header({ onLogin, onRegister, steamId, username, onLogout, genres, sele
   return (
     <div className="header">
       <div className="header-left">
-        <a href="/" className="logo" style={{ color: '#fff', textDecoration: 'none' }} onClick={(e) => { e.preventDefault(); onGenreChange(''); }}>IndieLens</a>
+        <a href="/" className="logo" style={{ color: '#fff', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px' }} onClick={(e) => { e.preventDefault(); onGenreChange(''); }}>
+          <img 
+            src="/logo.png" 
+            alt="IndieLens Logo" 
+            style={{ 
+              height: '32px', 
+              width: '32px', 
+              objectFit: 'contain',
+              filter: 'drop-shadow(0 0 4px rgba(102, 192, 244, 0.5))'
+            }}
+            onError={(e) => { e.currentTarget.style.display = 'none'; }}
+          />
+          <span>IndieLens</span>
+        </a>
         <div className="nav-links">
           {mainGenres.map(g => (
             <a key={g} href="#" className="nav-link" onClick={(e) => { e.preventDefault(); onGenreChange(g); }} style={{ fontWeight: selectedGenre === g ? 'bold' : 'normal', textDecoration: selectedGenre === g ? 'underline' : 'none' }}>
@@ -1459,7 +1485,20 @@ function WhyWereHere({ apiBase }) {
   if (loading) {
     return (
       <div className="container" style={{ maxWidth: '1200px', margin: '40px auto', padding: '40px' }}>
-        <h1 style={{ color: '#c7d5e0', fontSize: '3em', marginBottom: 10, textAlign: 'center' }}>Why We're Here</h1>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px', marginBottom: 20 }}>
+          <img 
+            src="/logo.png" 
+            alt="IndieLens Logo" 
+            style={{ 
+              height: '48px', 
+              width: '48px', 
+              objectFit: 'contain',
+              filter: 'drop-shadow(0 0 8px rgba(102, 192, 244, 0.6))'
+            }}
+            onError={(e) => { e.currentTarget.style.display = 'none'; }}
+          />
+          <h1 style={{ color: '#c7d5e0', fontSize: '3em', marginBottom: 0, textAlign: 'center' }}>Why We're Here</h1>
+        </div>
         <p style={{ color: '#8f98a0', fontSize: '1.2em', textAlign: 'center', marginBottom: 20 }}>
           <strong style={{ color: '#66c0f4' }}>Metacritic and IGN</strong> are the most used and respected game scoring systems in the industry. Metacritic scores were <strong style={{ color: '#66c0f4' }}>mandatorily displayed on Steam</strong> for years, 
           and publishers consider both platforms to determine bonuses, funding, and marketing budgets. However, both follow the same basic formula—aggregating critic reviews—which leads to the same fundamental problems.
