@@ -1078,7 +1078,7 @@ app.post('/rate', async (req, res) => {
 });
 
 // Browse top indie IDs
-app.get('/browse', async (req, res) => {
+const handleBrowse = async (req, res) => {
   try {
     const idsPath = path.resolve(__dirname, '../../cpp/ConsoleApplication1/ConsoleApplication1/top1000_indie_ids.txt');
     const text = fs.readFileSync(idsPath, 'utf-8');
