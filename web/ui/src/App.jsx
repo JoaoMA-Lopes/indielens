@@ -2162,9 +2162,16 @@ function Browse({ apiBase, data, setData, onSelectGame, selectedGenre, searchQue
       {(!selectedGenre && !searchQuery) ? null : (
         <div className="container">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, padding: '0 20px' }}>
-            <h2 style={{ margin: 0, fontSize: '24px', fontWeight: 700, color: '#c7d5e0' }}>
-              {selectedGenre ? selectedGenre : searchQuery ? `Search: "${searchQuery}"` : 'All Games'}
-            </h2>
+            <div>
+              <h2 style={{ margin: 0, fontSize: '24px', fontWeight: 700, color: '#c7d5e0' }}>
+                {selectedGenre ? selectedGenre : searchQuery ? `Search: "${searchQuery}"` : 'All Games'}
+              </h2>
+              {!loading && data.length > 0 && (
+                <p style={{ margin: '4px 0 0 0', fontSize: '14px', color: '#8f98a0' }}>
+                  Showing {data.length} {data.length === 1 ? 'game' : 'games'}
+                </p>
+              )}
+            </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
               <label style={{ fontSize: 14, color: '#8f98a0', fontWeight: 500 }}>Sort By:</label>
               <select 
@@ -2188,11 +2195,42 @@ function Browse({ apiBase, data, setData, onSelectGame, selectedGenre, searchQue
       )}
       <div className="container">
         {loading ? (
-          <p style={{ textAlign: 'center', padding: '40px', color: '#8f98a0' }}>Loading…</p>
+          <div style={{ textAlign: 'center', padding: '40px', color: '#8f98a0' }}>
+            <p style={{ margin: 0 }}>Loading games…</p>
+            <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'center', gap: '8px' }}>
+              {[0, 1, 2].map(i => (
+                <div key={i} style={{
+                  width: '12px',
+                  height: '12px',
+                  borderRadius: '50%',
+                  background: '#66c0f4',
+                  animation: `pulse 1.4s ease-in-out ${i * 0.2}s infinite`
+                }} />
+              ))}
+            </div>
+            <style>{`
+              @keyframes pulse {
+                0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
+                40% { opacity: 1; transform: scale(1.2); }
+              }
+            `}</style>
+          </div>
         ) : data.length === 0 ? (
-          <p style={{ textAlign: 'center', padding: '40px', color: '#8f98a0' }}>
-            No games found{selectedGenre ? ` in genre "${selectedGenre}"` : searchQuery ? ` matching "${searchQuery}"` : ''}.
-          </p>
+          <div style={{ textAlign: 'center', padding: '60px 40px', color: '#8f98a0' }}>
+            <p style={{ margin: 0, fontSize: '18px', marginBottom: '12px' }}>
+              No games found{selectedGenre ? ` in genre "${selectedGenre}"` : searchQuery ? ` matching "${searchQuery}"` : ''}.
+            </p>
+            {searchQuery && (
+              <p style={{ margin: 0, fontSize: '14px', opacity: 0.8 }}>
+                Try a different search term or browse by genre above.
+              </p>
+            )}
+            {selectedGenre && !searchQuery && (
+              <p style={{ margin: 0, fontSize: '14px', opacity: 0.8 }}>
+                Try selecting a different genre or browse all games.
+              </p>
+            )}
+          </div>
         ) : (
           <div className="grid">
             {data.map(item => (
