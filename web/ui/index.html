@@ -11,7 +11,13 @@
       .header { background: #171a21; color: #fff; padding: 12px 40px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
       .header-left { display: flex; align-items: center; gap: 32px; }
       .logo { font-size: 24px; font-weight: bold; color: #ffffff; text-decoration: none; background: transparent !important; }
-      .logo img { background: transparent !important; mix-blend-mode: normal; }
+      .logo img { 
+        background: transparent !important; 
+        mix-blend-mode: normal; 
+        image-rendering: crisp-edges;
+        -webkit-background-clip: padding-box;
+        background-clip: padding-box;
+      }
       .nav-links { display: flex; gap: 24px; }
       .nav-link { color: #ffffff; text-decoration: none; font-size: 14px; }
       .nav-link:hover { opacity: 0.8; }

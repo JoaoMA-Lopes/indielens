@@ -874,7 +874,8 @@ function Header({ onLogin, onRegister, steamId, username, onLogout, genres, sele
               filter: 'drop-shadow(0 0 4px rgba(102, 192, 244, 0.5))',
               backgroundColor: 'transparent',
               background: 'transparent',
-              mixBlendMode: 'normal'
+              mixBlendMode: 'normal',
+              imageRendering: 'crisp-edges'
             }}
             onError={(e) => { 
               // Try alternative path if first fails
