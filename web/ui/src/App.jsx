@@ -421,14 +421,18 @@ export default function App() {
                     if (result.status === 'ok' && result.summary) {
                       const summaryDiv = document.getElementById('summary-result');
                       if (summaryDiv) {
-                        summaryDiv.innerHTML = `<p style="color: #c7d5e0; font-style: italic; margin-top: 12px; text-align: center;"><strong>Summary:</strong> ${result.summary}</p>`;
+                        const sourceBadge = result.source === 'raindrop' ? '<span style="color: #66c0f4; font-size: 0.85em;">(AI Summary)</span>' : '<span style="color: #8f98a0; font-size: 0.85em;">(Smart Truncation)</span>';
+                        summaryDiv.innerHTML = `<p style="color: #c7d5e0; font-style: italic; margin-top: 12px; text-align: center;"><strong>Summary:</strong> ${result.summary} ${sourceBadge}</p>`;
                       }
                     } else {
                       throw new Error(result.error || 'Failed to get summary');
                     }
                   } catch (e) {
                     console.error('Summarize error:', e);
-                    alert(`Failed to summarize: ${e.message}. Using fallback method.`);
+                    // Only show alert if it's a real error, not a fallback
+                    if (!e.message.includes('fallback')) {
+                      alert(`Failed to summarize: ${e.message}`);
+                    }
                   }
                 }}
                 style={{
@@ -2776,14 +2780,18 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                     if (result.status === 'ok' && result.summary) {
                       const summaryDiv = document.getElementById('summary-about');
                       if (summaryDiv) {
-                        summaryDiv.innerHTML = `<p style="color: #c7d5e0; font-style: italic; margin-top: 12px;"><strong>Summary:</strong> ${result.summary}</p>`;
+                        const sourceBadge = result.source === 'raindrop' ? '<span style="color: #66c0f4; font-size: 0.85em;">(AI Summary)</span>' : '<span style="color: #8f98a0; font-size: 0.85em;">(Smart Truncation)</span>';
+                        summaryDiv.innerHTML = `<p style="color: #c7d5e0; font-style: italic; margin-top: 12px;"><strong>Summary:</strong> ${result.summary} ${sourceBadge}</p>`;
                       }
                     } else {
                       throw new Error(result.error || 'Failed to get summary');
                     }
                   } catch (e) {
                     console.error('Summarize error:', e);
-                    alert(`Failed to summarize: ${e.message}. The system will use a fallback method.`);
+                    // Only show alert if it's a real error, not a fallback
+                    if (!e.message.includes('fallback')) {
+                      alert(`Failed to summarize: ${e.message}`);
+                    }
                   }
                 }}
                 style={{
@@ -2831,14 +2839,18 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                     if (result.status === 'ok' && result.summary) {
                       const summaryDiv = document.getElementById('summary-description');
                       if (summaryDiv) {
-                        summaryDiv.innerHTML = `<p style="color: #c7d5e0; font-style: italic; margin-top: 12px;"><strong>Summary:</strong> ${result.summary}</p>`;
+                        const sourceBadge = result.source === 'raindrop' ? '<span style="color: #66c0f4; font-size: 0.85em;">(AI Summary)</span>' : '<span style="color: #8f98a0; font-size: 0.85em;">(Smart Truncation)</span>';
+                        summaryDiv.innerHTML = `<p style="color: #c7d5e0; font-style: italic; margin-top: 12px;"><strong>Summary:</strong> ${result.summary} ${sourceBadge}</p>`;
                       }
                     } else {
                       throw new Error(result.error || 'Failed to get summary');
                     }
                   } catch (e) {
                     console.error('Summarize error:', e);
-                    alert(`Failed to summarize: ${e.message}. The system will use a fallback method.`);
+                    // Only show alert if it's a real error, not a fallback
+                    if (!e.message.includes('fallback')) {
+                      alert(`Failed to summarize: ${e.message}`);
+                    }
                   }
                 }}
                 style={{
@@ -3221,16 +3233,28 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                             achievements: userGame.achievements_unlocked || 0
                           })
                         });
+                        
+                        if (!response.ok) {
+                          const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+                          throw new Error(errorData.error || `Server error: ${response.status}`);
+                        }
+                        
                         const result = await response.json();
                         if (result.status === 'ok' && result.explanation) {
                           const explanationDiv = document.getElementById('weight-explanation');
                           if (explanationDiv) {
-                            explanationDiv.innerHTML = `<div style="padding: 16px; background: rgba(59, 130, 246, 0.1); border: 1px solid #3B82F6; border-radius: 4px; margin-top: 12px;"><p style="color: #c7d5e0; white-space: pre-wrap; line-height: 1.6;">${result.explanation}</p></div>`;
+                            const sourceBadge = result.source === 'vultr' ? '<span style="color: #66c0f4; font-size: 0.85em; float: right;">(AI Explanation)</span>' : '<span style="color: #8f98a0; font-size: 0.85em; float: right;">(Rule-based)</span>';
+                            explanationDiv.innerHTML = `<div style="padding: 16px; background: rgba(59, 130, 246, 0.1); border: 1px solid #3B82F6; border-radius: 4px; margin-top: 12px;"><p style="color: #c7d5e0; white-space: pre-wrap; line-height: 1.6; margin: 0;">${sourceBadge}${result.explanation}</p></div>`;
                           }
+                        } else {
+                          throw new Error(result.error || 'Failed to get explanation');
                         }
                       } catch (e) {
                         console.error('Weight explanation error:', e);
-                        alert('Failed to generate explanation. Please try again.');
+                        // Only show alert if it's a real error, not a fallback
+                        if (!e.message.includes('fallback')) {
+                          alert(`Failed to generate explanation: ${e.message}`);
+                        }
                       }
                     }}
                     style={{
