@@ -306,7 +306,10 @@ export default function App() {
                 height: '48px', 
                 width: '48px', 
                 objectFit: 'contain',
-                filter: 'drop-shadow(0 0 8px rgba(102, 192, 244, 0.6))'
+                filter: 'drop-shadow(0 0 8px rgba(102, 192, 244, 0.6))',
+                backgroundColor: 'transparent',
+                background: 'transparent',
+                mixBlendMode: 'normal'
               }}
               onError={(e) => { e.currentTarget.style.display = 'none'; }}
             />
@@ -860,7 +863,7 @@ function Header({ onLogin, onRegister, steamId, username, onLogout, genres, sele
   return (
     <div className="header">
       <div className="header-left">
-        <a href="/" className="logo" style={{ color: '#fff', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px' }} onClick={(e) => { e.preventDefault(); onGenreChange(''); }}>
+        <a href="/" className="logo" style={{ color: '#fff', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px', background: 'transparent' }} onClick={(e) => { e.preventDefault(); onGenreChange(''); }}>
           <img 
             src={logoPath} 
             alt="IndieLens Logo" 
@@ -868,7 +871,10 @@ function Header({ onLogin, onRegister, steamId, username, onLogout, genres, sele
               height: '32px', 
               width: '32px', 
               objectFit: 'contain',
-              filter: 'drop-shadow(0 0 4px rgba(102, 192, 244, 0.5))'
+              filter: 'drop-shadow(0 0 4px rgba(102, 192, 244, 0.5))',
+              backgroundColor: 'transparent',
+              background: 'transparent',
+              mixBlendMode: 'normal'
             }}
             onError={(e) => { 
               // Try alternative path if first fails
