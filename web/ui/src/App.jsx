@@ -298,22 +298,23 @@ export default function App() {
         <WhyWereHere apiBase={apiBase} logoPath={logoPath} />
       ) : tab === 'howitworks' ? (
         <div className="container" style={{ maxWidth: '1200px', margin: '40px auto', padding: '40px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px', marginBottom: 20 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '20px', marginBottom: 40, marginTop: 20 }}>
             <img 
               src={logoPath} 
               alt="IndieLens Logo" 
               style={{ 
-                height: '48px', 
-                width: '48px', 
+                height: '80px', 
+                width: '80px', 
                 objectFit: 'contain',
-                filter: 'drop-shadow(0 0 8px rgba(102, 192, 244, 0.6))',
+                filter: 'drop-shadow(0 0 12px rgba(102, 192, 244, 0.7))',
                 backgroundColor: 'transparent',
                 background: 'transparent',
-                mixBlendMode: 'normal'
+                mixBlendMode: 'normal',
+                imageRendering: 'crisp-edges'
               }}
               onError={(e) => { e.currentTarget.style.display = 'none'; }}
             />
-            <h1 style={{ color: '#c7d5e0', fontSize: '3em', marginBottom: 0, textAlign: 'center' }}>How IndieLens Weighting Works</h1>
+            <h1 style={{ color: '#c7d5e0', fontSize: '4.5em', marginBottom: 0, textAlign: 'center', fontWeight: 700 }}>How IndieLens Weighting Works</h1>
           </div>
           <p style={{ color: '#8f98a0', fontSize: '1.2em', textAlign: 'center', marginBottom: 50 }}>
             IndieLens uses a sophisticated weighting system to ensure your game ratings have appropriate influence on aggregate scores.
@@ -1503,19 +1504,19 @@ function WhyWereHere({ apiBase, logoPath = '/logo.png' }) {
   if (loading) {
     return (
       <div className="container" style={{ maxWidth: '1200px', margin: '40px auto', padding: '40px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px', marginBottom: 20 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '20px', marginBottom: 40, marginTop: 20 }}>
           <img 
             src={logoPath || '/logo.png'} 
             alt="IndieLens Logo" 
             style={{ 
-              height: '48px', 
-              width: '48px', 
+              height: '80px', 
+              width: '80px', 
               objectFit: 'contain',
-              filter: 'drop-shadow(0 0 8px rgba(102, 192, 244, 0.6))'
+              filter: 'drop-shadow(0 0 12px rgba(102, 192, 244, 0.7))'
             }}
             onError={(e) => { e.currentTarget.style.display = 'none'; }}
           />
-          <h1 style={{ color: '#c7d5e0', fontSize: '3em', marginBottom: 0, textAlign: 'center' }}>Why We're Here</h1>
+          <h1 style={{ color: '#c7d5e0', fontSize: '4.5em', marginBottom: 0, textAlign: 'center', fontWeight: 700 }}>Why We're Here</h1>
         </div>
         <p style={{ color: '#8f98a0', fontSize: '1.2em', textAlign: 'center', marginBottom: 20 }}>
           <strong style={{ color: '#66c0f4' }}>Metacritic and IGN</strong> are the most used and respected game scoring systems in the industry. Metacritic scores were <strong style={{ color: '#66c0f4' }}>mandatorily displayed on Steam</strong> for years, 
@@ -1533,15 +1534,15 @@ function WhyWereHere({ apiBase, logoPath = '/logo.png' }) {
 
   return (
     <div className="container" style={{ maxWidth: '1200px', margin: '40px auto', padding: '40px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px', marginBottom: 20 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '20px', marginBottom: 40, marginTop: 20 }}>
         <img 
           src={logoPath || '/logo.png'} 
           alt="IndieLens Logo" 
           style={{ 
-            height: '48px', 
-            width: '48px', 
+            height: '80px', 
+            width: '80px', 
             objectFit: 'contain',
-            filter: 'drop-shadow(0 0 8px rgba(102, 192, 244, 0.6))',
+            filter: 'drop-shadow(0 0 12px rgba(102, 192, 244, 0.7))',
             backgroundColor: 'transparent',
             background: 'transparent',
             mixBlendMode: 'normal',
@@ -1549,7 +1550,7 @@ function WhyWereHere({ apiBase, logoPath = '/logo.png' }) {
           }}
           onError={(e) => { e.currentTarget.style.display = 'none'; }}
         />
-        <h1 style={{ color: '#c7d5e0', fontSize: '3em', marginBottom: 0, textAlign: 'center' }}>Why We're Here</h1>
+        <h1 style={{ color: '#c7d5e0', fontSize: '4.5em', marginBottom: 0, textAlign: 'center', fontWeight: 700 }}>Why We're Here</h1>
       </div>
       <p style={{ color: '#8f98a0', fontSize: '1.2em', textAlign: 'center', marginBottom: 20 }}>
         <strong style={{ color: '#66c0f4' }}>Metacritic and IGN</strong> are the most used and respected game scoring systems in the industry. Metacritic scores were <strong style={{ color: '#66c0f4' }}>mandatorily displayed on Steam</strong> for years, 
