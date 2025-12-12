@@ -1866,8 +1866,10 @@ app.post('/raindrop/summarize', async (req, res) => {
 
     // Skip API call if no key - go straight to fallback
     if (!RAINDROP_API_KEY || RAINDROP_API_KEY.trim() === '') {
-      // Fallback: Simple text truncation with smart cutoff
+      // Fallback: Smart summary extraction
       const cleanText = text.replace(/<[^>]*>/g, '').trim();
+      
+      // If text is short enough, return as-is
       if (cleanText.length <= maxLength) {
         return res.json({ 
           status: 'ok', 
@@ -1876,22 +1878,53 @@ app.post('/raindrop/summarize', async (req, res) => {
         });
       }
 
-      // Find a good cutoff point (sentence boundary)
-      let summary = cleanText.substring(0, maxLength);
-      const lastPeriod = summary.lastIndexOf('.');
-      const lastExclamation = summary.lastIndexOf('!');
-      const lastQuestion = summary.lastIndexOf('?');
-      const lastSentence = Math.max(lastPeriod, lastExclamation, lastQuestion);
+      // Try to extract first 1-2 sentences that are meaningful
+      const sentences = cleanText.match(/[^.!?]+[.!?]+/g) || [];
       
-      if (lastSentence > maxLength * 0.7) {
-        summary = summary.substring(0, lastSentence + 1);
-      } else {
-        summary = summary.substring(0, maxLength - 3) + '...';
+      if (sentences.length > 0) {
+        // Take first sentence, or first two if combined length is reasonable
+        let summary = sentences[0].trim();
+        
+        if (sentences.length > 1 && (summary.length + sentences[1].length) <= maxLength * 1.2) {
+          summary = (summary + ' ' + sentences[1].trim()).trim();
+        }
+        
+        // If summary is still too long, truncate at word boundary
+        if (summary.length > maxLength) {
+          const words = summary.split(' ');
+          summary = '';
+          for (const word of words) {
+            if ((summary + ' ' + word).length <= maxLength - 3) {
+              summary = (summary ? summary + ' ' : '') + word;
+            } else {
+              break;
+            }
+          }
+          summary = summary.trim() + '...';
+        }
+        
+        return res.json({ 
+          status: 'ok', 
+          summary: summary,
+          source: 'fallback'
+        });
       }
+
+      // Fallback to word-boundary truncation if no sentence structure found
+      const words = cleanText.split(' ');
+      let summary = '';
+      for (const word of words) {
+        if ((summary + ' ' + word).length <= maxLength - 3) {
+          summary = (summary ? summary + ' ' : '') + word;
+        } else {
+          break;
+        }
+      }
+      summary = summary.trim() + '...';
 
       return res.json({ 
         status: 'ok', 
-        summary: summary.trim(),
+        summary: summary,
         source: 'fallback'
       });
     }
@@ -1923,8 +1956,9 @@ app.post('/raindrop/summarize', async (req, res) => {
       console.log('[RAINDROP] API call failed, using fallback:', e.message);
     }
 
-    // Fallback if API fails
+    // Fallback if API fails - same smart extraction logic
     const cleanText = text.replace(/<[^>]*>/g, '').trim();
+    
     if (cleanText.length <= maxLength) {
       return res.json({ 
         status: 'ok', 
@@ -1933,21 +1967,51 @@ app.post('/raindrop/summarize', async (req, res) => {
       });
     }
 
-    let summary = cleanText.substring(0, maxLength);
-    const lastPeriod = summary.lastIndexOf('.');
-    const lastExclamation = summary.lastIndexOf('!');
-    const lastQuestion = summary.lastIndexOf('?');
-    const lastSentence = Math.max(lastPeriod, lastExclamation, lastQuestion);
+    // Try to extract first 1-2 sentences
+    const sentences = cleanText.match(/[^.!?]+[.!?]+/g) || [];
     
-    if (lastSentence > maxLength * 0.7) {
-      summary = summary.substring(0, lastSentence + 1);
-    } else {
-      summary = summary.substring(0, maxLength - 3) + '...';
+    if (sentences.length > 0) {
+      let summary = sentences[0].trim();
+      
+      if (sentences.length > 1 && (summary.length + sentences[1].length) <= maxLength * 1.2) {
+        summary = (summary + ' ' + sentences[1].trim()).trim();
+      }
+      
+      if (summary.length > maxLength) {
+        const words = summary.split(' ');
+        summary = '';
+        for (const word of words) {
+          if ((summary + ' ' + word).length <= maxLength - 3) {
+            summary = (summary ? summary + ' ' : '') + word;
+          } else {
+            break;
+          }
+        }
+        summary = summary.trim() + '...';
+      }
+      
+      return res.json({ 
+        status: 'ok', 
+        summary: summary,
+        source: 'fallback'
+      });
     }
+
+    // Word-boundary truncation fallback
+    const words = cleanText.split(' ');
+    let summary = '';
+    for (const word of words) {
+      if ((summary + ' ' + word).length <= maxLength - 3) {
+        summary = (summary ? summary + ' ' : '') + word;
+      } else {
+        break;
+      }
+    }
+    summary = summary.trim() + '...';
 
     return res.json({ 
       status: 'ok', 
-      summary: summary.trim(),
+      summary: summary,
       source: 'fallback'
     });
   } catch (e) {
