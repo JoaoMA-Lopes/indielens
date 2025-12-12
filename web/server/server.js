@@ -158,7 +158,8 @@ function normalizeScore(rawScore) {
   // Ensure max is 99.9 and min is 0
   normalized = Math.min(99.9, Math.max(0, normalized));
   
-  return normalized;
+  // Always return as float with one decimal place
+  return parseFloat(normalized.toFixed(1));
 }
 
 async function getGameScoreFromDB(appid) {
@@ -1068,7 +1069,7 @@ app.post('/rate', async (req, res) => {
     res.json({ 
       ...result, 
       aggregate: { 
-        score: aggregateScore !== null ? aggregateScore : null  // Only show score if ratings exist
+        score: aggregateScore !== null ? parseFloat(aggregateScore.toFixed(1)) : null  // Only show score if ratings exist, always as float
       } 
     });
   } catch (e) {

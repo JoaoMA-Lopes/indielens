@@ -1243,7 +1243,7 @@ function LatestReviews({ apiBase, onSelectGame }) {
               <div className="tag-segment-card-title" style={{ marginBottom: '6px' }}>{review.gameName || 'Unknown title'}</div>
               <div style={{ fontSize: '12px', color: '#8f98a0' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px', flexWrap: 'wrap' }}>
-                  <span className="badge" style={{ fontSize: '11px', padding: '3px 8px' }}>{review.rating}</span>
+                  <span className="badge" style={{ fontSize: '11px', padding: '3px 8px' }}>{typeof review.rating === 'number' ? review.rating.toFixed(1) : review.rating}</span>
                   <span style={{ fontSize: '10px', color: '#8f98a0' }}>Weight: {(review.weight * 100).toFixed(1)}%</span>
                 </div>
                 <div style={{ fontSize: '11px', color: '#8f98a0', marginBottom: '4px', fontWeight: 500 }}>
@@ -2435,7 +2435,7 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
   }
 
   // Don't round - use toFixed(1) to show one decimal, but cap at 99.9 visually
-  const score = d.score ? Math.min(99.9, parseFloat(d.score.toFixed(1))) : null;
+  const score = d.score ? parseFloat(Math.min(99.9, parseFloat(d.score.toFixed(1))).toFixed(1)) : null;
   const getScoreColor = (s) => {
     if (!s) return '#999';
     if (s >= 75) return '#66cc33';
@@ -2466,7 +2466,7 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
               <div className="detail-score-box">
               <div className="detail-score-label">IndieLens Score</div>
               <div className="detail-score-number" style={{ color: '#d4af37' }}>
-                {score ?? '—'}
+                {score !== null ? score.toFixed(1) : '—'}
               </div>
             </div>
             {scoreBreakdown && typeof scoreBreakdown.profileMatchScore === 'number' && !isNaN(scoreBreakdown.profileMatchScore) && (
@@ -2509,7 +2509,7 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
         <div className="recent-scores-section">
           <div className="recent-scores-title">Community Score</div>
           <div className="recent-score-item">
-            <div className="recent-score-value" style={{ color: '#d4af37' }}>{score ?? '—'}</div>
+            <div className="recent-score-value" style={{ color: '#d4af37' }}>{score !== null ? score.toFixed(1) : '—'}</div>
             <div>
               <div className="recent-score-user">IndieLens Score</div>
               <div className="recent-score-date">Weighted average</div>
@@ -2587,7 +2587,7 @@ function GameDetail({ apiBase, game, steamId, onClose }) {
                           const tooltip = document.getElementById('weight-tooltip');
                           if (tooltip) tooltip.remove();
                         }}
-                        >{(scoreBreakdown.currentUser.weight * 100).toFixed(1)}%</span> • Rating: {scoreBreakdown.currentUser.rating}
+                        >{(scoreBreakdown.currentUser.weight * 100).toFixed(1)}%</span> • Rating: {typeof scoreBreakdown.currentUser.rating === 'number' ? scoreBreakdown.currentUser.rating.toFixed(1) : scoreBreakdown.currentUser.rating}
                       </span>
                     </div>
                   </div>
